@@ -66,7 +66,7 @@ class Tank {
 
         const mag = Math.sqrt(dx * dx + dy * dy);
         const topSpeed = 15;
-        const bulletSpeed = 17;
+        let bulletSpeed = 17;
         if( mag >= this.container.width && !game.isMouseDown ){        
             
             const normDx = dx / mag;
@@ -108,6 +108,7 @@ class Tank {
                 this.bullets[i][0].destroy();
                 this.bullets.splice(i,1);
             } else {
+                bulletSpeed = Math.random()*10 + 17;
                 this.bullets[i][0].x += bulletSpeed*Math.cos(this.bullets[i][1]);
                 this.bullets[i][0].y += bulletSpeed*Math.sin(this.bullets[i][1]);
             }
