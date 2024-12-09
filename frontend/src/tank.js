@@ -1,7 +1,7 @@
 import { Graphics, Container } from "pixi.js";
 import { game } from "./game";
 import { HealthBar } from "./healthbar";
-import { Bullet } from "./bullet";
+import { Bullets } from "./bullets";
 
 class Tank {
     constructor(name, color, x, y, w , h, angle, damage, bullet_speed)
@@ -17,7 +17,7 @@ class Tank {
         this.damage = damage;
         this.bullet_speed = bullet_speed;
         this.#setup_container();
-        this.bullets = []
+        this.bullets = new Bullets(this.bullet_speed);
        // this.#setup();
     }
 
@@ -66,7 +66,6 @@ class Tank {
 
         const mag = Math.sqrt(dx * dx + dy * dy);
         const topSpeed = 15;
-        let bulletSpeed = 17;
         if( mag >= this.container.width && !game.isMouseDown ){        
             
             const normDx = dx / mag;
@@ -81,37 +80,12 @@ class Tank {
         }
         
         if(game.isMouseDown){
-            const bullet = new Graphics()
-                .rect(0,0,5,5)
-                .fill({
-                    color: 0xFF00FF,
-                    alpha: 1
-                    })
-                .stroke({
-                    width: 2,
-                    color: 0x000000
-                    });
 
-            bullet.pivot.set(bullet.width/2, bullet.height/2);
-            bullet.position.x = this.container.position.x;
-            bullet.position.y = this.container.position.y;
-            this.bullets.push([bullet, this.angle]);
-            this.bullets.forEach(bullet => {
-                game.app.stage.addChild(bullet[0]);
-            });
+            this.bullets.shoot(this.container.position.x, this.container.position.y, this.angle, this.damage);
         }
-
-        for(let i = 0; i < this.bullets.length; i++) {
-            if (this.bullets[i][0].x > game.app.screen.width || this.bullets[i][0].x < 0 || 
-                this.bullets[i][0].y > game.app.screen.height || this.bullets[i][0].y < 0) {
-
-                this.bullets[i][0].destroy();
-                this.bullets.splice(i,1);
-            } else {
-                bulletSpeed = Math.random()*10 + 17;
-                this.bullets[i][0].x += bulletSpeed*Math.cos(this.bullets[i][1]);
-                this.bullets[i][0].y += bulletSpeed*Math.sin(this.bullets[i][1]);
-            }
+        this.bullets.update();
+        if (game.ws.readyState === WebSocket.OPEN) {
+            game.ws.send(JSON.stringify({name: this.name, x: this.container.x, y: this.container.y, angle: this.angle}));
         }
     }
 }
