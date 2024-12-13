@@ -1,19 +1,18 @@
 from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect, status
 from api.ws import manager
-import json
 
 gr = APIRouter()
 
 @gr.websocket("/testws")
-async def websocket_endpoint(websocket: WebSocket):
+async def websocket_endpoint(websocket: WebSocket, name: str):
     
-    await manager.connect(websocket)
-
+    await manager.connect(websocket, name)
     try:
         while True:
             data = await websocket.receive_text()
-            await manager.broadcast(data)
-
+            print("ep: \n", data)
+            await manager.handle_data(data)
+            
     except WebSocketDisconnect:
-        await manager.disconnect(websocket)
+        await manager.disconnect(name)
         print("dcd")
