@@ -79,8 +79,8 @@ class Game {
         this.tanks.push(new Tank(this.name, 0x00ff00, x, y, tank1w, tank1h, 0, 10, 17));
         this.wsManager.send("state", {
             name: this.name,
-            mouseX: this.mouseX || 0,
-            mouseY: this.mouseY || 0,
+            mouseX: x,
+            mouseY: y,
             shooting: false,
         });
     }

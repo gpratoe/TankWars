@@ -44,8 +44,8 @@ class Tank {
             
             this.healthBar = new HealthBar(this.x, this.y - this.h*0.75, this.w, 5, this.health, this.container);
             
-            this.container.position.x = game.canvas.width/2 + this.x;
-            this.container.position.y = game.canvas.height/2 + this.y; 
+            this.container.position.x = this.x;
+            this.container.position.y = this.y; 
             this.container.pivot.set(this.container.width/2, this.container.height/2);
     }
 
@@ -78,15 +78,14 @@ class Tank {
             this.bullets.shoot(this.container.position.x, this.container.position.y, this.angle, this.damage);
         }
         this.bullets.update();
-        if (game.wsManager.ws.readyState === WebSocket.OPEN) {
-            game.wsManager.send("state",
-                {
-                name: this.name, 
-                mouseX: game.mouseX ? game.mouseX : 0, 
-                mouseY: game.mouseY ? game.mouseY : 0, 
-                shooting: game.isMouseDown}
-            );
-        }
+        
+        game.wsManager.send("state",
+            {
+            name: this.name, 
+            mouseX: game.mouseX ? game.mouseX : this.x, 
+            mouseY: game.mouseY ? game.mouseY : this.y, 
+            shooting: game.isMouseDown}
+        );
     }
 }
 
