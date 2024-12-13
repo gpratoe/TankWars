@@ -11,6 +11,7 @@ class Game {
         this.app = null;
         this.canvas = null;
         this.tanks = [];
+        this.main_tank = null;
         this.seconds = new Date().getTime() / 1000;
         this.name = "Player " + this.seconds;
 
@@ -25,7 +26,6 @@ class Game {
         const event = fullData.event;
         const data = fullData.data;
         const name = data.name;
-
         if (event === "init_tank") {
             this.tankinitposx = data.tankx;
             this.tankinitposy = data.tanky;
@@ -48,6 +48,15 @@ class Game {
                     this.tanks.push(
                         new Tank(name, 0xff0000, data.tankx, data.tanky, 100, 50, data.angle, 10, 17)
                     );
+                }
+            }
+        } else if (event === "remove_tank") {
+            console.log("trying to remove tank: ", name);
+            for (let i = 0; i < this.tanks.length; i++) {
+                if (this.tanks[i].name === data) {
+                    this.tanks[i].container.destroy();
+                    this.tanks.splice(i, 1);
+                    break;
                 }
             }
         }
@@ -76,11 +85,11 @@ class Game {
         const tank1w = 100;
         const tank1h = 50;
 
-        this.tanks.push(new Tank(this.name, 0x00ff00, x, y, tank1w, tank1h, 0, 10, 17));
+        this.main_tank = new Tank(this.name, 0x00ff00, x, y, tank1w, tank1h, 0, 10, 17);
         this.wsManager.send("state", {
             name: this.name,
-            mouseX: x,
-            mouseY: y,
+            mouseX: this.mouseX ? this.mouseX : x,
+            mouseY: this.mouseY ? this.mouseY : y,
             shooting: false,
         });
     }
@@ -105,8 +114,8 @@ class Game {
 
         })
         this.app.ticker.add(() => {
-            if (this.tanks.length > 0){
-                this.tanks[0].update();
+            if (this.main_tank){
+                this.main_tank.update();
             }
     
         })
