@@ -23,33 +23,56 @@ class connection_manager:
         
         except Exception as e:
             print(e, " conection failed")
-    
-    async def disconnect(self, name: str):
-        self.active_connections.pop(name)
-        game.tanks.pop(name)
+            if name in self.active_connections:
+                self.active_connections.pop(name, None)
 
-    async def broadcast(self, data: str, name: str):
-        for connection in self.active_connections.values():
-            if connection != self.active_connections[name]:
-                await connection.send_text(data)
+    async def disconnect(self, name: str):
+        try:
+            if name in self.active_connections:
+                self.active_connections.pop(name)
+            if name in game.tanks:
+                game.tanks[name].tank.DestroyFixture(game.tanks[name].tank.fixtures[0])
+                game.tanks.pop(name)
+
+            await self.broadcast(json.dumps({
+                "event": "remove_tank",
+                "data": name
+            }), name)
+        except Exception as e:
+            print(f"Error during disconnection of {name}: {e}")
+
+    async def broadcast(self, data: str, name: str = None):
+        for conn_name, connection in self.active_connections.items():
+            if name is None or conn_name != name:  # Solo excluye si `name` es válido.
+                try:
+                    await connection.send_text(data)
+                except Exception as e:
+                    print(f"Error broadcasting to {conn_name}: {e}")
+
 
     async def handle_data(self, data: str):
-        print(data)
-        event = json.loads(data)["event"]
-        data = json.loads(data)["data"]
+        try:
+            parsed = json.loads(data)
+            event = parsed.get("event")
+            data = parsed.get("data")
 
-        if event == "add_tank":
-            pass # maybe i dont need this
-        elif event == "state":
-            tank = game.tanks[data["name"]]
-            tank.set_state(data)
-            tank.update()
-            await self.broadcast(json.dumps({
-                "event": "state",
-                "data":tank.get_state()
-                }), data["name"])    
-        
-        game.run()
+            if event == "state" and "name" in data:
+                name = data["name"]
+                if name in game.tanks:
+                    tank = game.tanks[name]
+                    tank.set_state(data)
+                    tank.update()
+                    await self.broadcast(json.dumps({
+                        "event": "state",
+                        "data": tank.get_state()
+                    }), name)
+            #game.run()
+        except json.JSONDecodeError as e:
+            print(f"Invalid JSON received: {data} - {e}")
+        except KeyError as e:
+            print(f"Missing key in data: {data} - {e}")
+        except Exception as e:
+            print(f"Unexpected error handling data: {data} - {e}")
 
 
 
