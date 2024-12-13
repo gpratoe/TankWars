@@ -1,24 +1,60 @@
 import {Application} from "pixi.js";
 import { Tank } from "./tank";
+import { WebSocketManager } from "./websocketmanager";
 
 class Game {
-    #mouseX;
-    #mouseY;
-
-    constructor(width, height){
+    constructor(width, height) {
+        this.initialized = false;
+        this.tank_initialized = false;
         this.width = width;
         this.height = height;
         this.app = null;
         this.canvas = null;
-        this.tanks = []
-        this.ws = new WebSocket("ws://localhost:8000/game/testws");
+        this.tanks = [];
         this.seconds = new Date().getTime() / 1000;
         this.name = "Player " + this.seconds;
+
+        this.wsManager = new WebSocketManager(
+            "ws://localhost:8000/game/testws",
+            this.name,
+            this.handleWebSocketMessage.bind(this)
+        );
+    }
+
+    handleWebSocketMessage(fullData) {
+        const event = fullData.event;
+        const data = fullData.data;
+        const name = data.name;
+
+        if (event === "init_tank") {
+            this.tankinitposx = data.tankx;
+            this.tankinitposy = data.tanky;
+            if (this.initialized) {
+                this.#initTank(data.tankx, data.tanky);
+                this.tank_initialized = true;
+            }
+        } else if (event === "state") {
+            if (name !== this.name) {
+                let found = false;
+                for (let i = 0; i < this.tanks.length; i++) {
+                    if (this.tanks[i].name === name) {
+                        this.tanks[i].container.x = data.tankx;
+                        this.tanks[i].container.y = data.tanky;
+                        this.tanks[i].container.rotation = data.angle;
+                        found = true;
+                    }
+                }
+                if (!found) {
+                    this.tanks.push(
+                        new Tank(name, 0xff0000, data.tankx, data.tanky, 100, 50, data.angle, 10, 17)
+                    );
+                }
+            }
+        }
     }
 
     async init() {
         this.app = new Application();
-        console.log(this.app);
         await this.app.init({
             width: this.width,
             height: this.height,
@@ -31,39 +67,29 @@ class Game {
         this.app.stage.hitArea = this.app.screen
         this.app.stage.interactive = true;
         document.body.appendChild(this.canvas)
-        this.#initTanks();
+        //this.#initTank(0,0);
+        this.initialized = true;
+        
     }
 
-    #initTanks(){
+    #initTank(x, y) {
         const tank1w = 100;
         const tank1h = 50;
-        const tank2w = 100;
-        const tank2h = 50;
 
-        this.tanks.push(new Tank(this.name, 0x00FF00, -this.width/2 + tank1w/2, 0, tank1w, tank1h, 0, 10, 17));
-        //this.tanks.push(new Tank("Player 2", 0xFF0000, this.width/2 - tank2w/2, 0, tank2w, tank2h, 0, 10, 17));
+        this.tanks.push(new Tank(this.name, 0x00ff00, x, y, tank1w, tank1h, 0, 10, 17));
+        this.wsManager.send("state", {
+            name: this.name,
+            mouseX: this.mouseX || 0,
+            mouseY: this.mouseY || 0,
+            shooting: false,
+        });
     }
 
     update() {
-        this.ws.onmessage = (event) => {
-            var name = JSON.parse(event.data)["name"];
-            if (name != this.name){
-                var found = false;
-                for (let i = 0; i < this.tanks.length; i++){
-                    if (this.tanks[i].name == name){
-                        this.tanks[i].container.x = JSON.parse(event.data)["x"];
-                        this.tanks[i].container.y = JSON.parse(event.data)["y"];
-                        this.tanks[i].container.rotation = JSON.parse(event.data)["angle"];
-                        //this.tanks[i].health = JSON.parse(event.data)["health"];
-                        //this.tanks[i].healthBar.update(this.tanks[i].health);
-                        found = true;
-                    }
-                }
-                if (!found){
-                    this.tanks.push(new Tank(name, 0xFF0000, JSON.parse(event.data)["x"], JSON.parse(event.data)["y"], 100, 50, JSON.parse(event.data)["angle"], 10, 17));
-                }
-            }
+        if (!this.tank_initialized){
+            this.#initTank(this.tankinitposx,this.tankinitposy);
         }
+        
         this.app.stage.on("pointermove", (event) => {
             const mousePos = event.global;
     
@@ -79,8 +105,9 @@ class Game {
 
         })
         this.app.ticker.add(() => {
-
-            this.tanks[0].update();
+            if (this.tanks.length > 0){
+                this.tanks[0].update();
+            }
     
         })
         .maxFPS(60);

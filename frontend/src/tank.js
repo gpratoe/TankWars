@@ -28,10 +28,6 @@ class Tank {
         });
         game.app.stage.addChild(this.container);
         this.#setup();
-        console.log(this.container.width,this.container.height)
-
-        
-        
     }
     #setup() {
         this.rectangle = new Graphics()
@@ -45,8 +41,6 @@ class Tank {
                 color: 0x000000
             });
             this.container.addChild(this.rectangle);
-            
-            console.log(this.container.width,this.container.height);
             
             this.healthBar = new HealthBar(this.x, this.y - this.h*0.75, this.w, 5, this.health, this.container);
             
@@ -84,8 +78,14 @@ class Tank {
             this.bullets.shoot(this.container.position.x, this.container.position.y, this.angle, this.damage);
         }
         this.bullets.update();
-        if (game.ws.readyState === WebSocket.OPEN) {
-            game.ws.send(JSON.stringify({name: this.name, x: this.container.x, y: this.container.y, angle: this.angle}));
+        if (game.wsManager.ws.readyState === WebSocket.OPEN) {
+            game.wsManager.send("state",
+                {
+                name: this.name, 
+                mouseX: game.mouseX ? game.mouseX : 0, 
+                mouseY: game.mouseY ? game.mouseY : 0, 
+                shooting: game.isMouseDown}
+            );
         }
     }
 }
