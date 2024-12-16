@@ -1,5 +1,6 @@
-from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect, status
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from api.ws import manager
+
 
 gr = APIRouter()
 
@@ -10,8 +11,13 @@ async def websocket_endpoint(websocket: WebSocket, name: str):
     try:
         while True:
             data = await websocket.receive_text()
-            print("ep: \n", data)
             await manager.handle_data(data)
+            #game.run()
+            # await manager.broadcast(json.dumps({
+            #             "event": "state",
+            #             "data": game.get_state()
+            #         }), name)
+            
             
     except WebSocketDisconnect:
         await manager.disconnect(name)

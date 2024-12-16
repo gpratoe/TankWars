@@ -8,6 +8,7 @@ class Utils:
         self.PPM = 10
         self.mouseX = 0
         self.mouseY = 0
+        self.manager = None
 
 
     def to_pixel(self, meter):
