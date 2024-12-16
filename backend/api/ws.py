@@ -1,6 +1,8 @@
 from fastapi.websockets import WebSocket
 from src.game import game
 import json
+from src.utils import utils
+import asyncio
 
 class connection_manager:
     def __init__(self):
@@ -43,11 +45,11 @@ class connection_manager:
 
     async def broadcast(self, data: str, name: str = None):
         for conn_name, connection in self.active_connections.items():
-            if name is None or conn_name != name:  # Solo excluye si `name` es válido.
-                try:
-                    await connection.send_text(data)
-                except Exception as e:
-                    print(f"Error broadcasting to {conn_name}: {e}")
+            #if name is None or conn_name != name:  # Solo excluye si `name` es válido.
+            try:
+                await connection.send_text(data)
+            except Exception as e:
+                print(f"Error broadcasting to {conn_name}: {e}")
 
 
     async def handle_data(self, data: str):
@@ -61,12 +63,7 @@ class connection_manager:
                 if name in game.tanks:
                     tank = game.tanks[name]
                     tank.set_state(data)
-                    tank.update()
-                    await self.broadcast(json.dumps({
-                        "event": "state",
-                        "data": tank.get_state()
-                    }), name)
-            #game.run()
+            
         except json.JSONDecodeError as e:
             print(f"Invalid JSON received: {data} - {e}")
         except KeyError as e:
@@ -76,4 +73,4 @@ class connection_manager:
 
 
 
-manager = connection_manager()
+manager = utils.manager = connection_manager()
