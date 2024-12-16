@@ -29,6 +29,7 @@ class Game:
             elif isinstance(bodyA.userData, Tank) and isinstance(bodyB.userData, Bullet):
                 print("Tank and bullet collided")
                 bodyA.userData.health -= bodyB.userData.damage
+                #bodyB.userData.isDead = True
             elif isinstance(bodyA.userData, Bullet) and isinstance(bodyB.userData, Tank):
                 print("Bullet and tank collided")
                 bodyB.userData.health -= bodyA.userData.damage
@@ -40,6 +41,7 @@ class Game:
     def add_tank(self, name):
         if self.tanks.get(name) is None:
             self.tanks[name] = Tank(name, self.tank_initialpos, self.tanksw, self.tanksh, 0, 10, 200)
+            self.tanks[name].groupIndex = -self.tanks.__len__()
             self.bullets[name] = self.tanks[name].alive_bullets
             return 0
         else:

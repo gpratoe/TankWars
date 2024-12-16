@@ -18,7 +18,7 @@ class Tank:
         self.alive_bullets = []
         self.damage = damage
         self.bullet_speed = bullet_speed
-        self.tank = utils.world.CreateStaticBody(
+        self.tank = utils.world.CreateKinematicBody(
             position=utils.vec2_to_world(pos),
             fixtures=b2FixtureDef(
                 shape=b2PolygonShape(box=utils.vec2_to_world(self.dimentions)),
@@ -27,10 +27,11 @@ class Tank:
                 restitution=0.1
             ))
         self.tank.userData = self
+        self.groupIndex = None
 
     def shoot(self):
         bullet_pos = (self.pos[0] + 100 * math.cos(self.angle), self.pos[1] + 100 * math.sin(self.angle))
-        self.alive_bullets.append(Bullet(bullet_pos, self.angle, self.damage, self.bullet_speed))
+        self.alive_bullets.append(Bullet(bullet_pos, self.angle, self.damage, self.bullet_speed, self.groupIndex))
         
     def update(self):
         '''
@@ -46,18 +47,17 @@ class Tank:
         self.tank.angle = self.angle
 
         mag = math.sqrt(dx**2 + dy**2)
-        topSpeed = 25
+        topSpeed = 1.5
         if mag >= self.w  and not self.is_shooting:
             normDx = dx/mag
             normDy = dy/mag
             ds = (mag*5) / self.w
             speed = topSpeed if ds > topSpeed else ds
-            self.pos = (utils.to_pixel(self.tank.position.x) + speed * normDx, utils.to_pixel(self.tank.position.y) + speed * normDy)
+            self.tank.position = (self.tank.position.x + speed * normDx, self.tank.position.y + speed * normDy)
             # update tank in world
-            self.tank.position = utils.vec2_to_world(b2Vec2(self.pos[0], self.pos[1]))
-        
+            self.pos = utils.vec2_to_pixel(self.tank.position)
+            
         if self.is_shooting:
-            #bug cuando dispara se mueve rarinrarin
             self.shoot()
             pass
         for bullet in self.alive_bullets:
