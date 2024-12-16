@@ -15,10 +15,11 @@ class Bullet:
             position=utils.vec2_to_world(b2Vec2(self.x, self.y)),
             fixtures=b2FixtureDef(
                 shape=b2CircleShape(radius=1),
-                density=0.1,
-                friction=0.1,
+                density=0.5,
+                friction=0,
                 restitution=0.5
-            ))
+            ),
+            bullet = True)
         self.bullet.linearVelocity = (self.speed * self.direction[0], self.speed * self.direction[1])
         self.bullet.bullet = True
         
