@@ -1,6 +1,7 @@
 import {Application} from "pixi.js";
 import { Tank } from "./tank";
 import { WebSocketManager } from "./websocketmanager";
+import { Bullets } from "./bullets";
 
 class Game {
     constructor(width, height) {
@@ -10,8 +11,10 @@ class Game {
         this.height = height;
         this.app = null;
         this.canvas = null;
-        this.tanks = [];
-        this.main_tank = null;
+        this.tanks = {};
+        //this.bullets = new Bullets(10);
+        this.bullets = {};
+        this.tanks[this.name] = null;
         this.seconds = new Date().getTime() / 1000;
         this.name = "Player " + this.seconds;
 
@@ -34,30 +37,45 @@ class Game {
                 this.tank_initialized = true;
             }
         } else if (event === "state") {
-            if (name !== this.name) {
-                let found = false;
-                for (let i = 0; i < this.tanks.length; i++) {
-                    if (this.tanks[i].name === name) {
-                        this.tanks[i].container.x = data.tankx;
-                        this.tanks[i].container.y = data.tanky;
-                        this.tanks[i].container.rotation = data.angle;
-                        found = true;
+            const tanks = data.tanks;
+            const bullets = data.bullets;
+            console.log("tanks: ", tanks);
+            for (const key in tanks) {
+                if (this.tanks[key]) {
+                    this.tanks[key].container.x = tanks[key].tankx;
+                    this.tanks[key].container.y = tanks[key].tanky;
+                    this.tanks[key].angle = tanks[key].angle;
+                    this.tanks[key].container.rotation = tanks[key].angle;
+                    
+                    if (this.bullets[key].length > bullets[key].length) {
+                        for (let i = bullets[key].length; i < this.bullets[key].length; i++) {
+                            this.bullets[key][i].bullet.destroy();
+                            
+                        } 
+                        this.bullets[key].splice(bullets[key].length, this.bullets[key].length - bullets[key].length);
+
                     }
-                }
-                if (!found) {
-                    this.tanks.push(
-                        new Tank(name, 0xff0000, data.tankx, data.tanky, 100, 50, data.angle, 10, 17)
-                    );
+                    for (let i = 0; i < bullets[key].length; i++) {
+                        if(!this.bullets[key][i]){
+                            this.bullets[key][i] = new Bullets(bullets[key][i].x, bullets[key][i].y, bullets[key][i].direction, 10, 10);
+                        }
+                        else {
+                            this.bullets[key][i].bullet.x = bullets[key][i].x;
+                            this.bullets[key][i].bullet.y = bullets[key][i].y;
+                            this.bullets[key][i].dir_norm = bullets[key][i].direction;
+                        }
+                    }
+                    
+                } else if (key !== this.name) {
+                    this.tanks[key] = new Tank(key, 0xFF0000, tanks[key].tankx, tanks[key].tanky, 100, 50, 0, 10, 17);
+                    this.bullets[key] = [];
                 }
             }
         } else if (event === "remove_tank") {
             console.log("trying to remove tank: ", name);
-            for (let i = 0; i < this.tanks.length; i++) {
-                if (this.tanks[i].name === data) {
-                    this.tanks[i].container.destroy();
-                    this.tanks.splice(i, 1);
-                    break;
-                }
+            if (this.tanks[data]) {
+                this.tanks[data].container.destroy();
+                delete this.tanks[data];
             }
         }
     }
@@ -85,11 +103,12 @@ class Game {
         const tank1w = 100;
         const tank1h = 50;
 
-        this.main_tank = new Tank(this.name, 0x00ff00, x, y, tank1w, tank1h, 0, 10, 17);
+        this.tanks[this.name] = new Tank(this.name, 0x00ff00, x, y, tank1w, tank1h, 0, 10, 17);
+        this.bullets[this.name] = [];
         this.wsManager.send("state", {
             name: this.name,
-            mouseX: this.mouseX ? this.mouseX : x,
-            mouseY: this.mouseY ? this.mouseY : y,
+            mouseX: this.tanks[this.name].mouseX ? this.tanks[this.name].mouseX : x,
+            mouseY: this.tanks[this.name].mouseY ? this.tanks[this.name].mouseY : y,
             shooting: false,
         });
     }
@@ -102,24 +121,38 @@ class Game {
         this.app.stage.on("pointermove", (event) => {
             const mousePos = event.global;
     
-            this.mouseX = mousePos.x;
-            this.mouseY = mousePos.y;
+            this.tanks[this.name].mouseX = mousePos.x;
+            this.tanks[this.name].mouseY = mousePos.y;
+            game.wsManager.send("state", {
+                name: this.name,
+                mouseX: this.tanks[this.name].mouseX,
+                mouseY: this.tanks[this.name].mouseY,
+                shooting: this.tanks[this.name].isShooting,
+            });
         });
-        this.isMouseDown = false
         this.app.stage.on("mousedown", (event) => {
-            this.isMouseDown = true
+            this.tanks[this.name].isShooting = true
+            game.wsManager.send("state", {
+                name: this.name,
+                mouseX: this.tanks[this.name].mouseX,
+                mouseY: this.tanks[this.name].mouseY,
+                shooting: true,
+            });
         })
         this.app.stage.on("mouseup", (event) => {
-            this.isMouseDown = false
+            this.tanks[this.name].isShooting = false
+            game.wsManager.send("state", {
+                name: this.name,
+                mouseX: this.tanks[this.name].mouseX,
+                mouseY: this.tanks[this.name].mouseY,
+                shooting: false, // Enviar el estado actualizado
+            });
 
         })
         this.app.ticker.add(() => {
-            if (this.main_tank){
-                this.main_tank.update();
-            }
-    
+            
         })
-        .maxFPS(60);
+        .maxFPS(20);
     }
 }
 
