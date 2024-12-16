@@ -19,7 +19,7 @@ class Game {
         this.name = "Player " + this.seconds;
 
         this.wsManager = new WebSocketManager(
-            "ws://localhost:8000/game/testws",
+            "ws://192.168.1.100:8000/game/testws",
             this.name,
             this.handleWebSocketMessage.bind(this)
         );
@@ -39,13 +39,9 @@ class Game {
         } else if (event === "state") {
             const tanks = data.tanks;
             const bullets = data.bullets;
-            console.log("tanks: ", tanks);
             for (const key in tanks) {
                 if (this.tanks[key]) {
-                    this.tanks[key].container.x = tanks[key].tankx;
-                    this.tanks[key].container.y = tanks[key].tanky;
-                    this.tanks[key].angle = tanks[key].angle;
-                    this.tanks[key].container.rotation = tanks[key].angle;
+                    this.tanks[key].set_state(tanks[key]);
                     
                     if (this.bullets[key].length > bullets[key].length) {
                         for (let i = bullets[key].length; i < this.bullets[key].length; i++) {

@@ -52,6 +52,18 @@ class Tank {
             this.container.pivot.set(this.container.width/2, this.container.height/2);
     }
     
+    set_state(state){
+        this.x = state.tankx;
+        this.y = state.tanky;
+        this.container.x = state.tankx;
+        this.container.y = state.tanky;
+        this.angle = state.angle;
+        this.container.rotation = state.angle;
+        if(this.health > state.health){
+            this.healthBar.decreaseHealth();
+        }
+        this.health = state.health;
+    }
 }
 
 export {Tank};
