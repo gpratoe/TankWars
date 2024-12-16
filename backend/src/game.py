@@ -1,14 +1,18 @@
 from Box2D import b2World
 from src.utils import utils
 from src.tank import Tank
+from src.bullet import Bullet
+from src.contactlistener import ContactListener
 import json 
 import asyncio
+
 
 class Game:
     def __init__(self, w, h):
         self.w = utils.gameWidth = w
         self.h = utils.gameHeight = h
         self.world = utils.world = b2World(gravity=(0, 0), doSleep=True)
+        self.world.contactListener = utils.cl = ContactListener(self.collision_handler)
         self.time_step = 1.0 / 60
         self.tanks = {}
         self.tanksw = 50
@@ -16,6 +20,22 @@ class Game:
         self.tank_initialpos = (self.w/2, self.h/2)
         self.bullets = {}
         self.prev_state = None
+
+
+    def collision_handler(self, bodyA, bodyB):
+        if bodyA.userData is not None and bodyB.userData is not None:
+            if isinstance(bodyA.userData, Tank) and isinstance(bodyB.userData, Tank):
+                print("Tanks collided")
+            elif isinstance(bodyA.userData, Tank) and isinstance(bodyB.userData, Bullet):
+                print("Tank and bullet collided")
+                bodyA.userData.health -= bodyB.userData.damage
+            elif isinstance(bodyA.userData, Bullet) and isinstance(bodyB.userData, Tank):
+                print("Bullet and tank collided")
+                bodyB.userData.health -= bodyA.userData.damage
+            elif isinstance(bodyA.userData, Bullet) and isinstance(bodyB.userData, Bullet):
+                print("Bullets collided")
+            else:
+                print("Unknown collision")
 
     def add_tank(self, name):
         if self.tanks.get(name) is None:

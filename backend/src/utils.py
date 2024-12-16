@@ -1,4 +1,5 @@
 from Box2D import b2Vec2
+from src.contactlistener import ContactListener
 
 class Utils:
     def __init__(self):
@@ -9,7 +10,7 @@ class Utils:
         self.mouseX = 0
         self.mouseY = 0
         self.manager = None
-
+        self.cl = None
 
     def to_pixel(self, meter):
         return meter * self.PPM
