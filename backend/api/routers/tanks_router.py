@@ -2,7 +2,6 @@ from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel
 from src.tank import Tank
 from typing import Tuple
-from api.utils import *
 
 tank = None
 
