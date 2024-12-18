@@ -14,12 +14,12 @@ class Game {
         this.tanks = {};
         //this.bullets = new Bullets(10);
         this.bullets = {};
-        this.tanks[this.name] = null;
+        this.main_tank = null;
         this.seconds = new Date().getTime() / 1000;
         this.name = "Player " + this.seconds;
 
         this.wsManager = new WebSocketManager(
-            "ws://192.168.1.100:8000/game/testws",
+            "ws://localhost:8000/game/testws",
             this.name,
             this.handleWebSocketMessage.bind(this)
         );
@@ -39,6 +39,17 @@ class Game {
         } else if (event === "state") {
             const tanks = data.tanks;
             const bullets = data.bullets;
+            const tanks_to_remove = data.tanks_to_remove;
+
+            for (const tank_name of tanks_to_remove ){
+                if(this.tanks[tank_name]){
+                    this.tanks[tank_name].container.destroy();
+                    this.bullets[tank_name].forEach(bullet => {
+                        bullet.bullet.destroy();
+                    });
+                    delete this.tanks[tank_name];
+                }
+            }
             for (const key in tanks) {
                 if (this.tanks[key]) {
                     this.tanks[key].set_state(tanks[key]);
@@ -71,6 +82,9 @@ class Game {
             console.log("trying to remove tank: ", name);
             if (this.tanks[data]) {
                 this.tanks[data].container.destroy();
+                this.bullets[data].forEach(bullet => {
+                    bullet.bullet.destroy();
+                });
                 delete this.tanks[data];
             }
         }
@@ -99,16 +113,25 @@ class Game {
         const tank1w = 100;
         const tank1h = 50;
 
-        this.tanks[this.name] = new Tank(this.name, 0x00ff00, x, y, tank1w, tank1h, 0, 10, 17);
+        const tank = new Tank(this.name, 0x00ff00, x, y, tank1w, tank1h, 0, 10, 17);
+        this.tanks[this.name] = tank;
+        this.main_tank = tank; 
         this.bullets[this.name] = [];
         this.wsManager.send("state", {
             name: this.name,
-            mouseX: this.tanks[this.name].mouseX ? this.tanks[this.name].mouseX : x,
-            mouseY: this.tanks[this.name].mouseY ? this.tanks[this.name].mouseY : y,
+            mouseX: this.main_tank.mouseX ? this.main_tank.mouseX : x,
+            mouseY: this.main_tank.mouseY ? this.main_tank.mouseY : y,
             shooting: false,
         });
     }
-
+    send_state(){
+        game.wsManager.send("state", {
+            name: this.name,
+            mouseX: this.main_tank.mouseX,
+            mouseY: this.main_tank.mouseY,
+            shooting: this.main_tank.isShooting
+        })
+    }
     update() {
         if (!this.tank_initialized){
             this.#initTank(this.tankinitposx,this.tankinitposy);
@@ -117,32 +140,17 @@ class Game {
         this.app.stage.on("pointermove", (event) => {
             const mousePos = event.global;
     
-            this.tanks[this.name].mouseX = mousePos.x;
-            this.tanks[this.name].mouseY = mousePos.y;
-            game.wsManager.send("state", {
-                name: this.name,
-                mouseX: this.tanks[this.name].mouseX,
-                mouseY: this.tanks[this.name].mouseY,
-                shooting: this.tanks[this.name].isShooting,
-            });
+            this.main_tank.mouseX = mousePos.x;
+            this.main_tank.mouseY = mousePos.y;
+            this.send_state()
         });
         this.app.stage.on("mousedown", (event) => {
-            this.tanks[this.name].isShooting = true
-            game.wsManager.send("state", {
-                name: this.name,
-                mouseX: this.tanks[this.name].mouseX,
-                mouseY: this.tanks[this.name].mouseY,
-                shooting: true,
-            });
+            this.main_tank.isShooting = true
+            this.send_state()
         })
         this.app.stage.on("mouseup", (event) => {
-            this.tanks[this.name].isShooting = false
-            game.wsManager.send("state", {
-                name: this.name,
-                mouseX: this.tanks[this.name].mouseX,
-                mouseY: this.tanks[this.name].mouseY,
-                shooting: false, // Enviar el estado actualizado
-            });
+            this.main_tank.isShooting = false
+            this.send_state()
 
         })
         this.app.ticker.add(() => {
