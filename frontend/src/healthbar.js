@@ -12,7 +12,6 @@ class HealthBar {
         this.acum = 0;
         this.container = container;
         this.#setup();
-        this.decreaseHealth();
     }
 
     #setupBar(color, width) {
