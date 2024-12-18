@@ -2,6 +2,7 @@ from Box2D import (b2FixtureDef, b2PolygonShape, b2Vec2)
 from src.bullet import Bullet
 from src.utils import utils
 import math
+import json
 
 class Tank:
     def __init__(self, name, pos, w, h, angle, damage, bullet_speed):
@@ -38,6 +39,9 @@ class Tank:
         Updates the tank's position, direction and if it is shooting
         Needs to modify the tank's mousex, mousey and is_shooting first
         '''
+        if self.health <= 0:
+            utils.world.DestroyBody(self.tank)
+            return 1
         dx = self.mouseX - utils.to_pixel(self.tank.position.x)
         dy = self.mouseY - utils.to_pixel(self.tank.position.y)
 
@@ -48,7 +52,7 @@ class Tank:
 
         mag = math.sqrt(dx**2 + dy**2)
         topSpeed = 1.5
-        if mag >= self.w  and not self.is_shooting:
+        if mag >= self.w+100  and not self.is_shooting:
             normDx = dx/mag
             normDy = dy/mag
             ds = (mag*5) / self.w

@@ -34,6 +34,8 @@ class Game:
                 print("Bullet and tank collided")
                 bodyB.userData.health -= bodyA.userData.damage
             elif isinstance(bodyA.userData, Bullet) and isinstance(bodyB.userData, Bullet):
+                bodyA.userData.isDead = True
+                bodyB.userData.isDead = True
                 print("Bullets collided")
             else:
                 print("Unknown collision")
@@ -49,10 +51,11 @@ class Game:
         
 
         # maybe return 1 and 0 and handle the jsons in ws.py? idk
-    def get_state(self):
+    def get_state(self, tanks_to_remove):
         state = {
             "tanks": {name: tank.get_state() for name, tank in self.tanks.items()},
-            "bullets": {name: [bullet.get_state() for bullet in bullets] for name, bullets in self.bullets.items()}
+            "bullets": {name: [bullet.get_state() for bullet in bullets] for name, bullets in self.bullets.items()},
+            "tanks_to_remove": tanks_to_remove,
         }
         return state
     
@@ -61,14 +64,21 @@ class Game:
         self.running = True
         while self.running:
             self.world.Step(self.time_step, 6, 0)
+            to_remove = []
             for tank in self.tanks.values():
-                tank.update()
+                if (tank.update()):
+                    to_remove.append(tank.name)
 
-            state = self.get_state()
+            for tank in to_remove:
+                self.tanks.pop(tank)
+                self.bullets.pop(tank)
+            
+            state = self.get_state(to_remove)
+            
             if state != self.prev_state:
                 await utils.manager.broadcast(json.dumps({
                     "event": "state",
-                    "data": self.get_state()
+                    "data": state
                 }))
             self.prev_state = state
 
