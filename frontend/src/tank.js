@@ -55,14 +55,21 @@ class Tank {
     set_state(state){
         this.x = state.tankx;
         this.y = state.tanky;
-        this.container.x = state.tankx;
-        this.container.y = state.tanky;
+        //this.container.x = state.tankx;
+        //this.container.y = state.tanky;
         this.angle = state.angle;
         this.container.rotation = state.angle;
         if(this.health > state.health){
             this.healthBar.decreaseHealth();
         }
         this.health = state.health;
+    }
+
+    update() {
+        let lerp_factor = 0.1;
+        this.container.position.x += (this.x - this.container.position.x) * lerp_factor;
+        this.container.position.y += (this.y - this.container.position.y) * lerp_factor;
+
     }
 }
 

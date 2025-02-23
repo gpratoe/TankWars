@@ -154,9 +154,11 @@ class Game {
 
         })
         this.app.ticker.add(() => {
-            
+            for (const key in this.tanks) {
+                this.tanks[key].update();
+            }
         })
-        .maxFPS(20);
+        .maxFPS(60);
     }
 }
 
