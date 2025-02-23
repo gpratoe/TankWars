@@ -58,18 +58,27 @@ class Tank {
         //this.container.x = state.tankx;
         //this.container.y = state.tanky;
         this.angle = state.angle;
-        this.container.rotation = state.angle;
+        //this.container.rotation = state.angle;
         if(this.health > state.health){
             this.healthBar.decreaseHealth();
         }
         this.health = state.health;
+    }
+    
+    #lerpAngle(start, end, t) {
+        // Normalizar la diferencia al rango [-π, π]
+        const twoPi = 2 * Math.PI;
+        let diff = (end - start) % twoPi; // Diferencia módulo 2π
+        if (diff > Math.PI) diff -= twoPi; // Si es mayor a π, ajusta al camino corto negativo
+        if (diff < -Math.PI) diff += twoPi; // Si es menor a -π, ajusta al camino corto positivo
+        return start + diff * t; // Interpolar con la diferencia ajustada
     }
 
     update() {
         let lerp_factor = 0.1;
         this.container.position.x += (this.x - this.container.position.x) * lerp_factor;
         this.container.position.y += (this.y - this.container.position.y) * lerp_factor;
-
+        this.container.rotation = this.#lerpAngle(this.container.rotation, this.angle, lerp_factor);
     }
 }
 
