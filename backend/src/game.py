@@ -16,7 +16,7 @@ class Game:
         self.time_step = 1.0 / 60
         self.tanks = {}
         self.tanksw = 50
-        self.tanksh = 25
+        self.tanksh = 50
         self.tank_initialpos = (self.w/2, self.h/2)
         self.bullets = {}
         self.prev_state = None
