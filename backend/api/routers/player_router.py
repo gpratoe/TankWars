@@ -1,5 +1,5 @@
 from fastapi import APIRouter, status, HTTPException
-from src.player_handler import PlayerHandler
+from db.player_handler import PlayerHandler
 
 pr = APIRouter()
 ph = PlayerHandler()
