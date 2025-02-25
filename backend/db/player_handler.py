@@ -1,4 +1,4 @@
-from db.models import Player as PlayerModel
+from db.models import Player as PlayerModel, Game
 from pony.orm import db_session
 
 class PlayerHandler:
