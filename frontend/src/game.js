@@ -1,4 +1,4 @@
-import {Application} from "pixi.js";
+import {Application, Assets} from "pixi.js";
 import { Tank } from "./tank";
 import { WebSocketManager } from "./websocketmanager";
 import { Bullets } from "./bullets";
@@ -74,7 +74,7 @@ class Game {
                     }
                     
                 } else if (key !== this.name) {
-                    this.tanks[key] = new Tank(key, 0xFF0000, tanks[key].tankx, tanks[key].tanky, 100, 50, 0, 10, 17);
+                    this.tanks[key] = new Tank(key, 0xFF0000, tanks[key].tankx, tanks[key].tanky, 100, 100, 0, 10, 17, 2);
                     this.bullets[key] = [];
                 }
             }
@@ -91,6 +91,10 @@ class Game {
     }
 
     async init() {
+        await Assets.load(["/assets/tank_sprite_1.png",
+                        "/assets/tank_sprite_2.png",
+                        "/assets/tank_sprite_3.png",
+                        "/assets/tank_sprite_4.png"]);
         this.app = new Application();
         await this.app.init({
             width: this.width,
@@ -111,9 +115,9 @@ class Game {
 
     #initTank(x, y) {
         const tank1w = 100;
-        const tank1h = 50;
+        const tank1h = 100;
 
-        const tank = new Tank(this.name, 0x00ff00, x, y, tank1w, tank1h, 0, 10, 17);
+        const tank = new Tank(this.name, 0x00ff00, x, y, tank1w, tank1h, 0, 10, 17,1);
         this.tanks[this.name] = tank;
         this.main_tank = tank; 
         this.bullets[this.name] = [];

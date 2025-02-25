@@ -1,11 +1,12 @@
-import { Graphics, Container } from "pixi.js";
+import { Graphics, Container, Assets, Sprite } from "pixi.js";
 import { game } from "./game";
 import { HealthBar } from "./healthbar";
 import { Bullets } from "./bullets";
 
 class Tank {
-    constructor(name, color, x, y, w , h, angle, damage, bullet_speed)
+    constructor(name, color, x, y, w , h, angle, damage, bullet_speed,player_num)
     {
+        this.player_num = player_num;
         this.name = name;
         this.health = 100;
         this. color = color;
@@ -29,27 +30,28 @@ class Tank {
         this.container = new Container({
             interactive: true,
         });
+        this.container.position.x = this.x;
+        this.container.position.y = this.y; 
+        this.container.pivot.set(this.container.width/2, this.container.height/2);
+
         game.app.stage.addChild(this.container);
         this.#setup();
     }
     #setup() {
-        this.rectangle = new Graphics()
-            .rect(0,0,this.w,this.h)
-            .fill({
-                color: this.color,
-                alpha: 1
-            })
-            .stroke({
-                width: 1,
-                color: 0x000000
-            });
-            this.container.addChild(this.rectangle);
-            
-            this.healthBar = new HealthBar(this.x, this.y - this.h*0.75, this.w, 5, this.health, this.container);
-            
-            this.container.position.x = this.x;
-            this.container.position.y = this.y; 
-            this.container.pivot.set(this.container.width/2, this.container.height/2);
+        
+
+        const texture = Assets.get(`/assets/tank_sprite_${this.player_num}.png`);
+        this.sprite = new Sprite(texture);
+        this.sprite.x = 0;
+        this.sprite.y = 0;
+        this.sprite.width = this.w;
+        this.sprite.height = this.h;
+        this.sprite.anchor.set(0.5);
+        this.container.addChild(this.sprite);
+
+        
+        
+        this.healthBar = new HealthBar(0, this.y - this.h*0.75, this.w, 5, this.health, this.container);
     }
     
     set_state(state){
