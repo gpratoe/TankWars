@@ -31,7 +31,7 @@ class Tank:
         self.groupIndex = None
 
     def shoot(self):
-        bullet_pos = (self.pos[0] + 100 * math.cos(self.angle), self.pos[1] + 100 * math.sin(self.angle))
+        bullet_pos = (self.pos[0] + 75 * math.cos(self.angle), self.pos[1] + 75 * math.sin(self.angle))
         self.alive_bullets.append(Bullet(bullet_pos, self.angle, self.damage, self.bullet_speed, self.groupIndex))
         
     def update(self):
