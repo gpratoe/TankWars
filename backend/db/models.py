@@ -9,12 +9,15 @@ class Player(db.Entity):
     name = Required(str)
     color = Optional(str)
     game = Optional('Game', reverse='players')
+    is_owner = Optional(bool, default=False)
 
 class Game(db.Entity):
     id = PrimaryKey(int, auto=True)
+    name = Required(str)
     players = Set(Player)
-    state = Required(Json)
-    lobby = Optional(int)   
+    #state = Optional(Json) # probably won't be used since i don't need history of the game
+    in_lobby = Optional(bool, default=True)
+    max_players = Required(int)
 
 
 db.bind(provider='sqlite', filename=DATABASE_FILENAME, create_db=True)
