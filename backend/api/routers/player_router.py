@@ -4,7 +4,7 @@ from db.player_handler import PlayerHandler
 pr = APIRouter()
 ph = PlayerHandler()
 
-@pr.post(path="/", status_code=status.HTTP_201_CREATED)
+@pr.post(path="", status_code=status.HTTP_201_CREATED)
 async def create_player(name: str):
     player = ph.create_player(name)
     return {"id": player.id}
