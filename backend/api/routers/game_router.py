@@ -37,14 +37,16 @@ async def get_game_players(id:int):
     
 @gr.get(path="", status_code=status.HTTP_200_OK)
 async def get_games(lobby:bool=False):
-    if lobby:
-        try:
-            lobbies = gh.get_lobbies()
+    try:
+        if lobby:
+            lobbies = gh.get_games(lobby=True)
             return lobbies
-        except Exception as e:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
-    else:
-        return []
+        else:
+            games = gh.get_games()
+            return games
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+  
         
 @gr.post(path="/{game_id}/players", status_code=status.HTTP_202_ACCEPTED)
 async def add_player_to_game(game_id:int, player_id:int):
