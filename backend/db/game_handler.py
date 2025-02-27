@@ -9,6 +9,8 @@ class GameHandler:
     def create_game(self, name, max_players, owner_id):
         if max_players < 2 or max_players > 4:
             raise ValueError('Max players must be between 2 and 4')
+        if len(name) > 16:
+            raise ValueError('Name must be 16 characters or less')
         
         player = Player.get(id=owner_id)
         
