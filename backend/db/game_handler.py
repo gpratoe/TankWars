@@ -57,6 +57,8 @@ class GameHandler:
         game = Game.get(id=game_id)
         if game is None:
             raise ValueError(f'Game with id {game_id} not found')
+        if game.max_players == len(game.players):
+            raise ValueError(f'Game with id {game_id} is full')
         
         player = Player.get(id=player_id)
         if player is None:
