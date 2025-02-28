@@ -1,19 +1,41 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { create_player } from '../../apiService';
+import '../../styles/NameScreen.css';
 
 function NameScreen() {
   const [inputName, setInputName] = useState('');
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    setError(null);
+    setLoading(true)
+
     if (inputName.trim()) {
-      navigate('/lobbies');
+      try{
+        const data = await create_player(inputName);
+        if (data && data.id) {
+          sessionStorage.setItem('playerId', data.id);
+          navigate('/lobbies');
+        }
+        else{
+          setLoading(false);
+          throw new Error('No se pudo obtener el id del jugador');
+        }
+      }
+      catch(err){
+        setLoading(false);
+        setError(err.message);
+      }
     }
   };
 
   return (
-    <div>
+    <div className='nameScreen'>
       <h1>Elige tu nombre</h1>
       <form onSubmit={handleSubmit}>
         <input
@@ -21,15 +43,16 @@ function NameScreen() {
           value={inputName}
           onChange={(e) => setInputName(e.target.value)}
           placeholder="Ingresa tu nombre"
-          style={{ padding: '8px', fontSize: '16px' }}
         />
         <button
+          className='green-button'
           type="submit"
-          style={{ marginLeft: '10px', padding: '8px 16px' }}
+          disabled={loading}
         >
           Continuar
         </button>
       </form>
+      {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
     </div>
   );
 }
