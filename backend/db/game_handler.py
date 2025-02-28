@@ -47,7 +47,13 @@ class GameHandler:
     def get_games(self, lobby=False):
         if lobby:
             lobbies = Game.select(lambda g: g.in_lobby)
-            return [l.to_dict() for l in lobbies]
+            ret = []
+            for l in lobbies:
+                ret.append(l.to_dict())
+                ret[-1]['active_players'] = len(l.players)
+            
+            return ret
+
         else:
             games = Game.select(lambda g: not g.in_lobby)
             return [g.to_dict() for g in games]
@@ -69,7 +75,7 @@ class GameHandler:
         
         if game.in_lobby:
             game.players.add(player)
-            player.color = colors[len(game.players)]
+            player.color = colors[len(game.players)-1]
             return game
         else:
             raise ValueError(f'Game with id {game_id} is not in lobby')
