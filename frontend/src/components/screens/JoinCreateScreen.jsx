@@ -52,7 +52,7 @@ function JoinCreateScreen({}) {
           <ul>
             {lobbies.map((lobby, i) =>
             <li key={i}>
-              <p>{lobby.name} (#{lobby.id}) - Max players:<span style={{color: 'red'}}>{lobby.max_players}</span></p>
+              <p>{lobby.name} (#{lobby.id}) - Jugadores: <span style={{color: 'red'}}>{lobby.active_players}</span>/{lobby.max_players}</p>
               <button className='green-button' onClick={() => {handleJoinGame(lobby.id)}}>Unirse</button>
             </li>  
             )}
