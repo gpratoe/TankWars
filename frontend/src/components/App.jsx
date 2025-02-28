@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import NameScreen from './screens/NameScreen';
-import LobbyScreen from './screens/LobbyScreen';
+import JoinCreateScreen from './screens/JoinCreateScreen';
 import GameScreen from './screens/GameScreen';
+import '../styles/App.css';
 
 function App() {
 
@@ -16,9 +17,7 @@ function App() {
         <Route
           path="/lobbies"
           element={
-            <LobbyScreen
-              
-            />
+            <JoinCreateScreen/>
           }
         />
         <Route

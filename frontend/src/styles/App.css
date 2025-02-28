@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+* {
+    box-sizing: border-box;
+    font-family: 'Press Start 2P', sans-serif;
+    color:whitesmoke;
+}
+
+body {
+    background-color: black;
+}
+
+.green-button{
+    margin-left: 10px;
+    padding: 8px 16px;
+    background-color: rgba(6, 199, 6, 0.89);
+    transition: background-color 0.5s;
+}
+.green-button:hover{
+    background-color: rgba(6, 199, 6, 0.515);
+}
+
+input {
+    color:black;
+}
+
+select {
+    color:black;
+    option{
+        color:black;
+    }
+}
