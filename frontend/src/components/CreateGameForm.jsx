@@ -30,7 +30,7 @@ function CreateGameForm({goBackFunc}) {
             <div className="cgform-entry">
                 <label>
                     Jugadores:
-                    <select onChange={(e) => setInputPlayers(e.target.value)}>
+                    <select onChange={(e) => setInputPlayers(e.target.value)} defaultValue={4}>
                         <option value="2">2</option>
                         <option value="3">3</option>
                         <option value="4">4</option>
