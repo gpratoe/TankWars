@@ -1,0 +1,27 @@
+.join-create-screen{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    ul{
+        list-style-type: none;
+        padding: 16px;
+        margin: 0;
+        li{
+            width: 800px;
+            margin: 8px;
+            padding: 16px;
+            background-color: rgb(48, 48, 48);
+            border-radius: 8px;
+            border: white 2px solid;
+            display: flex;
+            justify-content: space-between;
+        }
+    }
+}
+
+#boton-crear{
+    width: 200px;
+    margin: 0 auto;
+}
