@@ -30,7 +30,7 @@ function JoinCreateScreen({}) {
     if (playerId){
       try {
         await join_game(lobby_id, playerId);
-        navigate(`/game/${lobby_id}`);
+        navigate(`/lobby/${lobby_id}`);
       }
       catch(err){
         console.error(err);

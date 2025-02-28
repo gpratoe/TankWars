@@ -66,3 +66,18 @@ export async function create_game(name, max_players, owner_id) {
         throw new Error(`Error al crear la partida: ${error.message}`);
     }
 }
+
+export async function get_game_players(lobby_id) {
+    try{
+        const response = await axios.get(`${API_URL}/game/${lobby_id}/players`);
+        if (response.status === 200){
+            return response.data;
+        }
+        else {
+            throw new Error(`Error al obtener los jugadores: ${response.statusText}`);
+        }
+    }
+    catch (error){
+        throw new Error(`Error al obtener los jugadores: ${error.message}`);
+    }
+}
