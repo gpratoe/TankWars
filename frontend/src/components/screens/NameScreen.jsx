@@ -43,6 +43,7 @@ function NameScreen() {
           value={inputName}
           onChange={(e) => setInputName(e.target.value)}
           placeholder="Ingresa tu nombre"
+          maxLength={16}
         />
         <button
           className='green-button'

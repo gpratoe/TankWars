@@ -5,6 +5,8 @@ class PlayerHandler:
 
     @db_session
     def create_player(self, name):
+        if len(name) > 16:
+            raise ValueError('Name must be 16 characters or less')
         player = PlayerModel(name=name)
         return player
     
