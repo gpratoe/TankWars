@@ -8,12 +8,12 @@ function Chat ({}) {
         setMessages([
             {sender: 'Jugador1', text: 'Hola'},
             {sender: 'Jugador2', text: 'Hola'},
-            {sender: 'Jugador1', text: 'Como estas?'},
-            {sender: 'Jugador2', text: 'Bien, y tu?'},
+            {sender: 'Jugador1', text: 'Como estas? asdfdsafgdasgfdahgdshgfshfghtsh dsahgsdhreshfdahfadhafd dsds dsfkdslfjioe adfkjsdof dsfiodsjiojfsd asd fijdsoaif sdao ifjdsiojfs adsfoij dsafoeafadsf iodsjafdsaf fiojdasoifjdsaf dsjfgiodsgfdsagfago adsoifj dsgjasdg goi aijg oijgijgoirag jgijaig i j idosfjdsioajfs a'},
+            {sender: 'Jugador2', text: 'Bien, y vo?'},
             {sender: 'Jugador1', text: 'Tambien'},
             {sender: 'Jugador2', text: 'Que bien'},
             {sender: 'Jugador1', text: 'Si'},
-            {sender: 'Jugador2', text: '...'},
+            {sender: 'Jugador2', text: '...xd'},
         ]);
     }, []);
     return (
@@ -23,8 +23,8 @@ function Chat ({}) {
                 {messages.map((message, i) =>
                     <li key={i}>
                         <div className='chat-entry'>
-                        <p>{message.sender}:</p>
-                        <p> {message.text}</p>
+                        <p id='sender'>{message.sender}:</p>
+                        <p id='message'> {message.text}</p>
                         </div>
                     </li>
                 )}

@@ -26,27 +26,25 @@ ol{
     border: 2px white solid;
     padding: 8px;
     overflow-y: scroll;
+    overflow-x: hidden;
 }
 .chat-entry{
     display: flex;
-    flex-direction: row;
-    align-content: flex-start;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
     padding-left: 16px;
-    padding-right: 16px;
-    border-radius: 8px;
-    margin: 8px;
-    background-color: rgb(48, 48, 48);
-    border: white 2px solid;
-    transition: background-color 0.5s;
+    margin:0;
     font-size: small;
     width: fit-content;
+    margin-bottom: 16px;
 }
 #chat-sendbar{
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
     margin: 16px;
+    width:100%;
 }
 #chat-input{
     padding: 8px;
@@ -55,4 +53,21 @@ ol{
     background-color: rgb(48, 48, 48);
     color: whitesmoke;
     margin-right: 16px;
+    flex-grow: 2;
+}
+#sender{
+    margin:0;
+}
+#message{
+    padding: 8px;
+    border-radius: 8px;
+    border: white 2px solid;
+    background-color: rgb(48, 48, 48);
+    color: whitesmoke;
+    margin-right: 16px;
+    margin-left: 40px;
+    width:fit-content;
+    max-width: 70%;
+    overflow-wrap: break-word;
+    text-align: left;
 }
