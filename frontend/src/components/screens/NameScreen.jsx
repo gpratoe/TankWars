@@ -20,7 +20,7 @@ function NameScreen() {
         const data = await create_player(inputName);
         if (data && data.id) {
           sessionStorage.setItem('playerId', data.id);
-          navigate('/lobbies');
+          navigate('/lobby');
         }
         else{
           setLoading(false);
