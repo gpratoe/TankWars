@@ -1,14 +1,24 @@
 import React, { useState } from "react";
 import { create_game } from "../apiService";
 import '../styles/CreateGameForm.css';
+import { useNavigate } from 'react-router-dom';
 
 function CreateGameForm({goBackFunc}) {
     const [inputName, setInputName] = useState('');
     const [inputPlayers, setInputPlayers] = useState(2);
+    const navigate = useNavigate();
 
     const handleCreateGame = async () => {
         try{
             const data = await create_game(inputName, inputPlayers, sessionStorage.getItem('playerId'));
+            if (data && data.id) {
+                sessionStorage.setItem('lobbyId', data.id);
+                sessionStorage.setItem('playerColor', 'red');
+                navigate(`/lobby/${data.id}`);
+            }
+            else{
+                throw new Error('No se pudo obtener el id de la sala');
+            }
         }
         catch(err){
             console.error(err);
