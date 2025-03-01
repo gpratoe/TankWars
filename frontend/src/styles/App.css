@@ -1,7 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap');
 * {
     box-sizing: border-box;
-    font-family: 'Press Start 2P', sans-serif;
+    font-family: 'Silkscreen', sans-serif;
     color:whitesmoke;
 }
 
@@ -9,14 +9,25 @@ body {
     background-color: black;
 }
 
-.green-button{
-    margin-left: 10px;
+button{
     padding: 8px 16px;
+}
+.green-button{
+    
     background-color: rgba(6, 199, 6, 0.89);
     transition: background-color 0.5s;
 }
 .green-button:hover{
     background-color: rgba(6, 199, 6, 0.515);
+}
+
+.red-button{
+    background-color: rgb(216, 4, 4);
+    transition: background-color 0.5s;
+}
+
+.red-button:hover{
+    background-color: rgba(216, 4, 4, 0.664);
 }
 
 input {
