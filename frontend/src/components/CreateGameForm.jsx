@@ -26,32 +26,35 @@ function CreateGameForm({goBackFunc}) {
     }
 
     return (
-        <div className="createGameForm">
-        <h1>Crear sala</h1>
-        <form>
-            <div className="cgform-entry">
-                <label> Nombre de la sala:
-                    <input type='text' 
-                    placeholder="Ingrese nombre"
-                    maxLength={16}  
-                    onChange={(e) => setInputName(e.target.value)}></input>
-                </label>
-            </div>
-            <div className="cgform-entry">
-                <label>
-                    Jugadores:
-                    <select onChange={(e) => setInputPlayers(e.target.value)} defaultValue={4}>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                    </select>
-                </label>
-            </div>
-        </form>
         <div>
-            <button className='green-button' onClick={() => goBackFunc(false)}>Volver</button>
-            <button className='green-button' onClick={handleCreateGame}>Crear</button>
-        </div>
+            <h1>Crear sala</h1>
+            <div className="createGameForm">
+            
+            <form>
+                <div className="cgform-entry">
+                    <label> Nombre de la sala:
+                        <input type='text' 
+                        placeholder="Ingrese nombre"
+                        maxLength={16}  
+                        onChange={(e) => setInputName(e.target.value)}></input>
+                    </label>
+                </div>
+                <div className="cgform-entry">
+                    <label>
+                        Jugadores:
+                        <select onChange={(e) => setInputPlayers(e.target.value)} defaultValue={4}>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                        </select>
+                    </label>
+                </div>
+            </form>
+            <div>
+                <button className='red-button' onClick={() => goBackFunc(false)}>Volver</button>
+                <button className='green-button' onClick={handleCreateGame}>Crear</button>
+            </div>
+            </div>
         </div>
     );
 }
