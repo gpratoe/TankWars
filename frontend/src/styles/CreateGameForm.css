@@ -22,13 +22,11 @@
 
     input{
         padding: 8px;
-        font-size: 16px;
         color: rgba(6, 199, 6, 0.89);
         background-color: rgb(48, 48, 48);
     }
     select{
         padding: 8px;
-        font-size: 16px;
         color: rgba(6, 199, 6, 0.89);
         background-color: rgb(48, 48, 48);
         option{

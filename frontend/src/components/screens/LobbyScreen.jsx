@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from "react";
 import { useParams } from 'react-router-dom';
 import { get_game_players } from "../../apiService";
+import "../../styles/LobbyScreen.css";
 
 function LobbyScreen({}){
     const [players, setPlayers] = useState([]);
@@ -24,17 +25,27 @@ function LobbyScreen({}){
     
     return (
         <div className="lobbyScreen">
-            <h1>Lobby</h1>
-            <div className="lobbyPlayers">
-                <h2>Jugadores</h2>
-                <ul>
-                    {players.map((player, i) =>
-                        <li key={i}>
-                            <p style={{'color':`${player.color}`}}>{player.name}</p>
-                        </li>
-                    )}
-                </ul>
+            <h1>LOBBY</h1>
+            <div className="lobbyInfo">
+                <div className="lobbyPlayers">
+                    <h2>JUGADORES</h2>
+                    <ul>
+                        {players.map((player, i) =>
+                            <div className='list-item' key={i} id={player.color}>
+                                <div className='color-show'></div>
+                                <li>
+                                    <p>{player.name}</p>
+                                    <button className='red-button' id='kick-button'>Expulsar</button>
+                                </li>
+                            </div>
+                        )}
+                    </ul>
+                </div>
+                <div className="chat-container">
+                    <h2>Chat</h2>
+                </div>
             </div>
+            <button className='red-button'>Abandonar</button>
         </div>
     );
 }

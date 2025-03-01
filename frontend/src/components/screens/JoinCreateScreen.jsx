@@ -47,7 +47,7 @@ function JoinCreateScreen({}) {
         </div>
       ):(
         <>
-          <h1>Salas</h1>
+          <h1>SALAS</h1>
           <button className='green-button' id='boton-crear' onClick = {() => setCreateGame(true)}>Crear sala</button>
           <ul>
             {lobbies.map((lobby, i) =>
