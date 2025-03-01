@@ -1,0 +1,84 @@
+.lobbyScreen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+.lobbyInfo {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items:center;
+    margin: 100px;
+}
+.lobbyPlayers {
+    padding: 16px;
+    border-radius: 8px;
+    border: white 2px solid;
+    background-color: rgb(48, 48, 48);
+    width: 500px;
+    height: 600px;
+
+}
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-left: 20px;
+    background-color: rgb(48, 48, 48);
+}
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+ul li {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    background-color: rgb(48, 48, 48);
+    border: white 2px solid;
+    transition: background-color 0.5s;
+}
+ul li p {
+    padding-left: 10px;
+}
+#kick-button {
+    padding: 3px;
+    margin-left: 100px;
+}
+.list-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
+}
+#orange div {
+    background-color: orange;
+}
+
+#green div {
+    background-color: green;
+}
+
+#yellow div {
+    background-color: yellow;
+}
+
+#blue div {
+    background-color: rgb(0, 124, 196);
+}
+.color-show {
+    height: 60px;
+    width: 70px;
+    border-radius: 8px;
+    margin-right: 16px;
+    margin-bottom: 8px;
+    border: white 2px solid;
+}
