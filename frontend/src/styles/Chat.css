@@ -13,7 +13,7 @@ ol{
     padding: 16px;
     border-radius: 8px;
     border: 2px white solid;
-    width: 500px;
+    width: 650px;
     height: 600px;
 }
 #chat-list{
@@ -40,4 +40,19 @@ ol{
     transition: background-color 0.5s;
     font-size: small;
     width: fit-content;
+}
+#chat-sendbar{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: 16px;
+}
+#chat-input{
+    padding: 8px;
+    border-radius: 8px;
+    border: white 2px solid;
+    background-color: rgb(48, 48, 48);
+    color: whitesmoke;
+    margin-right: 16px;
 }

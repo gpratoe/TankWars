@@ -23,8 +23,8 @@ function Chat ({}) {
                 {messages.map((message, i) =>
                     <li key={i}>
                         <div className='chat-entry'>
-                        <p>{message.sender}: </p>
-                        <p>{message.text}</p>
+                        <p>{message.sender}:</p>
+                        <p> {message.text}</p>
                         </div>
                     </li>
                 )}

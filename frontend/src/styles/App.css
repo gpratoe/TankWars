@@ -3,6 +3,7 @@
     box-sizing: border-box;
     font-family: 'Pixelify Sans', sans-serif;
     color:whitesmoke;
+    border-radius: 8px;
 }
 
 body {
