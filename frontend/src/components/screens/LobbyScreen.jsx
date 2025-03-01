@@ -1,7 +1,9 @@
 import React, {useState, useEffect} from "react";
 import { useParams } from 'react-router-dom';
 import { get_game_players } from "../../apiService";
+import Chat from "../Chat";
 import "../../styles/LobbyScreen.css";
+
 
 function LobbyScreen({}){
     const [players, setPlayers] = useState([]);
@@ -41,9 +43,7 @@ function LobbyScreen({}){
                         )}
                     </ul>
                 </div>
-                <div className="chat-container">
-                    <h2>Chat</h2>
-                </div>
+                <Chat/>
             </div>
             <button className='red-button'>Abandonar</button>
         </div>
