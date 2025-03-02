@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { get_game_players } from "../../apiService";
 import Chat from "../Chat";
 import "../../styles/LobbyScreen.css";
+import Button from "../Button";
 
 
 function LobbyScreen({}){
@@ -37,7 +38,7 @@ function LobbyScreen({}){
                                 <div className='color-show'></div>
                                 <li>
                                     <p>{player.name}</p>
-                                    <button className='red-button' id='kick-button'>Expulsar</button>
+                                    <Button text='Expulsar' variant='red' id='kick-button'/>
                                 </li>
                             </div>
                         )}
@@ -45,7 +46,7 @@ function LobbyScreen({}){
                 </div>
                 <Chat/>
             </div>
-            <button className='red-button'>Abandonar</button>
+            <Button text='Abandonar' variant='red'/>
         </div>
     );
 }

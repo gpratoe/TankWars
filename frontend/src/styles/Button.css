@@ -1,0 +1,21 @@
+button{
+    padding: 8px 16px;
+    font-size: 1.5em;
+}
+.green-button{
+    
+    background-color: rgba(6, 199, 6, 0.89);
+    transition: background-color 0.5s;
+}
+.green-button:hover{
+    background-color: rgba(6, 199, 6, 0.515);
+}
+
+.red-button{
+    background-color: rgb(216, 4, 4);
+    transition: background-color 0.5s;
+}
+
+.red-button:hover{
+    background-color: rgba(216, 4, 4, 0.664);
+}

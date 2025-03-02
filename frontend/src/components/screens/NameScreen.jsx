@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { create_player } from '../../apiService';
+import Button from '../Button';
 import '../../styles/NameScreen.css';
 
 function NameScreen() {
@@ -45,13 +46,11 @@ function NameScreen() {
           placeholder="Ingresa tu nombre"
           maxLength={16}
         />
-        <button
-          className='green-button'
-          type="submit"
+        <Button
+          text='Continuar'
+          btn_type="submit"
           disabled={loading}
-        >
-          Continuar
-        </button>
+        />
       </form>
       {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
     </div>

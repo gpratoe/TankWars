@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from "react";
 import '../styles/Chat.css';
+import Button from "./Button";
 
 function Chat ({}) {
     const [messages, setMessages] = useState([]);
@@ -31,7 +32,7 @@ function Chat ({}) {
             </ol>
             <div id="chat-sendbar">
                 <input type="text" id="chat-input" placeholder="Escribe un mensaje"></input>
-                <button className='green-button' id="chat-send">Enviar</button>
+                <Button text='Enviar' id="chat-send"/>
             </div>
         </div>
     );

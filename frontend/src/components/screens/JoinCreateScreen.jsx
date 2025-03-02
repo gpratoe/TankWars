@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { get_lobbies, join_game } from '../../apiService';
 import '../../styles/JoinCreateScreen.css';
 import CreateGameForm from '../CreateGameForm';
+import Button from '../Button';
 
 function JoinCreateScreen({}) {
   const [lobbies, setLobbies] = useState([]);
@@ -48,12 +49,12 @@ function JoinCreateScreen({}) {
       ):(
         <>
           <h1>SALAS</h1>
-          <button className='green-button' id='boton-crear' onClick = {() => setCreateGame(true)}>Crear sala</button>
+          <Button text='Crear sala'onClick = {() => setCreateGame(true)}/>
           <ul>
             {lobbies.map((lobby, i) =>
             <li key={i}>
               <p>{lobby.name} (#{lobby.id}) - Jugadores: <span style={{color: 'red'}}>{lobby.active_players}</span>/{lobby.max_players}</p>
-              <button className='green-button' onClick={() => {handleJoinGame(lobby.id)}}>Unirse</button>
+              <Button text='Unirse' onClick={() => {handleJoinGame(lobby.id)}}/>
             </li>  
             )}
           </ul>
