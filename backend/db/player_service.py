@@ -1,7 +1,7 @@
 from db.models import Player as PlayerModel, Game
 from pony.orm import db_session
 
-class PlayerHandler:
+class PlayerService:
 
     @db_session
     def create_player(self, name):
