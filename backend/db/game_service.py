@@ -3,7 +3,7 @@ from pony.orm import db_session
 
 colors = ['orange', 'blue', 'green', 'yellow']
 
-class GameHandler:
+class GameService:
 
     @db_session
     def create_game(self, name, max_players, owner_id):
@@ -126,3 +126,32 @@ class GameHandler:
         
         game.in_lobby = False
         return game
+    
+    @db_session
+    def leave_game(self, game_id, player_id):
+        game = Game.get(id=game_id)
+        if game is None:
+            raise ValueError(f'Game with id {game_id} not found')
+        player = Player.get(id=player_id)
+        if player is None:
+            raise ValueError(f'Player with id {player_id} not found')
+        if player.game is None:
+            raise ValueError(f'Player with id {player_id} is not in a game')
+        if player.game.id != game.id:
+            raise ValueError(f'Player with id {player_id} is not in game with id {game_id}')
+        
+        player.game = None
+        player.color = ""
+        player.is_owner = False
+        if len(game.players) == 0:
+            game.delete()
+        elif player.is_owner:
+            new_owner = game.players.first()
+            new_owner.is_owner = True
+            for player in game.players:
+                i=0
+                player.color = colors[i]
+                i+=1
+
+        return {'state': 'success',
+                'message': f'Player with id {player_id} has left game with id {game_id}'}
