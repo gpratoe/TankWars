@@ -7,7 +7,6 @@ db = Database()
 class Player(db.Entity):
     id = PrimaryKey(int, auto=True)
     name = Required(str)
-    color = Optional(str)
     game = Optional('Game', reverse='players')
     is_owner = Optional(bool, default=False)
 

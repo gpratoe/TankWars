@@ -1,8 +1,6 @@
 from db.models import Player, Game
 from pony.orm import db_session
 
-colors = ['orange', 'blue', 'green', 'yellow']
-
 class GameService:
 
     @db_session
@@ -24,7 +22,6 @@ class GameService:
         game = Game(name=name, max_players=max_players)
         game.players.add(player)
         player.is_owner = True
-        player.color = colors[0]
         return game
     
     @db_session
@@ -79,7 +76,6 @@ class GameService:
         
         if game.in_lobby:
             game.players.add(player)
-            player.color = colors[len(game.players)-1]
             return game
         else:
             raise ValueError(f'Game with id {game_id} is not in lobby')
@@ -99,16 +95,12 @@ class GameService:
             raise ValueError(f'Player with id {player_id} is not in game with id {game_id}')
         
         game.players.remove(player)
-        player.color = ""
+       
         if player.is_owner:
             player.is_owner = False
             if len(game.players) > 0:
                 new_owner = game.players.first()
                 new_owner.is_owner = True
-                for player in game.players:
-                    i=0
-                    player.color = colors[i]
-                    i+=1
             else:
                 game.delete()        
 
@@ -145,17 +137,13 @@ class GameService:
             raise ValueError(f'Player with id {player_id} is not in game with id {game_id}')
         
         player.game = None
-        player.color = ""
+        
         player.is_owner = False
         if len(game.players) == 0:
             game.delete()
         elif player.is_owner:
             new_owner = game.players.first()
             new_owner.is_owner = True
-            for player in game.players:
-                i=0
-                player.color = colors[i]
-                i+=1
 
         return {'state': 'success',
                 'message': f'Player with id {player_id} has left game with id {game_id}'}
