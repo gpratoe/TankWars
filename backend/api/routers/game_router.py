@@ -1,10 +1,9 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, status, HTTPException
 from pydantic import BaseModel
 from api.ws import manager
-from db.game_service import GameService
+from db.game_service import gs
 
 gr = APIRouter()
-gs = GameService()
 
 class GameSchema(BaseModel):
     name: str
@@ -20,10 +19,10 @@ async def create_game(game_data: GameSchema):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     
 @gr.get(path="/{id}", status_code=status.HTTP_200_OK)
-async def get_game(id:int):
+async def get_game(id:int, include_players:bool=False):
     try:
-        game = gs.get_game(id)
-        return game.to_dict()
+        game = gs.get_game(id, include_players)
+        return game
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     

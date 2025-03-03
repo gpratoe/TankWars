@@ -28,12 +28,16 @@ class GameService:
         return game
     
     @db_session
-    def get_game(self, id):
+    def get_game(self, id, include_players):
         game = Game.get(id=id)
         if game is None:
             raise ValueError(f'Game with id {id} not found')
-        return game
-
+        if include_players:
+            dic = game.to_dict(related_objects=True, with_collections=True)
+            dic['players'] = [p.to_dict() for p in dic['players']]
+            return dic
+        return game.to_dict()
+    
     @db_session
     def get_game_players(self, game_id):
         game = Game.get(id=game_id)
@@ -155,3 +159,6 @@ class GameService:
 
         return {'state': 'success',
                 'message': f'Player with id {player_id} has left game with id {game_id}'}
+    
+
+gs = GameService()
