@@ -8,7 +8,7 @@ class PlayerService:
         if len(name) > 16:
             raise ValueError('Name must be 16 characters or less')
         player = PlayerModel(name=name)
-        return player
+        return player.id
     
     @db_session
     def get_player(self, id):
@@ -16,3 +16,5 @@ class PlayerService:
         if player is None:
             raise ValueError(f'Player with id {id} not found')
         return player
+
+ps = PlayerService()

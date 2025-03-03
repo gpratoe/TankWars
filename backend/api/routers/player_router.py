@@ -6,8 +6,8 @@ ps = PlayerService()
 
 @pr.post(path="", status_code=status.HTTP_201_CREATED)
 async def create_player(name: str):
-    player = ps.create_player(name)
-    return {"id": player.id}
+    player_id = ps.create_player(name)
+    return {"id": player_id}
 
 @pr.get(path="/{id}")
 async def get_player(id: int):
