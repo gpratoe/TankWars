@@ -15,6 +15,6 @@ class PlayerService:
         player = PlayerModel.get(id=id)
         if player is None:
             raise ValueError(f'Player with id {id} not found')
-        return player
+        return player.to_dict()
 
 ps = PlayerService()

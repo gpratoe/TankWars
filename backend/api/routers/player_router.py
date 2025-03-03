@@ -1,8 +1,7 @@
 from fastapi import APIRouter, status, HTTPException
-from db.player_service import PlayerService
+from db.player_service import ps
 
 pr = APIRouter()
-ps = PlayerService()
 
 @pr.post(path="", status_code=status.HTTP_201_CREATED)
 async def create_player(name: str):
@@ -13,6 +12,6 @@ async def create_player(name: str):
 async def get_player(id: int):
     try:
         player = ps.get_player(id)
-        return player.to_dict()
+        return player
     except ValueError as e:
         raise HTTPException(detail=str(e), status_code= status.HTTP_404_NOT_FOUND)
