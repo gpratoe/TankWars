@@ -20,6 +20,7 @@ class Lobby:
         self.owner = owner
         self.players = [owner]
         self.websocket_url = Utils.API_URL + f'/game/{self.lobby_id}/ws'
+        self.connections = {}
 
     def create_db_entry(self):
         self.lobby_id = gs.create_game(self.name, self.max_players, self.owner.id)
@@ -69,7 +70,16 @@ class Lobby:
         if not player:
             raise ValueError('Player not found in lobby')
         await websocket.accept()
-        player.ws['game'] = websocket
+        self.connections[player_id] = websocket
+
+    async def disconnect_player(self, player_id: int):
+        player = self.players.filter(id=player_id).first()
+        if not player:
+            raise ValueError('Player not found in lobby')
+        connection = self.connections.get(player_id)
+        if connection:
+            connection.close()
+            self.connections[player_id] = None
 
     def add_player(self, player: Player):
         gs.add_player_to_game(self.lobby_id, player.id)

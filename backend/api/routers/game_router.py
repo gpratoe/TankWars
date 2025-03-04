@@ -104,4 +104,5 @@ async def game_lobby_ws(websocket: WebSocket, game_id: int, player_id: int):
             data = await websocket.receive_text()
             print(data)
         except WebSocketDisconnect:
+            await lobby.disconnect_player(player_id)
             break

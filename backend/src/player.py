@@ -7,7 +7,6 @@ class Player:
         self.name = name
         self.validation_token = None # JWT token in a future
         self.game = None
-        self.ws = {} # Active Websocket connections (lobby, game, chat, etc.)
         
         if not self.id: # Creates entry or retrieves from db if id is provided
             self.create_db_entry()
