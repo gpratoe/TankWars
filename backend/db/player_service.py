@@ -8,7 +8,7 @@ class PlayerService:
         if len(name) > 16:
             raise ValueError('Name must be 16 characters or less')
         player = PlayerModel(name=name)
-        return player.id
+        return player.to_dict()['id']
     
     @db_session
     def get_player(self, id):
