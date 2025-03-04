@@ -1,5 +1,5 @@
 from db.models import Player as PlayerModel, Game
-from pony.orm import db_session
+from pony.orm import db_session, commit
 
 class PlayerService:
 
@@ -8,7 +8,8 @@ class PlayerService:
         if len(name) > 16:
             raise ValueError('Name must be 16 characters or less')
         player = PlayerModel(name=name)
-        return player.to_dict()['id']
+        commit()
+        return player.id
     
     @db_session
     def get_player(self, id):
