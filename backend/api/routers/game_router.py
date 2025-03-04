@@ -2,6 +2,8 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect, status, HTTPExcep
 from pydantic import BaseModel
 from api.ws import manager
 from db.game_service import gs
+from src.lobby import Lobby
+from src.player import Player
 
 gr = APIRouter()
 
@@ -88,3 +90,18 @@ async def websocket_endpoint(websocket: WebSocket, name: str):
     except WebSocketDisconnect:
         await manager.disconnect(name)
         print("dcd")
+
+@gr.websocket("/{game_id}/ws")
+async def game_lobby_ws(websocket: WebSocket, game_id: int, player_id: int):
+    try:
+        lobby = Lobby.get_lobby(game_id)
+        await lobby.connect_player(player_id, websocket)
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    
+    while True:
+        try:
+            data = await websocket.receive_text()
+            print(data)
+        except WebSocketDisconnect:
+            break
