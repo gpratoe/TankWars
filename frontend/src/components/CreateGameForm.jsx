@@ -6,7 +6,7 @@ import Button from "./Button";
 
 function CreateGameForm({goBackFunc}) {
     const [inputName, setInputName] = useState('');
-    const [inputPlayers, setInputPlayers] = useState(2);
+    const [inputPlayers, setInputPlayers] = useState(4);
     const navigate = useNavigate();
 
     const handleCreateGame = async () => {
@@ -42,7 +42,7 @@ function CreateGameForm({goBackFunc}) {
                     <div className="cgform-entry">
                         <label>
                             Jugadores:
-                            <select onChange={(e) => setInputPlayers(e.target.value)} defaultValue={4}>
+                            <select onChange={(e) => setInputPlayers(e.target.value)} defaultValue="4">
                                 <option value="2">2</option>
                                 <option value="3">3</option>
                                 <option value="4">4</option>
