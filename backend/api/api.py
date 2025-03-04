@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api.routers.player_router import pr
-from api.routers.game_router import gr, websocket_endpoint
+from api.routers.game_router import gr, websocket_endpoint, game_lobby_ws
 import asyncio
 from src.game import game
 
@@ -21,3 +21,4 @@ app.add_middleware(
 app.include_router(gr, prefix="/game", tags=["game"])
 app.include_router(pr, prefix="/player", tags=["player"])
 app.add_websocket_route("/game/testws", websocket_endpoint)
+app.add_websocket_route("/game/{game_id}/ws", game_lobby_ws)
