@@ -31,7 +31,8 @@ async def get_game(id:int, include_players:bool=False):
 @gr.get(path="/{id}/players", status_code=status.HTTP_200_OK)
 async def get_game_players(id:int):
     try:
-        players = gs.get_game_players(id)
+        lobby = Lobby.get_lobby(id)
+        players = lobby.get_players()
         return players
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
@@ -52,8 +53,11 @@ async def get_games(lobby:bool=False):
 @gr.post(path="/{game_id}/players", status_code=status.HTTP_202_ACCEPTED)
 async def add_player_to_game(game_id:int, player_id:int):
     try:
-        game = gs.add_player_to_game(game_id, player_id)
-        return game.to_dict()
+        lobby = Lobby.get_lobby(game_id)
+        player = Player("", player_id)
+        color = lobby.add_player(player)
+        return {'message': 'Player added to game',
+                'color': color}
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     
@@ -102,7 +106,6 @@ async def game_lobby_ws(websocket: WebSocket, game_id: int, player_id: int):
     while True:
         try:
             data = await websocket.receive_text()
-            print(data)
         except WebSocketDisconnect:
             await lobby.disconnect_player(player_id)
             break
