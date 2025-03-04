@@ -1,10 +1,12 @@
 from db.game_service import gs
 from player import Player
-
+from utils import Utils
+from fastapi import WebSocket
 
 colors = ["green", "blue", "yellow", "orange"]
 
 class Lobby:
+    ACTIVE_LOBBIES = {}
 
     def __init__(self, name: (str | None), owner: (Player | None),
                   max_players: int, id: (int | None) = None):
@@ -17,7 +19,7 @@ class Lobby:
         self.name = name
         self.owner = owner
         self.players = [owner]
-        self.websocket_url = None # Maybe later this is filled with a generated url based on the lobby id 
+        self.websocket_url = Utils.API_URL + f'/game/{self.lobby_id}/ws'
 
     def create_db_entry(self):
         self.lobby_id = gs.create_game(self.name, self.max_players, self.owner.id)
@@ -36,13 +38,38 @@ class Lobby:
     def new(cls, name: str, owner: Player, max_players: int):
         lobby = cls(name, owner, max_players)
         lobby.create_db_entry()
+        cls.ACTIVE_LOBBIES[lobby.lobby_id] = lobby
         return
 
+    
     @classmethod
     def from_db(cls, lobby_id):
+        '''
+        Use only for debbugging or handling data from past games.
+        To get an active lobby use get_lobby() instead.
+        '''
         lobby = cls(None, None, 2, lobby_id) # dummy values
         lobby.load_from_db()
         return lobby
+    
+    @classmethod
+    def get_lobby(cls, lobby_id):
+        '''
+        Gets an active lobby from memory or pulls it from the db and set it as active.
+        This method won't create a new lobby if it doesn't exist.
+        '''
+        lobby = cls.ACTIVE_LOBBIES.get(lobby_id)
+        if not lobby:
+            lobby = cls.from_db(lobby_id)
+            cls.ACTIVE_LOBBIES[lobby_id] = lobby
+        return lobby
+
+    async def connect_player(self, player_id: int, websocket: WebSocket):
+        player = self.players.filter(id=player_id).first()
+        if not player:
+            raise ValueError('Player not found in lobby')
+        await websocket.accept()
+        player.ws['game'] = websocket
 
     def add_player(self, player: Player):
         gs.add_player_to_game(self.lobby_id, player.id)
@@ -50,4 +77,4 @@ class Lobby:
 
     def remove_player(self, player: Player):
         gs.remove_player_from_game(self.lobby_id, player.id)
-        self.players.remove(player)
+        self.load_from_db() # reload players and owner (if he left), use db as source of truth

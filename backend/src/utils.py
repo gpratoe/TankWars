@@ -2,6 +2,8 @@ from Box2D import b2Vec2
 from src.contactlistener import ContactListener
 
 class Utils:
+    API_URL = "http://localhost:8000"
+    
     def __init__(self):
         self.world = None
         self.gameHeight = 0
