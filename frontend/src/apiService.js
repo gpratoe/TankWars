@@ -81,3 +81,18 @@ export async function get_game_players(lobby_id) {
         throw new Error(`Error al obtener los jugadores: ${error.message}`);
     }
 }
+
+export async function leave_lobby(lobby_id, player_id) {
+    try{
+        const response = await axios.delete(`${API_URL}/game/${lobby_id}/players/${player_id}`);
+        if (response.status === 202){
+            return response.data;
+        }
+        else {
+            throw new Error(`Error al abandonar la partida: ${response.statusText}`);
+        }
+    }
+    catch (error){
+        throw new Error(`Error al abandonar la partida: ${error.message}`);
+    }
+}

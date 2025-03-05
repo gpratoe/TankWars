@@ -1,6 +1,6 @@
-import React, {useState, useEffect, useContext} from "react";
-import { useParams } from 'react-router-dom';
-import { get_game_players } from "../../apiService";
+import React, {useState, useEffect} from "react";
+import { useParams, useNavigate } from 'react-router-dom';
+import { get_game_players, leave_lobby } from "../../apiService";
 import Chat from "../Chat";
 import "../../styles/LobbyScreen.css";
 import Button from "../Button";
@@ -10,6 +10,7 @@ import { useWebSocket, WebSocketContext } from "../../webSocketContext";
 function LobbyScreen({}){
     const [players, setPlayers] = useState([]);
     const lobbyId = useParams().lobbyId;
+    const navigate = useNavigate();
     const ws_url = `ws://localhost:8000/game/${lobbyId}/ws?player_id=${sessionStorage.getItem('playerId')}`;
     
     const onMessage = (data) => {
@@ -50,6 +51,16 @@ function LobbyScreen({}){
         fetchPlayers();
     }, []);
 
+    const onLeaving = async () => {
+        try {
+            const resp = await leave_lobby(lobbyId, sessionStorage.getItem('playerId'));
+            ws.close();
+            navigate('/lobby');
+        }   
+        catch(err) {
+            console.error(err);
+        }
+    }
     
     return (
         <div className="lobbyScreen">
@@ -71,7 +82,7 @@ function LobbyScreen({}){
                 </div>
                 <Chat/>
             </div>
-            <Button text='Abandonar' variant='red'/>
+            <Button text='Abandonar' variant='red' onClick={() => {onLeaving()}}/>
         </div>
     );
 }
