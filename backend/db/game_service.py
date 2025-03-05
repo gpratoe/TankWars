@@ -99,7 +99,7 @@ class GameService:
         if player.is_owner:
             player.is_owner = False
             if len(game.players) > 0:
-                new_owner = game.players.first()
+                new_owner = list(game.players)[0]
                 new_owner.is_owner = True
             else:
                 game.delete()        
