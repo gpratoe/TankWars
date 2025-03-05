@@ -43,8 +43,7 @@ class Lobby:
         for player in self.players:
             if player.is_owner:
                 self.owner = player
-                break
-        self.owner.color = colors[0]
+            player.color = colors[self.players.index(player)]
 
     @classmethod
     def new(cls, name: str, owner: Player, max_players: int):
@@ -82,11 +81,14 @@ class Lobby:
         player.color = colors[len(self.players) - 1]
         return {'color': player.color}
 
-    def remove_player(self, player: Player):
-        gs.remove_player_from_game(self.lobby_id, player.id)
-        self.load_from_db() # reload players and owner (if he left), use db as source of truth
-        player.color = None
-        self.players.pop(player)
+    async def remove_player(self, player_id: int):
+        gs.remove_player_from_game(self.lobby_id, player_id)
+        if len(self.players) > 1:
+            self.load_from_db() # reload players and owner (if he left), use db as source of truth
+            await self.broadcast({'event': 'player_left', 'player_id': player_id})
+        if self.connections.get(player_id):
+            await self.connections[player_id].close()
+            self.connections.pop(player_id)
 
     async def connect_player(self, player_id: int, websocket: WebSocket):
         player = None
@@ -109,8 +111,8 @@ class Lobby:
             raise ValueError('Player not found in lobby')
         connection = self.connections.get(player_id)
         if connection:
-            connection.close()
-            self.connections[player_id] = None
+            await connection.close()
+            self.connections.pop(player_id)
         await self.broadcast({'event': 'player_left', 'player_id': player.id})
 
     async def broadcast(self, data: dict):
