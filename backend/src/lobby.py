@@ -7,11 +7,6 @@ import json
 
 colors = ["green", "blue", "yellow", "orange"]
 
-class NewPlayerSchema(BaseModel):
-    id: int
-    name: str
-    color: str
-
 class Lobby:
     ACTIVE_LOBBIES = {}
 
@@ -102,8 +97,7 @@ class Lobby:
             raise ValueError('Player not found in lobby')
         await websocket.accept()
 
-        await self.broadcast({'event': 'player_joined', 'player': NewPlayerSchema(id=player.id, name=player.name,
-                                                                      color=player.color).json()})
+        await self.broadcast({'event': 'player_joined', 'player': player.to_dict()})
         self.connections[player_id] = websocket
 
     async def disconnect_player(self, player_id: int):
