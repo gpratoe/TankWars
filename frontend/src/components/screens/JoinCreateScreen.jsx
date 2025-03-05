@@ -8,6 +8,7 @@ import Button from '../Button';
 function JoinCreateScreen({}) {
   const [lobbies, setLobbies] = useState([]);
   const [createGame, setCreateGame] = useState(false);
+  const [refresh, setRefresh] = useState(false);
 
   const navigate = useNavigate();
 
@@ -24,7 +25,8 @@ function JoinCreateScreen({}) {
     }
 
     fetch_lobbies();
-  }, []);
+    setRefresh(false);
+  }, [refresh]);
 
   const handleJoinGame = async (lobby_id) => {
     const playerId = sessionStorage.getItem('playerId');
@@ -49,7 +51,10 @@ function JoinCreateScreen({}) {
       ):(
         <>
           <h1>SALAS</h1>
-          <Button text='Crear sala'onClick = {() => setCreateGame(true)}/>
+          <div className='buttons-container'>
+            <Button text='Crear sala'onClick = {() => setCreateGame(true)}/>
+            <Button text='Recargar salas'onClick = {() => setRefresh(true)}/>
+          </div>
           <ul>
             {lobbies.map((lobby, i) =>
             <li key={i}>
