@@ -30,6 +30,11 @@ export function WebSocketProvider({ children }) {
                 });
             }
         };
+        ws.onclose = () => {
+            console.log(`Disconnected from ${url}`);
+            delete webSockets.current[url];
+            delete callBacks.current[url];
+        }
 
         return ws;
     };
