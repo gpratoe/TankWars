@@ -78,7 +78,7 @@ function LobbyScreen({}){
                                 <div className='color-show'></div>
                                 <li>
                                     <p>{p.name}</p>
-                                    <Button text='Expulsar' variant='red' id='kick-button'/>
+                                    {player.is_owner && <Button text='Expulsar' variant='red' id='kick-button'/>}
                                 </li>
                             </div>
                         )}
