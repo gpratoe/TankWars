@@ -5,13 +5,16 @@ import Chat from "../Chat";
 import "../../styles/LobbyScreen.css";
 import Button from "../Button";
 import { useWebSocket, WebSocketContext } from "../contexts/webSocketContext";
+import { usePlayer } from "../contexts/playerContext";
 
 
 function LobbyScreen({}){
     const [players, setPlayers] = useState([]);
+    const { player, updatePlayer } = usePlayer();
     const lobbyId = useParams().lobbyId;
     const navigate = useNavigate();
-    const ws_url = `ws://localhost:8000/game/${lobbyId}/ws?player_id=${sessionStorage.getItem('playerId')}`;
+
+    const ws_url = `ws://localhost:8000/game/${lobbyId}/ws?player_id=${player.id}`;
     
     const onMessage = (data) => {
         console.log(data.player);
@@ -53,8 +56,9 @@ function LobbyScreen({}){
 
     const onLeaving = async () => {
         try {
-            const resp = await leave_lobby(lobbyId, sessionStorage.getItem('playerId'));
+            const resp = await leave_lobby(lobbyId, player.id);
             ws.close();
+            updatePlayer({ id: player.id, name: player.name, is_owner: false });
             navigate('/lobby');
         }   
         catch(err) {
@@ -69,11 +73,11 @@ function LobbyScreen({}){
                 <div className="lobbyPlayers">
                     <h2>JUGADORES</h2>
                     <ul>
-                        {players.map((player, i) =>
-                            <div className='list-item' key={i} id={player.color}>
+                        {players.map((p, i) =>
+                            <div className='list-item' key={i} id={p.color}>
                                 <div className='color-show'></div>
                                 <li>
-                                    <p>{player.name}</p>
+                                    <p>{p.name}</p>
                                     <Button text='Expulsar' variant='red' id='kick-button'/>
                                 </li>
                             </div>

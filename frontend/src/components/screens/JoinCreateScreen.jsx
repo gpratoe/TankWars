@@ -4,11 +4,13 @@ import { get_lobbies, join_game } from '../../apiService';
 import '../../styles/JoinCreateScreen.css';
 import CreateGameForm from '../CreateGameForm';
 import Button from '../Button';
+import { usePlayer } from '../contexts/playerContext';
 
 function JoinCreateScreen({}) {
   const [lobbies, setLobbies] = useState([]);
   const [createGame, setCreateGame] = useState(false);
   const [refresh, setRefresh] = useState(false);
+  const { player, updatePlayer } = usePlayer();
 
   const navigate = useNavigate();
 
@@ -29,10 +31,9 @@ function JoinCreateScreen({}) {
   }, [refresh]);
 
   const handleJoinGame = async (lobby_id) => {
-    const playerId = sessionStorage.getItem('playerId');
-    if (playerId){
+    if (player.id){
       try {
-        await join_game(lobby_id, playerId);
+        await join_game(lobby_id, player.id);
         navigate(`/lobby/${lobby_id}`);
       }
       catch(err){

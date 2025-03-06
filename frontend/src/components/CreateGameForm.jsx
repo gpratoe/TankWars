@@ -3,18 +3,19 @@ import { create_game } from "../apiService";
 import '../styles/CreateGameForm.css';
 import { useNavigate } from 'react-router-dom';
 import Button from "./Button";
+import { usePlayer } from "./contexts/playerContext";
 
 function CreateGameForm({goBackFunc}) {
     const [inputName, setInputName] = useState('');
     const [inputPlayers, setInputPlayers] = useState(4);
+    const { player, updatePlayer } = usePlayer();
     const navigate = useNavigate();
 
     const handleCreateGame = async () => {
         try{
-            const data = await create_game(inputName, inputPlayers, sessionStorage.getItem('playerId'));
+            const data = await create_game(inputName, inputPlayers, player.id);
             if (data && data.id) {
-                sessionStorage.setItem('lobbyId', data.id);
-                sessionStorage.setItem('playerColor', 'red');
+                updatePlayer({ id: player.id, name: player.name, is_owner: true });
                 navigate(`/lobby/${data.id}`);
             }
             else{

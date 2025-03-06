@@ -3,12 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { create_player } from '../../apiService';
 import Button from '../Button';
 import '../../styles/NameScreen.css';
+import { usePlayer } from '../contexts/playerContext';
 
 function NameScreen() {
   const [inputName, setInputName] = useState('');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { updatePlayer } = usePlayer();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,7 +22,7 @@ function NameScreen() {
       try{
         const data = await create_player(inputName);
         if (data && data.id) {
-          sessionStorage.setItem('playerId', data.id);
+          updatePlayer({ id: data.id, name: inputName, is_owner: false });
           navigate('/lobby');
         }
         else{
