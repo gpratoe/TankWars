@@ -15,8 +15,9 @@ class GameSchema(BaseModel):
 @gr.post(path="", status_code=status.HTTP_201_CREATED)
 async def create_game(game_data: GameSchema):
     try:
-        game = gs.create_game(game_data.name, game_data.max_players, game_data.owner_id)
-        return game.to_dict()
+        owner = Player("", game_data.owner_id)
+        game = Lobby.new(game_data.name, owner, game_data.max_players)
+        return game
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     

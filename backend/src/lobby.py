@@ -28,7 +28,9 @@ class Lobby:
         self.connections = {}
 
     def create_db_entry(self):
-        self.lobby_id = gs.create_game(self.name, self.max_players, self.owner.id)
+        game = gs.create_game(self.name, self.max_players, self.owner.id).to_dict()
+        self.lobby_id = game['id']
+        return game
 
     def load_from_db(self):
         if not self.lobby_id:
@@ -48,9 +50,9 @@ class Lobby:
     @classmethod
     def new(cls, name: str, owner: Player, max_players: int):
         lobby = cls(name, owner, max_players)
-        lobby.create_db_entry()
+        game_dict = lobby.create_db_entry()
         cls.ACTIVE_LOBBIES[lobby.lobby_id] = lobby
-        return
+        return game_dict
 
     
     @classmethod
