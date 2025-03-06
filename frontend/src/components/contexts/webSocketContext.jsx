@@ -38,6 +38,15 @@ export function WebSocketProvider({ children }) {
 
         return ws;
     };
+    
+    const sendMessage = (url, message) => {
+        const ws = getWebSocket(url); 
+        if (ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify(message)); 
+        } else {
+            console.warn(`WebSocket for ${url} is not open. Current state: ${ws.readyState}`);
+        }
+    };
 
     const getWebSocket = (url) => {
         if (!webSockets.current[url]) {
@@ -57,7 +66,7 @@ export function WebSocketProvider({ children }) {
     }, []);
 
     return (
-        <WebSocketContext.Provider value ={{ getWebSocket, subscribe }}>
+        <WebSocketContext.Provider value ={{ getWebSocket, subscribe, sendMessage }}>
             {children}
         </WebSocketContext.Provider>
     );
@@ -71,7 +80,7 @@ export function useWebSocket(url, onMessage) {
         throw new Error('Not in provider wachin');
     }
     
-    const { getWebSocket, subscribe} = context;
+    const { getWebSocket, subscribe, sendMessage} = context;
     const ws = getWebSocket(url);
 
     useEffect(()=>{
@@ -79,5 +88,6 @@ export function useWebSocket(url, onMessage) {
             subscribe(url, onMessage);
         }
     }, [url, onMessage, subscribe]);
-    return ws;
+    
+    return {ws, sendMessage: (message) => sendMessage(url, message)};
 }
