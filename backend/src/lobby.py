@@ -102,7 +102,6 @@ class Lobby:
     def get_player(self, player_id: int):
         for player in self.players:
             if player.id == player_id:
-                print(player.to_dict())
                 return player
         return None
 
@@ -112,6 +111,11 @@ class Lobby:
         if player:
             self.__color_availability[player.color] = True
             self.players.remove(player)
+            if player.is_owner:
+                if len(self.players) > 0:
+                    new_owner = self.players[0]
+                    new_owner.is_owner = True
+                    self.owner = new_owner
         
         if self.connections.get(player_id):
             await self.connections[player_id].close()
