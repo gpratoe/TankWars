@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useRef} from "react";
 import { useParams, useNavigate } from 'react-router-dom';
 import { get_game_players, leave_lobby } from "../../apiService";
 import Chat from "../Chat";
@@ -61,7 +61,7 @@ function LobbyScreen({}){
         try {
             const resp = await leave_lobby(lobbyId, player.id);
             ws.close();
-            updatePlayer({ id: player.id, name: player.name, is_owner: false });
+            updatePlayer({ id: player.id, name: player.name, is_owner: false }); // this re-renders the lobby and calls for useWebSocket generating a rejected conection due to player not in game anymore (not problematic but annoying)
             navigate('/lobby');
         }   
         catch(err) {
