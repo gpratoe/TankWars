@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from "react";
+import React, {useState, useEffect, useCallback} from "react";
 import { useParams, useNavigate } from 'react-router-dom';
 import { get_game_players, leave_lobby } from "../../apiService";
 import Chat from "../Chat";
@@ -16,8 +16,7 @@ function LobbyScreen({}){
 
     const ws_url = `ws://localhost:8000/game/${lobbyId}/ws?player_id=${player.id}`;
     
-    const onMessage = (data) => {
-        console.log(data);
+    const onMessage = useCallback((data) => {
         if (data.event === 'player_joined') {
             const newPlayer = data.player;
             if (newPlayer){
@@ -39,7 +38,7 @@ function LobbyScreen({}){
                 updatePlayer({ id: player.id, name: player.name, is_owner: true });
             }
         }
-    }
+    }, []);
     
     const ws = useWebSocket(ws_url, onMessage);
     
