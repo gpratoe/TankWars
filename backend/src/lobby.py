@@ -5,7 +5,6 @@ from fastapi import WebSocket
 from pydantic import BaseModel
 import json
 
-colors = ["green", "blue", "yellow", "orange"]
 
 class Lobby:
     ACTIVE_LOBBIES = {}
@@ -20,9 +19,10 @@ class Lobby:
         self.name = name
         self.owner = owner
         self.players = []
+        self.__color_availability = {'green': True, 'blue': True, 'yellow': True, 'orange': True} 
         if owner:
             self.players = [owner]
-            owner.color = colors[0]
+            owner.color = self.__find_color()
         
         self.websocket_url = Utils.API_URL + f'/game/{self.lobby_id}/ws'
         self.connections = {}
@@ -39,13 +39,29 @@ class Lobby:
         game = gs.get_game(self.lobby_id, include_players=True)
         self.name = game['name']
         self.max_players = game['max_players']
-        self.players = [Player(p['name'], p['id']) for p in game['players']]
+        new_players = [Player(p['name'], p['id']) for p in game['players']]
         
+
+        for player in new_players:
+            existing_player = self.get_player(player.id)
+            if existing_player and existing_player.color:
+                player.color = existing_player.color
+            else:
+                player.color = self.__find_color()
+
+        self.players = new_players
         self.owner = None
         for player in self.players:
             if player.is_owner:
                 self.owner = player
-            player.color = colors[self.players.index(player)]
+                break
+
+
+    def __find_color(self):
+        for color, available in self.__color_availability.items():
+            if available:
+                self.__color_availability[color] = False
+                return color
 
     @classmethod
     def new(cls, name: str, owner: Player, max_players: int):
@@ -80,17 +96,30 @@ class Lobby:
     def add_player(self, player: Player):
         gs.add_player_to_game(self.lobby_id, player.id)
         self.players.append(player)
-        player.color = colors[len(self.players) - 1]
+        player.color = self.__find_color()
         return {'color': player.color}
+    
+    def get_player(self, player_id: int):
+        for player in self.players:
+            if player.id == player_id:
+                print(player.to_dict())
+                return player
+        return None
 
     async def remove_player(self, player_id: int):
         gs.remove_player_from_game(self.lobby_id, player_id)
-        if len(self.players) > 1:
-            self.load_from_db() # reload players and owner (if he left), use db as source of truth
-            await self.broadcast({'event': 'player_left', 'player_id': player_id})
+        player = self.get_player(player_id)
+        if player:
+            self.__color_availability[player.color] = True
+            self.players.remove(player)
+        
         if self.connections.get(player_id):
             await self.connections[player_id].close()
             self.connections.pop(player_id)
+        
+        if len(self.players) > 0:
+            self.load_from_db() # reload players and owner (if he left), use db as source of truth
+            await self.broadcast({'event': 'player_left', 'player_id': player_id})
 
     async def connect_player(self, player_id: int, websocket: WebSocket):
         player = None
