@@ -17,7 +17,7 @@ function LobbyScreen({}){
     const ws_url = `ws://localhost:8000/game/${lobbyId}/ws?player_id=${player.id}`;
     
     const onMessage = (data) => {
-        console.log(data.player);
+        console.log(data);
         if (data.event === 'player_joined') {
             const newPlayer = data.player;
             if (newPlayer){
@@ -35,7 +35,10 @@ function LobbyScreen({}){
             setPlayers((prevPlayers) => {
                 return prevPlayers.filter(player => player.id !== playerId);
             });
-        } 
+            if (data.owner && data.owner === player.id){
+                updatePlayer({ id: player.id, name: player.name, is_owner: true });
+            }
+        }
     }
     
     const ws = useWebSocket(ws_url, onMessage);
