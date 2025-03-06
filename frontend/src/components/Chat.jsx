@@ -1,39 +1,67 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useCallback} from "react";
 import '../styles/Chat.css';
 import Button from "./Button";
+import { useWebSocket } from "./contexts/webSocketContext";
+import { usePlayer } from "./contexts/playerContext";
+import { useParams } from 'react-router-dom';
 
 function Chat ({}) {
     const [messages, setMessages] = useState([]);
-    
-    useEffect(() => {
-        setMessages([
-            {sender: 'Jugador1', text: 'Hola'},
-            {sender: 'Jugador2', text: 'Hola'},
-            {sender: 'Jugador1', text: 'Como estas? asdfdsafgdasgfdahgdshgfshfghtsh dsahgsdhreshfdahfadhafd dsds dsfkdslfjioe adfkjsdof dsfiodsjiojfsd asd fijdsoaif sdao ifjdsiojfs adsfoij dsafoeafadsf iodsjafdsaf fiojdasoifjdsaf dsjfgiodsgfdsagfago adsoifj dsgjasdg goi aijg oijgijgoirag jgijaig i j idosfjdsioajfs a'},
-            {sender: 'Jugador2', text: 'Bien, y vo?'},
-            {sender: 'Jugador1', text: 'Tambien'},
-            {sender: 'Jugador2', text: 'Que bien'},
-            {sender: 'Jugador1', text: 'Si'},
-            {sender: 'Jugador2', text: '...xd'},
-        ]);
+    const [message, setMessage] = useState('');
+    const { player, updatePlayer } = usePlayer();
+    const lobbyId = useParams().lobbyId;
+    const ws_url = `ws://localhost:8000/game/${lobbyId}/ws?player_id=${player.id}`;
+
+    const onMessage = useCallback((data) => {
+        if (data.event === 'chat_msg') {
+            const payload = data.payload;
+            const msg = payload.msg;
+            const sender = payload.sender;
+            const time = payload.time;
+            const newMessage = {sender: sender, text: msg};
+            setMessages((prevMessages) => {
+                return [...prevMessages, newMessage];
+            });
+        }
     }, []);
+
+
+    const {ws, sendMessage} = useWebSocket(ws_url, onMessage);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (message.trim()){
+            sendMessage({
+                event: 'chat_msg',
+                payload: {
+                    msg: message,
+                    sender: player.name,
+                }
+            });
+        }
+    }
+    
     return (
         <div className="chat-container">
             <h2>Chat</h2>
             <ol id="chat-list">
-                {messages.map((message, i) =>
+                {messages.map((m, i) =>
                     <li key={i}>
                         <div className='chat-entry'>
-                        <p id='sender'>{message.sender}:</p>
-                        <p id='message'> {message.text}</p>
+                        <p id='sender'>{m.sender}:</p>
+                        <p id='message'> {m.text}</p>
                         </div>
                     </li>
                 )}
             </ol>
-            <div id="chat-sendbar">
-                <input type="text" id="chat-input" placeholder="Escribe un mensaje"></input>
-                <Button text='Enviar' id="chat-send"/>
-            </div>
+            <form id="chat-sendbar" onSubmit={handleSubmit}>
+                <input type="text" id="chat-input"
+                     placeholder="Escribe un mensaje"
+                     onChange={(e) => {
+                            setMessage(e.target.value);
+                     }}></input>
+                <Button text='Enviar' id="chat-send" btn_type='submit'/>
+            </form>
         </div>
     );
 }

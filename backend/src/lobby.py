@@ -5,6 +5,9 @@ from fastapi import WebSocket
 from src.game import Game
 import asyncio
 from api.ws import manager
+from pydantic import BaseModel
+import time
+import json
 
 class Lobby:
     ACTIVE_LOBBIES = {}
@@ -137,3 +140,24 @@ class Lobby:
     def get_players(self):
         players = [p.to_dict() for p in self.players]
         return players
+    
+    async def handle_data(self, data: dict, player_id: int):
+        if 'event' not in data or 'payload' not in data:
+            return
+        event = data['event']
+        payload = data['payload']
+        if event == 'chat_msg':
+            msg = payload['msg']
+            await self.handle_chat_msg(msg, player_id)
+
+    async def handle_chat_msg(self, msg: str, sender_id: int):
+        sender = self.get_player(sender_id)
+        current_time = time.strftime('%H:%M', time.localtime())
+        data = {'event': 'chat_msg',
+                'payload': {'msg': msg, 
+                            'sender': sender.name, 
+                            'sender_id': sender_id, 
+                            'time': current_time
+                            }
+                }
+        await self.broadcast(data)

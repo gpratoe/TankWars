@@ -4,6 +4,7 @@ from api.ws import manager
 from db.game_service import gs
 from src.lobby import Lobby
 from src.player import Player
+import json
 
 gr = APIRouter()
 
@@ -111,7 +112,9 @@ async def game_lobby_ws(websocket: WebSocket, game_id: int, player_id: int):
     
     while True:
         try:
-            data = await websocket.receive_text()
+            data = await websocket.receive_json()
+            if data:
+                await lobby.handle_data(data, player_id)
         except WebSocketDisconnect:
             try:
                 await lobby.disconnect_player(player_id)
