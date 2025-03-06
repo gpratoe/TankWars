@@ -121,10 +121,7 @@ class Lobby:
             await self.broadcast({'event': 'player_left', 'player_id': player_id, 'owner': self.owner.id})
 
     async def connect_player(self, player_id: int, websocket: WebSocket):
-        player = None
-        for p in self.players:
-            if p.id == player_id:
-                player = p
+        player = self.get_player(player_id)
         if not player:
             raise ValueError('Player not found in lobby')
         await websocket.accept()
