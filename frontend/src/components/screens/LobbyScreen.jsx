@@ -4,7 +4,7 @@ import { get_game_players, leave_lobby } from "../../apiService";
 import Chat from "../Chat";
 import "../../styles/LobbyScreen.css";
 import Button from "../Button";
-import { useWebSocket, WebSocketContext } from "../../webSocketContext";
+import { useWebSocket, WebSocketContext } from "../contexts/webSocketContext";
 
 
 function LobbyScreen({}){

@@ -5,7 +5,7 @@ import JoinCreateScreen from './screens/JoinCreateScreen';
 import GameScreen from './screens/GameScreen';
 import LobbyScreen from './screens/LobbyScreen';
 import '../styles/App.css';
-import { WebSocketProvider } from '../webSocketContext';
+import { WebSocketProvider } from './contexts/webSocketContext';
 
 function App() {
 
