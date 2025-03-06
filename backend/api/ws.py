@@ -4,73 +4,41 @@ import json
 from src.utils import utils
 import asyncio
 
-class connection_manager:
+class ConnectionManager:
     def __init__(self):
-        self.active_connections = {}
+        self.active_connections: dict[int, dict[int, WebSocket]] = {}
 
-    async def connect(self, connection: WebSocket, name: str):
-        try:
+    async def connect(self, connection: WebSocket, lobby_id: int, player_id: int):
+        try:    
             await connection.accept()
-            if game.add_tank(name):
-                print("tank not added")
-                await connection.send_text("tank already exists")
-                return
-            else:
-                print("tank added")
-                self.active_connections[name] = connection
-                await connection.send_text(json.dumps({
-                    "event": "init_tank",
-                    "data":
-                    game.tanks[name].get_state()}))
+            if lobby_id not in self.active_connections:
+                self.active_connections[lobby_id] = {}
+            self.active_connections[lobby_id][player_id] = connection
         
         except Exception as e:
             print(e, " conection failed")
-            if name in self.active_connections:
-                self.active_connections.pop(name, None)
+            if lobby_id in self.active_connections and player_id in self.active_connections[lobby_id]:
+                self.active_connections[lobby_id].pop(player_id)
 
-    async def disconnect(self, name: str):
+    async def disconnect(self, lobby_id: int, player_id: int):
         try:
-            if name in self.active_connections:
-                self.active_connections.pop(name)
-            if name in game.tanks:
-                game.tanks[name].tank.DestroyFixture(game.tanks[name].tank.fixtures[0])
-                game.tanks.pop(name)
+           if lobby_id in self.active_connections and player_id in self.active_connections[lobby_id]:
+                await self.active_connections[lobby_id][player_id].close()
+                self.active_connections[lobby_id].pop(player_id)
 
-            await self.broadcast(json.dumps({
-                "event": "remove_tank",
-                "data": name
-            }), name)
         except Exception as e:
-            print(f"Error during disconnection of {name}: {e}")
+            print(f"Error during disconnection of player with id: {player_id}: {e}")
 
-    async def broadcast(self, data: str, name: str = None):
-        for conn_name, connection in self.active_connections.items():
-            #if name is None or conn_name != name:  # Solo excluye si `name` es válido.
+    async def broadcast(self, data: dict, lobby_id: int):
+        if lobby_id not in self.active_connections:
+            return
+        for player_id, connection in self.active_connections[lobby_id].items():
             try:
-                await connection.send_text(data)
+                await connection.send_json(data)
             except Exception as e:
-                print(f"Error broadcasting to {conn_name}: {e}")
-
-
-    async def handle_data(self, data: str):
-        try:
-            parsed = json.loads(data)
-            event = parsed.get("event")
-            data = parsed.get("data")
-
-            if event == "state" and "name" in data:
-                name = data["name"]
-                if name in game.tanks:
-                    tank = game.tanks[name]
-                    tank.set_state(data)
-            
-        except json.JSONDecodeError as e:
-            print(f"Invalid JSON received: {data} - {e}")
-        except KeyError as e:
-            print(f"Missing key in data: {data} - {e}")
-        except Exception as e:
-            print(f"Unexpected error handling data: {data} - {e}")
+                print(f"Error broadcasting to player with id: {player_id} in lobby: {lobby_id}: {e}")
 
 
 
-manager = utils.manager = connection_manager()
+
+manager = utils.manager = ConnectionManager()

@@ -2,9 +2,9 @@ from db.game_service import gs
 from src.player import Player
 from src.utils import Utils
 from fastapi import WebSocket
-from pydantic import BaseModel
-import json
-
+from src.game import Game
+import asyncio
+from api.ws import manager
 
 class Lobby:
     ACTIVE_LOBBIES = {}
@@ -25,7 +25,8 @@ class Lobby:
             owner.color = self.__find_color()
         
         self.websocket_url = Utils.API_URL + f'/game/{self.lobby_id}/ws'
-        self.connections = {}
+        self.manager = manager
+        self.game = None
 
     def create_db_entry(self):
         game = gs.create_game(self.name, self.max_players, self.owner.id).to_dict()
@@ -112,10 +113,8 @@ class Lobby:
             self.__color_availability[player.color] = True
             self.players.remove(player)
         
-        if self.connections.get(player_id):
-            await self.connections[player_id].close()
-            self.connections.pop(player_id)
-        
+        await self.disconnect_player(player_id)
+
         if len(self.players) > 0:
             self.load_from_db() # reload players and owner (if he left), use db as source of truth
             await self.broadcast({'event': 'player_left', 'player_id': player_id, 'owner': self.owner.id})
@@ -124,24 +123,16 @@ class Lobby:
         player = self.get_player(player_id)
         if not player:
             raise ValueError('Player not found in lobby')
-        await websocket.accept()
 
         await self.broadcast({'event': 'player_joined', 'player': player.to_dict()})
-        self.connections[player_id] = websocket
+        await self.manager.connect(websocket, self.lobby_id, player_id)
 
     async def disconnect_player(self, player_id: int):
-        connection = self.connections.get(player_id)
-        if connection:
-            await connection.close()
-            self.connections.pop(player_id)
+        await self.manager.disconnect(self.lobby_id, player_id)
         await self.broadcast({'event': 'player_dcd', 'player_id': player_id})
 
     async def broadcast(self, data: dict):
-        try:
-            for id, connection in self.connections.items():
-                await connection.send_json(data)
-        except Exception as e:
-            print('Error broadcasting data', str(e))
+        await self.manager.broadcast(data, self.lobby_id)
 
     def get_players(self):
         players = [p.to_dict() for p in self.players]
