@@ -111,11 +111,6 @@ class Lobby:
         if player:
             self.__color_availability[player.color] = True
             self.players.remove(player)
-            if player.is_owner:
-                if len(self.players) > 0:
-                    new_owner = self.players[0]
-                    new_owner.is_owner = True
-                    self.owner = new_owner
         
         if self.connections.get(player_id):
             await self.connections[player_id].close()
@@ -123,7 +118,7 @@ class Lobby:
         
         if len(self.players) > 0:
             self.load_from_db() # reload players and owner (if he left), use db as source of truth
-            await self.broadcast({'event': 'player_left', 'player_id': player_id})
+            await self.broadcast({'event': 'player_left', 'player_id': player_id, 'owner': self.owner.id})
 
     async def connect_player(self, player_id: int, websocket: WebSocket):
         player = None
@@ -138,17 +133,11 @@ class Lobby:
         self.connections[player_id] = websocket
 
     async def disconnect_player(self, player_id: int):
-        player = None
-        for p in self.players:
-            if p.id == player_id:
-                player = p
-        if not player:
-            raise ValueError('Player not found in lobby')
         connection = self.connections.get(player_id)
         if connection:
             await connection.close()
             self.connections.pop(player_id)
-        await self.broadcast({'event': 'player_left', 'player_id': player.id})
+        await self.broadcast({'event': 'player_dcd', 'player_id': player_id})
 
     async def broadcast(self, data: dict):
         try:
