@@ -59,7 +59,6 @@ function LobbyScreen({}){
     const onLeaving = async () => {
         try {
             const resp = await leave_lobby(lobbyId, player.id);
-            ws.close();
             updatePlayer({ id: player.id, name: player.name, is_owner: false }); // this re-renders the lobby and calls for useWebSocket generating a rejected conection due to player not in game anymore (not problematic but annoying)
             navigate('/lobby');
         }   
