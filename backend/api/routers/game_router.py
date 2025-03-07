@@ -78,8 +78,9 @@ async def remove_player_from_game(game_id:int, player_id:int):
 @gr.post("/{game_id}/start", status_code=status.HTTP_202_ACCEPTED)
 async def start_game(game_id:int, owner_id:int):
     try:
-        game = gs.start_game(game_id, owner_id)
-        return game.to_dict()
+        game = Lobby.get_lobby(game_id)
+        resp = await game.start_game(owner_id)
+        return resp
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 

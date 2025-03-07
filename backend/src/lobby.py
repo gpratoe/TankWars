@@ -161,3 +161,12 @@ class Lobby:
                             }
                 }
         await self.broadcast(data)
+
+    
+    async def start_game(self, owner_id: int):
+        if owner_id != self.owner.id:
+            raise ValueError('Only the owner can start the game')
+        resp = gs.start_game(self.lobby_id, owner_id)
+        self.game = Game(self.players, self.lobby_id, self.manager)
+        asyncio.create_task(self.game.run())
+        return resp
