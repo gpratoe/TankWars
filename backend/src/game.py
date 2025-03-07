@@ -5,21 +5,22 @@ from src.bullet import Bullet
 from src.contactlistener import ContactListener
 import json 
 import asyncio
-
+from src.settings import *
+from src.entity_manager import EntityManager
 
 class Game:
-    def __init__(self, w, h):
-        self.w = utils.gameWidth = w
-        self.h = utils.gameHeight = h
+    def __init__(self, players, lobby_id, manager):
+        self.w = GAME_WIDTH
+        self.h = GAME_HEIGHT
+        self.id = lobby_id
+        self.players = players
         self.world = utils.world = b2World(gravity=(0, 0), doSleep=True)
         self.world.contactListener = utils.cl = ContactListener(self.collision_handler)
         self.time_step = 1.0 / 60
-        self.tanks = {}
-        self.tanksw = 50
-        self.tanksh = 50
         self.tank_initialpos = (self.w/2, self.h/2)
-        self.bullets = {}
         self.prev_state = None
+        self.manager = manager
+        self.entity_manager = EntityManager()
 
 
     def collision_handler(self, bodyA, bodyB):
@@ -39,49 +40,36 @@ class Game:
                 print("Bullets collided")
             else:
                 print("Unknown collision")
-
-    def add_tank(self, name):
-        if self.tanks.get(name) is None:
-            self.tanks[name] = Tank(name, self.tank_initialpos, self.tanksw, self.tanksh, 0, 10, 200)
-            self.tanks[name].groupIndex = -self.tanks.__len__()
-            self.bullets[name] = self.tanks[name].alive_bullets
-            return 0
-        else:
-            return 1
         
 
-        # maybe return 1 and 0 and handle the jsons in ws.py? idk
-    def get_state(self, tanks_to_remove):
-        state = {
-            "tanks": {name: tank.get_state() for name, tank in self.tanks.items()},
-            "bullets": {name: [bullet.get_state() for bullet in bullets] for name, bullets in self.bullets.items()},
-            "tanks_to_remove": tanks_to_remove,
-        }
-        return state
     
+    def handle_data(self, data):
+        if 'event' in data and 'payload' in data:
+            event = data['event']
+            payload = data['payload']
+            if event == 'input':
+                self.entity_manager.handle_client_input(payload)
+        else:
+            print("Invalid data received")
+
+
+    def first_setup(self):
+        for player in self.players:
+            self.entity_manager.add_tank(player, self.tank_initialpos, 0)
 
     async def run(self):
+        self.first_setup()
         self.running = True
         while self.running:
-            self.world.Step(self.time_step, 6, 0)
-            to_remove = []
-            for tank in self.tanks.values():
-                if (tank.update()):
-                    to_remove.append(tank.name)
-
-            for tank in to_remove:
-                self.tanks.pop(tank)
-                self.bullets.pop(tank)
+            self.world.Step(self.time_step, 10, 3)
             
-            state = self.get_state(to_remove)
+            state = self.entity_manager.update()
             
             if state != self.prev_state:
-                await utils.manager.broadcast(json.dumps({
+                await self.manager.broadcast(json.dumps({
                     "event": "state",
                     "data": state
                 }))
             self.prev_state = state
 
             await asyncio.sleep(self.time_step)
-
-game = Game(1900, 1080)
