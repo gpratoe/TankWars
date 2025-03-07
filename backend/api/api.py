@@ -2,13 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api.routers.player_router import pr
 from api.routers.game_router import gr, websocket_endpoint, game_lobby_ws
-import asyncio
-from src.game import game
 
-async def start_game():
-    asyncio.create_task(game.run())
-
-app = FastAPI(on_startup=[start_game])
+app = FastAPI()
 
 # Configurar CORS para permitir todas las solicitudes (en desarrollo)
 app.add_middleware(
