@@ -25,7 +25,7 @@ ol{
     border-radius: 8px;
     border: 2px white solid;
     padding: 8px;
-    overflow-y: scroll;
+    overflow-y: auto;
     overflow-x: hidden;
 }
 .chat-entry{
