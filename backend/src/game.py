@@ -7,9 +7,10 @@ import json
 import asyncio
 from src.settings import *
 from src.entity_manager import EntityManager
+from api.ws import ConnectionManager
 
 class Game:
-    def __init__(self, players, lobby_id, manager):
+    def __init__(self, players, lobby_id, manager: ConnectionManager):
         self.w = GAME_WIDTH
         self.h = GAME_HEIGHT
         self.id = lobby_id
@@ -53,12 +54,21 @@ class Game:
             print("Invalid data received")
 
 
-    def first_setup(self):
+    async def first_setup(self):
         for player in self.players:
             self.entity_manager.add_tank(player, self.tank_initialpos, 0)
 
+        first_state = {
+            'event': 'init_game',
+            'payload': self.entity_manager.update()
+        }
+        await self.broadcast(first_state)
+
+    async def broadcast(self, data):
+        await self.manager.broadcast(data, self.id)
+
     async def run(self):
-        self.first_setup()
+        await self.first_setup()
         self.running = True
         while self.running:
             self.world.Step(self.time_step, 10, 3)
@@ -66,10 +76,10 @@ class Game:
             state = self.entity_manager.update()
             
             if state != self.prev_state:
-                await self.manager.broadcast(json.dumps({
+                await self.broadcast({
                     "event": "state",
                     "data": state
-                }))
+                })
             self.prev_state = state
 
             await asyncio.sleep(self.time_step)
