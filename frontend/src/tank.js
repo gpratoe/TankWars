@@ -1,12 +1,12 @@
 import { Graphics, Container, Assets, Sprite } from "pixi.js";
-import { game } from "./game";
 import { HealthBar } from "./healthbar";
 import { Bullets } from "./bullets";
 
 class Tank {
-    constructor(name, color, x, y, w , h, angle, damage, bullet_speed,player_num)
+    constructor(player_id, name, color, x, y, w , h, angle, damage, bullet_speed, app)
     {
-        this.player_num = player_num;
+        this.player_id = player_id
+        this.app = app;
         this.name = name;
         this.health = 100;
         this. color = color;
@@ -18,7 +18,6 @@ class Tank {
         this.damage = damage;
         this.bullet_speed = bullet_speed;
         this.#setup_container();
-        this.bullets = game.bullets;
         this.isShooting = false;
         this.mouseX = x;
         this.mouseY = y;
@@ -34,21 +33,24 @@ class Tank {
         this.container.position.y = this.y; 
         this.container.pivot.set(this.container.width/2, this.container.height/2);
 
-        game.app.stage.addChild(this.container);
+        this.container.angle = this.angle;
+        
+        this.app.stage.addChild(this.container);
+        
         this.#setup();
     }
     #setup() {
-        
+        const texture = Assets.get(`/assets/tank_sprite_${this.color}.png`);
 
-        const texture = Assets.get(`/assets/tank_sprite_${this.player_num}.png`);
         this.sprite = new Sprite(texture);
+
         this.sprite.x = 0;
         this.sprite.y = 0;
         this.sprite.width = this.w;
         this.sprite.height = this.h;
         this.sprite.anchor.set(0.5);
-        this.container.addChild(this.sprite);
 
+        this.container.addChild(this.sprite);
         
         
         this.healthBar = new HealthBar(0, this.y - this.h*0.75, this.w, 5, this.health, this.container);
