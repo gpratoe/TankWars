@@ -41,6 +41,9 @@ function LobbyScreen({}){
         else if (data.event === 'game_started'){
             navigate(`/game/${lobbyId}`);
         }
+        else if (data.event === 'game_settings'){
+            sessionStorage.setItem('game_settings', JSON.stringify(data.payload));
+        }
     }, []);
     
     const ws = useWebSocket(ws_url, onMessage);
