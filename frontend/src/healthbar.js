@@ -1,5 +1,4 @@
 import { Graphics } from "pixi.js";
-import { game } from "./game";
 
 class HealthBar {
     constructor(x, y, w, h, health, container) {
