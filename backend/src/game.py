@@ -3,7 +3,7 @@ from src.utils import utils
 from src.tank import Tank
 from src.bullet import Bullet
 from src.contactlistener import ContactListener
-import json 
+import math
 import asyncio
 from src.settings import *
 from src.entity_manager import EntityManager
@@ -44,42 +44,63 @@ class Game:
         
 
     
-    def handle_data(self, data):
+    async def handle_data(self, data, player_id):
         if 'event' in data and 'payload' in data:
             event = data['event']
             payload = data['payload']
             if event == 'input':
                 self.entity_manager.handle_client_input(payload)
+
+            if event == 'player_ready':
+                for player in self.players:
+                    if player.id == player_id:
+                        player.ready = True
+                first_state = {
+                    'event': 'init_game',
+                    'payload': {'tanks':{t.id: t.get_state() for t in self.entity_manager.tanks.values()}}
+                }
+                await self.manager.send_message(first_state, self.id, player_id)
+                
         else:
             print("Invalid data received")
 
 
     async def first_setup(self):
-        for player in self.players:
-            self.entity_manager.add_tank(player, self.tank_initialpos, 0)
+        middle = (self.w/2, self.h/2)
+        
+        corners = [(TANK_WIDTH,TANK_HEIGHT),
+                    (self.w - TANK_WIDTH, 0 +TANK_HEIGHT),
+                    (0 + TANK_WIDTH, self.h - TANK_HEIGHT),
+                    (self.w - TANK_WIDTH, self.h - TANK_HEIGHT)]
+        
+        angles = [math.degrees(math.atan2(middle[1] - corner[1], middle[0] - corner[0])) for corner in corners]
 
-        first_state = {
-            'event': 'init_game',
-            'payload': self.entity_manager.update()
-        }
-        await self.broadcast(first_state)
+        for player in self.players:
+            pos = corners.pop(0)
+            angle = angles.pop(0)
+            self.entity_manager.add_tank(player, pos, angle)
+
+
 
     async def broadcast(self, data):
         await self.manager.broadcast(data, self.id)
 
     async def run(self):
         await self.first_setup()
+
+        # TODO: esperar a que todos los jugadores esten ready y meter un countdown
+        
         self.running = True
         while self.running:
             self.world.Step(self.time_step, 10, 3)
             
-            state = self.entity_manager.update()
+            # state = self.entity_manager.update()
             
-            if state != self.prev_state:
-                await self.broadcast({
-                    "event": "state",
-                    "data": state
-                })
-            self.prev_state = state
+            # if state != self.prev_state:
+            #     await self.broadcast({
+            #         "event": "state",
+            #         "payload": state
+            #     })
+            # self.prev_state = state
 
             await asyncio.sleep(self.time_step)

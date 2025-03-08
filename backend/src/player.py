@@ -9,6 +9,7 @@ class Player:
         self.game = None
         self.is_owner = is_owner
         self.color = None
+        self.ready = False
         
         if not self.id: # Creates entry or retrieves from db if id is provided
             self.create_db_entry()
