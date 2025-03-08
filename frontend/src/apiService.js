@@ -96,3 +96,18 @@ export async function leave_lobby(lobby_id, player_id) {
         throw new Error(`Error al abandonar la partida: ${error.message}`);
     }
 }
+
+export async function start_game(lobby_id, owner_id) {
+    try{
+        const response = await axios.post(`${API_URL}/game/${lobby_id}/start?owner_id=${owner_id}`);
+        if (response.status === 202){
+            return response.data;
+        }
+        else {
+            throw new Error(`Error al iniciar la partida: ${response.statusText}`);
+        }
+    }
+    catch (error){
+        throw new Error(`Error al iniciar la partida: ${error.message}`);
+    }
+}
