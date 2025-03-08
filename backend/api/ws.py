@@ -1,5 +1,4 @@
 from fastapi.websockets import WebSocket
-from src.game import game
 import json
 from src.utils import utils
 import asyncio
@@ -38,6 +37,12 @@ class ConnectionManager:
             except Exception as e:
                 print(f"Error broadcasting to player with id: {player_id} in lobby: {lobby_id}: {e}")
 
+    async def send_message(self, data: dict, lobby_id: int, player_id: int):
+        try:
+            if lobby_id in self.active_connections and player_id in self.active_connections[lobby_id]:
+                await self.active_connections[lobby_id][player_id].send_json(data)
+        except Exception as e:
+            print(f"Error sending message to player with id: {player_id} in lobby: {lobby_id}: {e}")
 
 
 
