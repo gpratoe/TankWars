@@ -74,11 +74,12 @@ class Tank:
     def get_state(self):
         return {
             'name': self.name,
+            'color': self.color,
             'tankx': utils.to_pixel(self.tank.position.x),
             'tanky': utils.to_pixel(self.tank.position.y),
             'mousex': self.mouseX,
             'mousey': self.mouseY,
-            'angle': self.tank.angle,
+            'angle': self.angle,
             'shooting': self.is_shooting,
             'health': self.health
         }
