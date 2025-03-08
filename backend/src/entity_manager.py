@@ -43,10 +43,9 @@ class EntityManager:
         }
         return state
 
-    def handle_client_input(self, input):
+    def handle_client_input(self, input, player_id):
         try:
-            tank_id = input['id']
-            tank = self.tanks.get(tank_id)
+            tank = self.tanks.get(player_id)
             if tank:
                 tank.mouseX = input['mouseX']
                 tank.mouseY = input['mouseY']

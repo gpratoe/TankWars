@@ -49,7 +49,7 @@ class Game:
             event = data['event']
             payload = data['payload']
             if event == 'input':
-                self.entity_manager.handle_client_input(payload)
+                self.entity_manager.handle_client_input(payload, player_id)
 
             if event == 'player_ready':
                 for player in self.players:
@@ -94,13 +94,13 @@ class Game:
         while self.running:
             self.world.Step(self.time_step, 10, 3)
             
-            # state = self.entity_manager.update()
+            state = self.entity_manager.update()
             
-            # if state != self.prev_state:
-            #     await self.broadcast({
-            #         "event": "state",
-            #         "payload": state
-            #     })
-            # self.prev_state = state
+            if state != self.prev_state:
+                await self.broadcast({
+                    "event": "state",
+                    "payload": state
+                })
+            self.prev_state = state
 
             await asyncio.sleep(self.time_step)
