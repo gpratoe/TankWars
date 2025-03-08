@@ -22,10 +22,27 @@ function GameScreen({ }) {
   useEffect(() => {
     const gameContainer = document.getElementById('game-container');
 
-    if(!gameRef.current){
-      gameRef.current = new Game(settings, lobbyId, player.id, (data) => {sendMessage(ws_url, data)});
-      gameRef.current.init().catch(console.error);
-    }
+    const asyncInit = async () => {
+      if(!gameRef.current){
+        gameRef.current = new Game(settings, lobbyId, player.id, (data) => {sendMessage(data)});
+        await gameRef.current.init();
+      
+        if (ws.readyState === WebSocket.OPEN){
+          sendMessage({event: 'player_ready', payload: {player_id: player.id}});
+        }
+        else{
+          await new Promise((resolve) => {
+            ws.onopen = () => {
+              sendMessage({event: 'player_ready', payload: {player_id: player.id}});
+              resolve();
+            }
+          });
+        }
+      }
+
+    };
+
+    asyncInit();
 
   }, [lobbyId, player.id, settings, sendMessage]);
 
