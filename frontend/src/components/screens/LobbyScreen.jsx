@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useCallback} from "react";
 import { useParams, useNavigate } from 'react-router-dom';
-import { get_game_players, leave_lobby } from "../../apiService";
+import { get_game_players, leave_lobby, start_game } from "../../apiService";
 import Chat from "../Chat";
 import "../../styles/LobbyScreen.css";
 import Button from "../Button";
@@ -38,6 +38,9 @@ function LobbyScreen({}){
                 updatePlayer({ id: player.id, name: player.name, is_owner: true });
             }
         }
+        else if (data.event === 'game_started'){
+            navigate(`/game/${lobbyId}`);
+        }
     }, []);
     
     const ws = useWebSocket(ws_url, onMessage);
@@ -67,6 +70,16 @@ function LobbyScreen({}){
         }
     }
     
+    const onStart = async () => {
+        try{
+            const resp = await start_game(lobbyId, player.id);
+            navigate(`/game/${lobbyId}`);
+        }
+        catch(err){
+            console.error(err);
+        }
+    }
+
     return (
         <div className="lobbyScreen">
             <h1>LOBBY</h1>
@@ -89,7 +102,7 @@ function LobbyScreen({}){
             </div>
             <div className='buttons-container'>
                 <Button text='Abandonar' variant='red' onClick={() => {onLeaving()}}/>
-                {player.is_owner ? <Button text='Empezar' onClick={() => {onLeaving()}}/>: null}
+                {player.is_owner ? <Button text='Empezar' onClick={() => {onStart()}}/>: null}
             </div>            
         </div>
     );
