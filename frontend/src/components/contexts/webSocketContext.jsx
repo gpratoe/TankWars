@@ -23,7 +23,6 @@ export function WebSocketProvider({ children }) {
 
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            console.log(callBacks.current[url]);
             if (callBacks.current[url]) {
                 callBacks.current[url].forEach((cb) => {
                     cb(data);
