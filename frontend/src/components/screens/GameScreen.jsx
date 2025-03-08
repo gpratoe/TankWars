@@ -2,27 +2,35 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { Game } from '../../game'; // Importa la instancia game
 import { usePlayer } from '../contexts/playerContext';
+import { useWebSocket } from '../contexts/webSocketContext';
+import '../../styles/GameScreen.css';
 
 function GameScreen({ }) {
-  const player = usePlayer();
+  const { player } = usePlayer();
   const lobbyId = useParams().lobbyId;
   const settings = JSON.parse(sessionStorage.getItem('game_settings'));
-  const  game = useRef(new Game(settings,lobbyId, player.id));
+  const gameRef = useRef(null);
+  const ws_url = `ws://localhost:8000/game/${lobbyId}/ws?player_id=${player.id}`;
+
+  const {ws, sendMessage} = useWebSocket(ws_url, (data) => {
+    if (gameRef.current){
+      gameRef.current.handleWebSocketMessage(data);
+    }
+  });
+
 
   useEffect(() => {
     const gameContainer = document.getElementById('game-container');
-    
-    const initGame = async () => {
-      await game.current.init();
-      game.current.update();
-    };
 
-    initGame().catch(console.error);
+    if(!gameRef.current){
+      gameRef.current = new Game(settings, lobbyId, player.id, (data) => {sendMessage(ws_url, data)});
+      gameRef.current.init().catch(console.error);
+    }
 
-  }, []);
+  }, [lobbyId, player.id, settings, sendMessage]);
 
   return (
-    <div>
+    <div className='gameScreen-container'>
       <h1>Game</h1>
       <div id='game-container'></div>
     </div>

@@ -1,0 +1,19 @@
+.gameScreen-container {
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+}
+
+h1 {
+    margin: 0;
+}
+
+#game-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px white solid;
+    margin-block: 16px;
+}
