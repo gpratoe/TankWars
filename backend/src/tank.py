@@ -3,10 +3,13 @@ from src.bullet import Bullet
 from src.utils import utils
 import math
 import json
+from src.settings import *
 
 class Tank:
-    def __init__(self, name, pos, w, h, angle, damage, bullet_speed):
+    def __init__(self, id, name, color, pos, w, h, angle):
+        self.id = id
         self.name = name
+        self.color = color
         self.dimentions = b2Vec2(w,h)
         self.health = 100
         self.pos = pos
@@ -17,8 +20,8 @@ class Tank:
         self.is_shooting = False
         self.angle = angle
         self.alive_bullets = []
-        self.damage = damage
-        self.bullet_speed = bullet_speed
+        self.damage = TANK_INITIAL_DAMAGE
+        self.bullet_speed = TANK_INITIAL_BULLETSPEED
         self.tank = utils.world.CreateKinematicBody(
             position=utils.vec2_to_world(pos),
             fixtures=b2FixtureDef(

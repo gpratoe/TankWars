@@ -8,6 +8,8 @@ from api.ws import manager
 from pydantic import BaseModel
 import time
 import json
+from src.settings import *
+
 
 class Lobby:
     ACTIVE_LOBBIES = {}
@@ -168,5 +170,14 @@ class Lobby:
             raise ValueError('Only the owner can start the game')
         resp = gs.start_game(self.lobby_id, owner_id)
         self.game = Game(self.players, self.lobby_id, self.manager)
+
+        game_settings = SETTINGS_JSON
+
+        await self.broadcast({'event': 'game_settings',
+                               'payload': game_settings})
+
         asyncio.create_task(self.game.run())
+
+        await self.broadcast({'event': 'game_started'})
+
         return resp
