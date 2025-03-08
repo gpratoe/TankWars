@@ -1,4 +1,4 @@
-import React, {useState, useCallback} from "react";
+import React, {useState, useCallback, useRef, useEffect} from "react";
 import '../styles/Chat.css';
 import Button from "./Button";
 import { useWebSocket } from "./contexts/webSocketContext";
@@ -38,9 +38,10 @@ function Chat ({}) {
                     sender: player.name,
                 }
             });
+            setMessage('');
         }
     }
-    
+
     return (
         <div className="chat-container">
             <h2>Chat</h2>
@@ -57,6 +58,7 @@ function Chat ({}) {
             <form id="chat-sendbar" onSubmit={handleSubmit}>
                 <input type="text" id="chat-input"
                      placeholder="Escribe un mensaje"
+                     value={message}
                      onChange={(e) => {
                             setMessage(e.target.value);
                      }}></input>
