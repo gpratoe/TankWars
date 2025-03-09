@@ -63,7 +63,7 @@ class Tank:
 
         mag = math.sqrt(dx**2 + dy**2)
         topSpeed = 150
-        if mag >= self.w+100 and not self.is_shooting:
+        if mag >= self.w and not self.is_shooting:
             normDx = dx/mag
             normDy = dy/mag
             ds = (mag*5) / self.w
