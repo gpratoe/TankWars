@@ -4,6 +4,7 @@ from src.utils import utils
 import math
 import json
 from src.settings import *
+import time
 
 class Tank:
     def __init__(self, id, name, color, pos, w, h, angle):
@@ -22,19 +23,25 @@ class Tank:
         self.alive_bullets = []
         self.damage = TANK_INITIAL_DAMAGE
         self.bullet_speed = TANK_INITIAL_BULLETSPEED
+        self.groupIndex = -id
+        self.cooldown = 1
+        self.shoot_time = 0
+
         self.tank = utils.world.CreateKinematicBody(
             position=utils.vec2_to_world(pos),
             fixtures=b2FixtureDef(
-                shape=b2PolygonShape(box=utils.vec2_to_world(self.dimentions)),
+                shape=b2PolygonShape(box=utils.vec2_to_world(self.dimentions * 0.5)), # * 0.5 because box2d uses half width and half height (almost went insane over this)
                 density=2,
                 friction=0.5,
-                restitution=0.1
+                restitution=0.1,
+                groupIndex=self.groupIndex 
             ))
         self.tank.userData = self
-        self.groupIndex = None
 
     def shoot(self):
-        bullet_pos = (self.pos[0] + 75 * math.cos(self.angle), self.pos[1] + 75 * math.sin(self.angle))
+        self.shoot_time = time.time()
+        #bullet_pos = (self.pos[0] + 75 * math.cos(self.angle), self.pos[1] + 75 * math.sin(self.angle))
+        bullet_pos = (self.pos[0] + self.w*2 * math.cos(self.angle), self.pos[1] + self.h*2 * math.sin(self.angle))
         self.alive_bullets.append(Bullet(bullet_pos, self.angle, self.damage, self.bullet_speed, self.groupIndex))
         
     def update(self):
@@ -64,7 +71,7 @@ class Tank:
             # update tank in world
             self.pos = utils.vec2_to_pixel(self.tank.position)
             
-        if self.is_shooting:
+        if self.is_shooting and time.time() - self.shoot_time > self.cooldown:
             self.shoot()
             pass
         for bullet in self.alive_bullets:
