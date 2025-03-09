@@ -15,7 +15,7 @@ class Bullet:
         self.bullet = utils.world.CreateDynamicBody(
             position=utils.vec2_to_world(b2Vec2(self.x, self.y)),
             fixtures=b2FixtureDef(
-                shape=b2CircleShape(radius=0.5),
+                shape=b2CircleShape(radius=utils.to_world(3)),
                 density=0.5,
                 friction=0,
                 restitution=0.5,
