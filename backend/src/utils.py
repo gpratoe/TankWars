@@ -13,10 +13,10 @@ class Utils:
         self.cl = None
 
     def to_pixel(self, meter):
-        return meter / self.PPM
+        return meter * self.PPM
     
     def to_world(self, pixel):
-        return pixel * self.PPM
+        return pixel / self.PPM
     
     def vec2_to_pixel(self, vec2):
         return b2Vec2(self.to_pixel(vec2[0]), self.to_pixel(vec2[1]))
