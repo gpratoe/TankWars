@@ -14,7 +14,6 @@ class EntityManager:
                                      color=player.color, pos=pos,
                                      w=TANK_WIDTH, h=TANK_HEIGHT,
                                      angle=angle)
-        self.tanks[player.id].groupIndex = player.id
         self.bullets[player.id] = self.tanks[player.id].alive_bullets
         return 1
 
@@ -51,7 +50,5 @@ class EntityManager:
                 tank.mouseX = input['mouseX']
                 tank.mouseY = input['mouseY']
                 tank.is_shooting = input['shooting']
-                if tank.is_shooting:
-                    tank.shoot()
         except Exception as e:
             print(f"Error handling input: {e}")
