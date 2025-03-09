@@ -2,6 +2,7 @@ from Box2D import (b2FixtureDef, b2CircleShape, b2Vec2)
 from src.utils import utils
 import math
 import copy
+from src.settings import *
 
 class Bullet:
     def __init__(self, pos, angle, damage, speed, groupIndex):
@@ -42,7 +43,7 @@ class Bullet:
         0 otherwise
         '''
         pixel_pos = utils.vec2_to_pixel(self.bullet.position)
-        if pixel_pos[0] < 0 or pixel_pos[0] > utils.gameWidth or pixel_pos[1] < 0 or pixel_pos[1] > utils.gameHeight:
+        if pixel_pos[0] < 0 or pixel_pos[0] > GAME_WIDTH or pixel_pos[1] < 0 or pixel_pos[1] > GAME_HEIGHT:
             utils.world.DestroyBody(self.bullet)
             return 1
         if(self.isDead):
