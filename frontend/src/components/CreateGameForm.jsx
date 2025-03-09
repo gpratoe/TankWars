@@ -27,11 +27,16 @@ function CreateGameForm({goBackFunc}) {
         }
     }
 
+    const handleSubmit = (e) => {
+        e.preventDefault(); 
+        handleCreateGame(); 
+    };
+
     return (
         <>
             <h1>Crear sala</h1>
             <div className="createGameForm">
-                <form>
+                <form onSubmit={handleSubmit}>
                     <div className="cgform-entry">
                         <label> Nombre de la sala:
                             <input type='text' 
@@ -52,8 +57,8 @@ function CreateGameForm({goBackFunc}) {
                     </div>
                 </form>
                 <div>
-                    <Button text='Volver' variant='red' onClick={() => goBackFunc(false)}/>
-                    <Button text='Crear' onClick={handleCreateGame}/>
+                    <Button text='Volver' variant='red' onClick={() => goBackFunc(false)} type='button'/>
+                    <Button text='Crear' onClick={handleCreateGame} type='submit'/>
                 </div>
             </div>
         </>
