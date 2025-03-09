@@ -5,6 +5,8 @@ import { Bullets } from "./bullets";
 class Game {
     constructor(settings, game_id, player_id, sendMessage) {
         this.initialized = false;
+        this.game_id = game_id;
+        this.player_id = player_id;
         this.width = settings.world.width;
         this.height = settings.world.height;
         this.app = null;
@@ -28,9 +30,11 @@ class Game {
 
     #handleEvent(event, payload) {
         if (event === 'init_game'){
+            if (this.initialized){
+                return;
+            }
             const tanks = payload.tanks;
             for (const player_id in tanks) {
-                console.log(player_id);
                 const name = tanks[player_id].name;
                 const color = tanks[player_id].color;
                 const x = tanks[player_id].tankx;
@@ -44,19 +48,44 @@ class Game {
                 this.tanks[player_id] = new Tank(player_id, name, color, x, y,
                                                  this.tank_width, this.tank_height,
                                                   angle, this.damage, this.bullet_speed, this.app);
-                /**
-                 * Todo: Crear un nuevo tanque con los datos recibidos
-                 * luego de crear la entityManager class
-                 */
+                this.bullets[player_id] = [];
+                this.update();
             }
-            console.log(this.tanks);
+            this.initialized = true;
+        }
+        else if (event === 'state') {
+            if (this.initialized){
+                const tanks = payload.tanks;
+                const bullets = payload.bullets;
+                for (const player_id in tanks) {
+                    this.tanks[player_id].set_state(tanks[player_id]);
+                }
+                for (const player_id in bullets) {
+                    if (this.bullets[player_id].length > bullets[player_id].length) {
+                        for (let i = bullets[player_id].length; i < this.bullets[player_id].length; i++) {
+                            this.bullets[player_id][i].bullet.destroy();
+                            
+                        } 
+                        this.bullets[player_id].splice(bullets[player_id].length, this.bullets[player_id].length - bullets[player_id].length);
+
+                    }
+                    for (let i = 0; i < bullets[player_id].length; i++) {
+                        if (!this.bullets[player_id][i]) {
+                            this.bullets[player_id][i] = new Bullets(bullets[player_id][i].x, bullets[player_id][i].y, bullets[player_id][i].direction, this.damage, this.bullet_speed, this.app);
+                        } else {
+                            this.bullets[player_id][i].bullet.x = bullets[player_id][i].x;
+                            this.bullets[player_id][i].bullet.y = bullets[player_id][i].y;
+                            this.bullets[player_id][i].dir_norm = bullets[player_id][i].direction;
+                        }
+                    }
+                }
+            }
         }
     }
 
     handleWebSocketMessage(data) {
         const event = data?.event;
         const payload = data?.payload;
-        console.log(event, payload);
         if (event && payload) {
             this.#handleEvent(event, payload);
         }
@@ -139,9 +168,6 @@ class Game {
         this.app.stage.hitArea = this.app.screen
         this.app.stage.interactive = true;
         this.container.appendChild(this.canvas)
-        //this.#initTank(0,0);
-        this.initialized = true;
-        
     }
 
     send_state(){
@@ -149,26 +175,27 @@ class Game {
             {'event': 'input',
             'payload': {
                 name: this.name,
-                mouseX: this.main_tank.mouseX,
-                mouseY: this.main_tank.mouseY,
-                shooting: this.main_tank.isShooting
+                mouseX: this.tanks[this.player_id].mouseX,
+                mouseY: this.tanks[this.player_id].mouseY,
+                shooting: this.tanks[this.player_id].isShooting
                 }
             });
     }
     update() {
         this.app.stage.on("pointermove", (event) => {
             const mousePos = event.global;
-    
-            this.main_tank.mouseX = mousePos.x;
-            this.main_tank.mouseY = mousePos.y;
+            this.tanks[this.player_id].mouseX = mousePos.x;
+            this.tanks[this.player_id].mouseY = mousePos.y;
             this.send_state()
         });
         this.app.stage.on("mousedown", (event) => {
-            this.main_tank.isShooting = true
-            this.send_state()
+            if(this.tanks[this.player_id]){
+                this.tanks[this.player_id].isShooting = true
+                this.send_state()
+            }
         })
         this.app.stage.on("mouseup", (event) => {
-            this.main_tank.isShooting = false
+            this.tanks[this.player_id].isShooting = false
             this.send_state()
 
         })
