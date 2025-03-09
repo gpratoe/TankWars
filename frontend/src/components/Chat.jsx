@@ -4,13 +4,14 @@ import Button from "./Button";
 import { useWebSocket } from "./contexts/webSocketContext";
 import { usePlayer } from "./contexts/playerContext";
 import { useParams } from 'react-router-dom';
+import { WS_URL } from "../apiService";
 
 function Chat ({}) {
     const [messages, setMessages] = useState([]);
     const [message, setMessage] = useState('');
     const { player, updatePlayer } = usePlayer();
     const lobbyId = useParams().lobbyId;
-    const ws_url = `ws://localhost:8000/game/${lobbyId}/ws?player_id=${player.id}`;
+    const ws_url = `${WS_URL}/game/${lobbyId}/ws?player_id=${player.id}`;
 
     const onMessage = useCallback((data) => {
         if (data.event === 'chat_msg') {

@@ -4,13 +4,14 @@ import { Game } from '../../game'; // Importa la instancia game
 import { usePlayer } from '../contexts/playerContext';
 import { useWebSocket } from '../contexts/webSocketContext';
 import '../../styles/GameScreen.css';
+import { WS_URL } from '../../apiService';
 
 function GameScreen({ }) {
   const { player } = usePlayer();
   const lobbyId = useParams().lobbyId;
   const settings = JSON.parse(sessionStorage.getItem('game_settings'));
   const gameRef = useRef(null);
-  const ws_url = `ws://localhost:8000/game/${lobbyId}/ws?player_id=${player.id}`;
+  const ws_url = `${WS_URL}/game/${lobbyId}/ws?player_id=${player.id}`;
 
   const {ws, sendMessage} = useWebSocket(ws_url, (data) => {
     if (gameRef.current){

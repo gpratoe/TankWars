@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useCallback} from "react";
 import { useParams, useNavigate } from 'react-router-dom';
-import { get_game_players, leave_lobby, start_game } from "../../apiService";
+import { get_game_players, leave_lobby, start_game, WS_URL } from "../../apiService";
 import Chat from "../Chat";
 import "../../styles/LobbyScreen.css";
 import Button from "../Button";
@@ -14,7 +14,7 @@ function LobbyScreen({}){
     const lobbyId = useParams().lobbyId;
     const navigate = useNavigate();
 
-    const ws_url = `ws://localhost:8000/game/${lobbyId}/ws?player_id=${player.id}`;
+    const ws_url = `${WS_URL}/game/${lobbyId}/ws?player_id=${player.id}`;
     
     const onMessage = useCallback((data) => {
         if (data.event === 'player_joined') {
