@@ -27,13 +27,12 @@ class Tank:
         self.cooldown = 1
         self.shoot_time = 0
 
-        self.tank = utils.world.CreateKinematicBody(
+        self.tank = utils.world.CreateDynamicBody(
             position=utils.vec2_to_world(pos),
             fixtures=b2FixtureDef(
                 shape=b2PolygonShape(box=utils.vec2_to_world(self.dimentions * 0.5)), # * 0.5 because box2d uses half width and half height (almost went insane over this)
                 density=2,
                 friction=0.5,
-                restitution=0.1,
                 groupIndex=self.groupIndex 
             ))
         self.tank.userData = self
