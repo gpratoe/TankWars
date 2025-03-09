@@ -14,6 +14,7 @@ class EntityManager:
                                      color=player.color, pos=pos,
                                      w=TANK_WIDTH, h=TANK_HEIGHT,
                                      angle=angle)
+        self.tanks[player.id].groupIndex = player.id
         self.bullets[player.id] = self.tanks[player.id].alive_bullets
         return 1
 
