@@ -115,10 +115,8 @@ async def game_lobby_ws(websocket: WebSocket, game_id: int, player_id: int):
         try:
             data = await websocket.receive_json()
             if data:
-                print("data received ", data)
                 await lobby.handle_data(data, player_id)
                 if lobby.game:
-                    print("to game! ", data)
                     await lobby.game.handle_data(data, player_id)
         except WebSocketDisconnect:
             try:
