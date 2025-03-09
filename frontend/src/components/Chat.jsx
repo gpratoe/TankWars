@@ -58,6 +58,7 @@ function Chat ({}) {
             </ol>
             <form id="chat-sendbar" onSubmit={handleSubmit}>
                 <input type="text" id="chat-input"
+                     autoComplete="off"
                      placeholder="Escribe un mensaje"
                      value={message}
                      onChange={(e) => {
