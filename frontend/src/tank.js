@@ -53,7 +53,7 @@ class Tank {
         this.container.addChild(this.sprite);
         
         
-        this.healthBar = new HealthBar(0, this.y - this.h*0.75, this.w, 5, this.health, this.container);
+        this.healthBar = new HealthBar(-this.w*0.75, -this.h/2, 3, this.h, this.health, this.container);
     }
     
     set_state(state){

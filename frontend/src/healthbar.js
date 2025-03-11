@@ -7,15 +7,15 @@ class HealthBar {
         this.w = w;
         this.h = h;
         this.health = health;
-        this.healthFactor = (this.w / this.health) * 10;
+        this.healthFactor = (this.h / this.health) * 10;
         this.acum = 0;
         this.container = container;
         this.#setup();
     }
 
-    #setupBar(color, width) {
+    #setupBar(color) {
         const bar = new Graphics()
-            .rect(0, -2*this.h, width, this.h)
+            .rect(this.x, this.y, this.w, this.h)
             .fill({
                 color: color,
                 alpha: 1
@@ -27,7 +27,7 @@ class HealthBar {
 
     #setup() {
         // Create the static background with a stroke
-        this.backgroundBar = this.#setupBar(0xFF0000, this.w);
+        this.backgroundBar = this.#setupBar(0xFF0000);
         this.backgroundBar.stroke({
             width: 1,
             color: 0x000000,
@@ -35,16 +35,16 @@ class HealthBar {
             alpha: 1
         });
         // Create the green health bar that will decrease
-        this.greenBar = this.#setupBar(0x00FF00, this.w);
+        this.greenBar = this.#setupBar(0x00FF00);
        
     }
 
     decreaseHealth() {
         // Reduce the width of the green bar
         this.acum += this.healthFactor;
-        const newWidth = Math.max(this.w - this.acum, 0); // Prevent negative width
+        const newHeight = Math.max(this.h - this.acum, 0); // Prevent negative height
         this.greenBar.clear()
-            .rect(0, -2*this.h, newWidth, this.h)
+            .rect(this.x, this.y, this.w, newHeight)
             .fill(0x00FF00);
     }
 }
