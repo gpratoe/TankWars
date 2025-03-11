@@ -69,9 +69,9 @@ class Game:
         middle = (self.w/2, self.h/2)
         
         corners = [(TANK_WIDTH,TANK_HEIGHT),
+                    (self.w - TANK_WIDTH, self.h - TANK_HEIGHT),
                     (self.w - TANK_WIDTH, 0 +TANK_HEIGHT),
-                    (0 + TANK_WIDTH, self.h - TANK_HEIGHT),
-                    (self.w - TANK_WIDTH, self.h - TANK_HEIGHT)]
+                    (0 + TANK_WIDTH, self.h - TANK_HEIGHT)]
         
         angles = [math.degrees(math.atan2(middle[1] - corner[1], middle[0] - corner[0])) for corner in corners]
 
@@ -89,6 +89,7 @@ class Game:
         await self.first_setup()
 
         # TODO: esperar a que todos los jugadores esten ready y meter un countdown
+        await asyncio.sleep(3)
         
         self.running = True
         while self.running:
