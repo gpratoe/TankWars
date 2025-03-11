@@ -38,11 +38,13 @@ class Tank:
         self.tank.userData = self
 
     def shoot(self):
-        self.shoot_time = time.time()
+        if time.time() - self.shoot_time > self.cooldown:
         #bullet_pos = (self.pos[0] + 75 * math.cos(self.angle), self.pos[1] + 75 * math.sin(self.angle))
-        bullet_pos = (self.pos[0] + self.w * math.cos(self.angle), self.pos[1] + self.h * math.sin(self.angle))
-        self.alive_bullets.append(Bullet(bullet_pos, self.angle, self.damage, self.bullet_speed, self.groupIndex))
-        
+            bullet_pos = (self.pos[0] + self.w * math.cos(self.angle), self.pos[1] + self.h * math.sin(self.angle))
+            self.alive_bullets.append(Bullet(bullet_pos, self.angle, self.damage, self.bullet_speed, self.groupIndex))
+            
+            self.shoot_time = time.time()
+
     def update(self):
         '''
         Updates the tank's position, direction and if it is shooting
@@ -75,9 +77,9 @@ class Tank:
         # Actualizar posición local
         self.pos = utils.vec2_to_pixel(self.tank.position)
             
-        if self.is_shooting and time.time() - self.shoot_time > self.cooldown:
+        if self.is_shooting:
             self.shoot()
-            pass
+
         for bullet in self.alive_bullets:
             if bullet.update():
                 self.alive_bullets.remove(bullet)
