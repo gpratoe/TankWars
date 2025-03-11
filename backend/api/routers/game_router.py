@@ -66,10 +66,6 @@ async def add_player_to_game(game_id:int, player_id:int):
 @gr.delete("/{game_id}/players/{player_id}",status_code=status.HTTP_202_ACCEPTED)
 async def remove_player_from_game(game_id:int, player_id:int):
     try:
-        # you wont be able to remove a player from a game that has started
-        # player leaving a game that has started will be handled by websocket discconection.
-        # the db will be updated when the game ends.
-
         game = Lobby.get_lobby(game_id) 
         await game.remove_player(player_id)
     except Exception as e:
@@ -83,25 +79,6 @@ async def start_game(game_id:int, owner_id:int):
         return resp
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
-
-@gr.websocket("/testws")
-async def websocket_endpoint(websocket: WebSocket, name: str):
-    
-    await manager.connect(websocket, name)
-    try:
-        while True:
-            data = await websocket.receive_text()
-            await manager.handle_data(data)
-            #game.run()
-            # await manager.broadcast(json.dumps({
-            #             "event": "state",
-            #             "data": game.get_state()
-            #         }), name)
-            
-            
-    except WebSocketDisconnect:
-        await manager.disconnect(name)
-        print("dcd")
 
 @gr.websocket("/{game_id}/ws")
 async def game_lobby_ws(websocket: WebSocket, game_id: int, player_id: int):
