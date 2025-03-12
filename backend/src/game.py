@@ -18,7 +18,6 @@ class Game:
         self.world = utils.world = b2World(gravity=(0, 0), doSleep=True)
         self.world.contactListener = utils.cl = ContactListener(self.collision_handler)
         self.time_step = 1.0 / 60
-        self.tank_initialpos = (self.w/2, self.h/2)
         self.prev_state = None
         self.manager = manager
         self.entity_manager = EntityManager()
