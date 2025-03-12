@@ -24,7 +24,7 @@ class Tank:
         self.damage = TANK_INITIAL_DAMAGE
         self.bullet_speed = TANK_INITIAL_BULLETSPEED
         self.groupIndex = -id
-        self.cooldown = 1
+        self.cooldown = 0.5
         self.shoot_time = 0
 
         self.tank = utils.world.CreateDynamicBody(
@@ -38,12 +38,13 @@ class Tank:
         self.tank.userData = self
 
     def shoot(self):
-        if time.time() - self.shoot_time > self.cooldown:
-        #bullet_pos = (self.pos[0] + 75 * math.cos(self.angle), self.pos[1] + 75 * math.sin(self.angle))
-            bullet_pos = (self.pos[0] + self.w * math.cos(self.angle), self.pos[1] + self.h * math.sin(self.angle))
-            self.alive_bullets.append(Bullet(bullet_pos, self.angle, self.damage, self.bullet_speed, self.groupIndex))
-            
-            self.shoot_time = time.time()
+        if time.time() - self.shoot_time <= self.cooldown:
+            return
+        
+        bullet_pos = (self.pos[0] + self.w * math.cos(self.angle), self.pos[1] + self.h * math.sin(self.angle))
+        self.alive_bullets.append(Bullet(bullet_pos, self.angle, self.damage, self.bullet_speed, self.groupIndex))
+        
+        self.shoot_time = time.time()
 
     def update(self):
         '''
