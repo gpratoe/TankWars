@@ -2,12 +2,12 @@ from Box2D import (b2FixtureDef, b2PolygonShape, b2Vec2)
 from src.bullet import Bullet
 from src.utils import utils
 import math
-import json
 from src.settings import *
 import time
+from src.physics_manager import PhysicsManager, BodyType
 
 class Tank:
-    def __init__(self, id, name, color, pos, w, h, angle):
+    def __init__(self, id, name, color, pos, w, h, angle, physics_manager: PhysicsManager):
         self.id = id
         self.name = name
         self.color = color
@@ -28,22 +28,24 @@ class Tank:
         self.shoot_time = 0
         self.bullet_id_counter = 0
 
-        self.tank = utils.world.CreateDynamicBody(
-            position=utils.vec2_to_world(pos),
-            fixtures=b2FixtureDef(
-                shape=b2PolygonShape(box=utils.vec2_to_world(self.dimentions * 0.5)), # * 0.5 because box2d uses half width and half height (almost went insane over this)
-                density=2,
-                friction=0.5,
-                groupIndex=self.groupIndex 
-            ))
-        self.tank.userData = self
+        self.physics_manager = physics_manager
+        self.tank = physics_manager.create_body(body_type=BodyType.dynamic.value,
+                                                position=utils.vec2_to_world(pos),
+                                                fixture_def=b2FixtureDef(
+                                                    shape=b2PolygonShape(box=utils.vec2_to_world(self.dimentions * 0.5)), # * 0.5 because box2d uses half width and half height (almost went insane over this)
+                                                    density=2,
+                                                    friction=0.5,
+                                                    groupIndex=self.groupIndex 
+                                                ),
+                                                userData=self
+                                                )
 
     def shoot(self):
         if time.time() - self.shoot_time <= self.cooldown:
             return
         
         bullet_pos = (self.pos[0] + self.w * math.cos(self.angle), self.pos[1] + self.h * math.sin(self.angle))
-        self.alive_bullets.append(Bullet(self.bullet_id_counter, bullet_pos, self.angle, self.damage, self.bullet_speed, self.groupIndex))
+        self.alive_bullets.append(Bullet(self.bullet_id_counter, bullet_pos, self.angle, self.damage, self.bullet_speed, self.groupIndex, self.physics_manager))
         
         self.bullet_id_counter += 1
         self.shoot_time = time.time()
@@ -54,7 +56,7 @@ class Tank:
         Needs to modify the tank's mousex, mousey and is_shooting first
         '''
         if self.health <= 0:
-            utils.world.DestroyBody(self.tank)
+            self.physics_manager.destroy_body(self.tank)
             return 1
         
         # calculate angle to where the mouse is

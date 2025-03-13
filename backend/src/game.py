@@ -8,38 +8,19 @@ import asyncio
 from src.settings import *
 from src.entity_manager import EntityManager
 from api.ws import ConnectionManager
+from src.physics_manager import PhysicsManager
 
 class Game:
-    def __init__(self, players, lobby_id, manager: ConnectionManager):
+    def __init__(self, players, lobby_id, connection_manager: ConnectionManager,
+                 entity_manager: EntityManager, physics_manager: PhysicsManager):
         self.w = GAME_WIDTH
         self.h = GAME_HEIGHT
         self.id = lobby_id
         self.players = players
-        self.world = utils.world = b2World(gravity=(0, 0), doSleep=True)
-        self.world.contactListener = utils.cl = ContactListener(self.collision_handler)
-        self.time_step = 1.0 / 60
         self.prev_state = None
-        self.manager = manager
-        self.entity_manager = EntityManager()
-
-
-    def collision_handler(self, bodyA, bodyB):
-        if bodyA.userData is not None and bodyB.userData is not None:
-            if isinstance(bodyA.userData, Tank) and isinstance(bodyB.userData, Tank):
-                print("Tanks collided")
-            elif isinstance(bodyA.userData, Tank) and isinstance(bodyB.userData, Bullet):
-                print("Tank and bullet collided")
-                bodyA.userData.health -= bodyB.userData.damage
-                #bodyB.userData.isDead = True
-            elif isinstance(bodyA.userData, Bullet) and isinstance(bodyB.userData, Tank):
-                print("Bullet and tank collided")
-                bodyB.userData.health -= bodyA.userData.damage
-            elif isinstance(bodyA.userData, Bullet) and isinstance(bodyB.userData, Bullet):
-                bodyA.userData.isDead = True
-                bodyB.userData.isDead = True
-                print("Bullets collided")
-            else:
-                print("Unknown collision")
+        self.connection_manager = connection_manager
+        self.physics_manager = physics_manager
+        self.entity_manager = entity_manager
         
 
     
@@ -58,7 +39,7 @@ class Game:
                     'event': 'init_game',
                     'payload': {'tanks':{t.id: t.get_state() for t in self.entity_manager.tanks.values()}}
                 }
-                await self.manager.send_message(first_state, self.id, player_id)
+                await self.connection_manager.send_message(first_state, self.id, player_id)
                 
         else:
             print("Invalid data received")
@@ -82,7 +63,7 @@ class Game:
 
 
     async def broadcast(self, data):
-        await self.manager.broadcast(data, self.id)
+        await self.connection_manager.broadcast(data, self.id)
 
     async def run(self):
         await self.first_setup()
@@ -92,7 +73,7 @@ class Game:
         
         self.running = True
         while self.running:
-            self.world.Step(self.time_step, 10, 3)
+            self.physics_manager.update()
             
             state = self.entity_manager.update()
             
@@ -103,4 +84,4 @@ class Game:
                 })
             self.prev_state = state
 
-            await asyncio.sleep(self.time_step)
+            await asyncio.sleep(self.physics_manager.time_step)

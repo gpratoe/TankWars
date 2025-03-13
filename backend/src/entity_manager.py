@@ -1,11 +1,13 @@
 from src.tank import Tank
 from src.bullet import Bullet
 from src.settings import *
+from src.physics_manager import PhysicsManager
 
 class EntityManager:
-    def __init__(self):
+    def __init__(self, physics_manager: PhysicsManager):
         self.tanks: dict[int, Tank] = {}
         self.bullets: dict[int, list[Bullet]] = {}
+        self.physics_manager = physics_manager
 
     def add_tank(self, player, pos, angle):
         if player.id in self.tanks:
@@ -13,7 +15,8 @@ class EntityManager:
         self.tanks[player.id] = Tank(id=player.id, name=player.name,
                                      color=player.color, pos=pos,
                                      w=TANK_WIDTH, h=TANK_HEIGHT,
-                                     angle=angle)
+                                     angle=angle,
+                                     physics_manager=self.physics_manager)
         self.bullets[player.id] = self.tanks[player.id].alive_bullets
         return 1
 

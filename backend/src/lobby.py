@@ -5,11 +5,11 @@ from fastapi import WebSocket
 from src.game import Game
 import asyncio
 from api.ws import manager
-from pydantic import BaseModel
 import time
-import json
 from src.settings import *
-
+from src.entity_manager import EntityManager
+from src.physics_manager import PhysicsManager
+from src.collision_handler import CollisionHandler
 
 class Lobby:
     ACTIVE_LOBBIES = {}
@@ -168,8 +168,18 @@ class Lobby:
     async def start_game(self, owner_id: int):
         if owner_id != self.owner.id:
             raise ValueError('Only the owner can start the game')
+        
         resp = gs.start_game(self.lobby_id, owner_id)
-        self.game = Game(self.players, self.lobby_id, self.manager)
+        
+        collision_handler = CollisionHandler()
+        physics_manager = PhysicsManager(begin_contact_callback=collision_handler.begin_contact_callback)
+        entity_manager = EntityManager(physics_manager=physics_manager)
+
+        self.game = Game(players=self.players,
+                         lobby_id=self.lobby_id,
+                         connection_manager=self.manager,
+                         entity_manager=entity_manager,
+                         physics_manager=physics_manager)
 
         game_settings = SETTINGS_JSON
 

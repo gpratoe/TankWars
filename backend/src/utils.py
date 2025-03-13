@@ -5,12 +5,7 @@ class Utils:
     API_URL = "http://localhost:8000"
     
     def __init__(self):
-        self.world = None
         self.PPM = 10
-        self.mouseX = 0
-        self.mouseY = 0
-        self.manager = None
-        self.cl = None
 
     def to_pixel(self, meter):
         return meter * self.PPM

@@ -1,11 +1,11 @@
-from Box2D import (b2FixtureDef, b2CircleShape, b2Vec2)
+from Box2D import (b2FixtureDef, b2CircleShape)
 from src.utils import utils
 import math
-import copy
 from src.settings import *
+from src.physics_manager import PhysicsManager, BodyType
 
 class Bullet:
-    def __init__(self, id, pos, angle, damage, speed, groupIndex):
+    def __init__(self, id, pos, angle, damage, speed, groupIndex, physics_manager: PhysicsManager):
        # self.shooter = shooter
         self.id = id
         self.x = pos[0]
@@ -13,21 +13,23 @@ class Bullet:
         self.direction = (math.cos(angle), math.sin(angle))
         self.damage = damage
         self.speed = speed
-        self.bullet = utils.world.CreateDynamicBody(
-            position=utils.vec2_to_world(b2Vec2(self.x, self.y)),
-            fixtures=b2FixtureDef(
-                shape=b2CircleShape(radius=utils.to_world(3)),
-                density=0.5,
-                friction=0,
-                restitution=0.5,
-                groupIndex = groupIndex
-            ),
-            bullet = True)
-        self.bullet.linearVelocity = (self.speed * self.direction[0], self.speed * self.direction[1])
-        self.bullet.bullet = True
+        self.physics_manager = physics_manager
+
+        self.bullet = physics_manager.create_body(body_type=BodyType.dynamic.value,
+                                                position=utils.vec2_to_world(pos),
+                                                fixture_def=b2FixtureDef(
+                                                    shape=b2CircleShape(radius=utils.to_world(3)),
+                                                    density=0.5,
+                                                    friction=0,
+                                                    restitution=0.5,
+                                                    groupIndex = groupIndex
+                                                ),
+                                                bullet=True,
+                                                linearVelocity=(speed * self.direction[0], speed * self.direction[1]),
+                                                userData=self)
         
         self.isDead = False
-        self.bullet.userData = self
+
     
     def get_state(self):
         return {
@@ -46,9 +48,9 @@ class Bullet:
         '''
         pixel_pos = utils.vec2_to_pixel(self.bullet.position)
         if pixel_pos[0] < 0 or pixel_pos[0] > GAME_WIDTH or pixel_pos[1] < 0 or pixel_pos[1] > GAME_HEIGHT:
-            utils.world.DestroyBody(self.bullet)
+            self.physics_manager.destroy_body(self.bullet)
             return 1
         if(self.isDead):
-            utils.world.DestroyBody(self.bullet)
+            self.physics_manager.destroy_body(self.bullet)
             return 1
         return 0
