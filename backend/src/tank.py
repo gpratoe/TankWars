@@ -29,7 +29,7 @@ class Tank:
         self.bullet_id_counter = 0
 
         self.physics_manager = physics_manager
-        self.tank = physics_manager.create_body(body_type=BodyType.dynamic.value,
+        self.tank = physics_manager.create_body(body_type=BodyType.dynamic,
                                                 position=utils.vec2_to_world(pos),
                                                 fixture_def=b2FixtureDef(
                                                     shape=b2PolygonShape(box=utils.vec2_to_world(self.dimentions * 0.5)), # * 0.5 because box2d uses half width and half height (almost went insane over this)

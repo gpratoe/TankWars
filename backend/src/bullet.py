@@ -15,7 +15,7 @@ class Bullet:
         self.speed = speed
         self.physics_manager = physics_manager
 
-        self.bullet = physics_manager.create_body(body_type=BodyType.dynamic.value,
+        self.bullet = physics_manager.create_body(body_type=BodyType.dynamic,
                                                 position=utils.vec2_to_world(pos),
                                                 fixture_def=b2FixtureDef(
                                                     shape=b2CircleShape(radius=utils.to_world(3)),

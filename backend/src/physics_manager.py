@@ -1,8 +1,8 @@
 from Box2D import b2World
 from src.contactlistener import ContactListener
-from enum import Enum
+from enum import IntEnum
 
-class BodyType(Enum):
+class BodyType(IntEnum):
     static = 0
     kinematic = 1
     dynamic = 2
