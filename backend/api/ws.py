@@ -1,7 +1,5 @@
 from fastapi.websockets import WebSocket
-import json
-from src.utils import utils
-import asyncio
+
 
 class ConnectionManager:
     def __init__(self):
@@ -46,4 +44,4 @@ class ConnectionManager:
 
 
 
-manager = utils.manager = ConnectionManager()
+manager = ConnectionManager()
