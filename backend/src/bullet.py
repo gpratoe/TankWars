@@ -5,8 +5,9 @@ import copy
 from src.settings import *
 
 class Bullet:
-    def __init__(self, pos, angle, damage, speed, groupIndex):
+    def __init__(self, id, pos, angle, damage, speed, groupIndex):
        # self.shooter = shooter
+        self.id = id
         self.x = pos[0]
         self.y = pos[1]
         self.direction = (math.cos(angle), math.sin(angle))
@@ -30,6 +31,7 @@ class Bullet:
     
     def get_state(self):
         return {
+            "id": self.id,
             "x": utils.to_pixel(self.bullet.position.x),
             "y": utils.to_pixel(self.bullet.position.y),
             "direction": self.direction,

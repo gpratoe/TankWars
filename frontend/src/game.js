@@ -12,7 +12,7 @@ class Game {
         this.app = null;
         this.canvas = null;
         this.tanks = {};
-        this.bullets = {};
+        this.bullets = new Map();
         this.main_tank = null;
         this.seconds = new Date().getTime() / 1000;
         this.name = "Player " + this.seconds;
@@ -57,26 +57,53 @@ class Game {
             if (this.initialized){
                 const tanks = payload.tanks;
                 const bullets = payload.bullets;
+                const tanks_to_remove = payload.tanks_to_remove;
+                const bullets_to_remove = payload.bullets_to_remove;
+
+                
                 for (const player_id in tanks) {
                     this.tanks[player_id].set_state(tanks[player_id]);
                 }
-                for (const player_id in bullets) {
-                    if (this.bullets[player_id].length > bullets[player_id].length) {
-                        for (let i = bullets[player_id].length; i < this.bullets[player_id].length; i++) {
-                            this.bullets[player_id][i].bullet.destroy();
-                            
-                        } 
-                        this.bullets[player_id].splice(bullets[player_id].length, this.bullets[player_id].length - bullets[player_id].length);
 
+
+                for (const player_id in bullets) {
+                    if (!this.bullets.has(player_id)) {
+                        this.bullets.set(player_id, new Map());
                     }
-                    for (let i = 0; i < bullets[player_id].length; i++) {
-                        if (!this.bullets[player_id][i]) {
-                            this.bullets[player_id][i] = new Bullets(bullets[player_id][i].x, bullets[player_id][i].y, bullets[player_id][i].direction, this.damage, this.bullet_speed, this.app);
-                        } else {
-                            this.bullets[player_id][i].bullet.x = bullets[player_id][i].x;
-                            this.bullets[player_id][i].bullet.y = bullets[player_id][i].y;
-                            this.bullets[player_id][i].dir_norm = bullets[player_id][i].direction;
+
+                    const player_bullets = this.bullets.get(player_id);
+
+                    if(bullets_to_remove[player_id]) {
+                        for (const bullet_id of bullets_to_remove[player_id]) {
+                            if (player_bullets.has(bullet_id)) {
+                                const bullet = player_bullets.get(bullet_id);
+                                bullet.bullet.destroy();
+                                player_bullets.delete(bullet_id);
+                            }
                         }
+                    }
+
+                    for (const bullet_data of bullets[player_id]) {
+                        const bullet_id = bullet_data.id;
+
+                        if (!player_bullets.has(bullet_id)) {
+                            const newBullet = new Bullets(bullet_id,
+                                                            bullet_data.x,
+                                                            bullet_data.y,
+                                                            bullet_data.direction,
+                                                            this.damage,
+                                                            this.bullet_speed,
+                                                            this.app);
+                            player_bullets.set(bullet_id, newBullet);
+                        
+                        } else {
+                            const bullet = player_bullets.get(bullet_id);
+                            bullet.bullet.x = bullet_data.x;
+                            bullet.bullet.y = bullet_data.y;
+                            bullet.dir_norm = bullet_data.direction;
+                        }
+
+
                     }
                 }
             }
@@ -89,67 +116,6 @@ class Game {
         if (event && payload) {
             this.#handleEvent(event, payload);
         }
-
-        // const name = data.name;
-        // if (event === "init_tank") {
-        //     this.tankinitposx = data.tankx;
-        //     this.tankinitposy = data.tanky;
-        //     if (this.initialized) {
-        //         this.#initTank(data.tankx, data.tanky);
-        //         this.tank_initialized = true;
-        //     }
-        // } else if (event === "state") {
-        //     const tanks = data.tanks;
-        //     const bullets = data.bullets;
-        //     const tanks_to_remove = data.tanks_to_remove;
-
-        //     for (const tank_name of tanks_to_remove ){
-        //         if(this.tanks[tank_name]){
-        //             this.tanks[tank_name].container.destroy();
-        //             this.bullets[tank_name].forEach(bullet => {
-        //                 bullet.bullet.destroy();
-        //             });
-        //             delete this.tanks[tank_name];
-        //         }
-        //     }
-        //     for (const key in tanks) {
-        //         if (this.tanks[key]) {
-        //             this.tanks[key].set_state(tanks[key]);
-                    
-        //             if (this.bullets[key].length > bullets[key].length) {
-        //                 for (let i = bullets[key].length; i < this.bullets[key].length; i++) {
-        //                     this.bullets[key][i].bullet.destroy();
-                            
-        //                 } 
-        //                 this.bullets[key].splice(bullets[key].length, this.bullets[key].length - bullets[key].length);
-
-        //             }
-        //             for (let i = 0; i < bullets[key].length; i++) {
-        //                 if(!this.bullets[key][i]){
-        //                     this.bullets[key][i] = new Bullets(bullets[key][i].x, bullets[key][i].y, bullets[key][i].direction, 10, 10);
-        //                 }
-        //                 else {
-        //                     this.bullets[key][i].bullet.x = bullets[key][i].x;
-        //                     this.bullets[key][i].bullet.y = bullets[key][i].y;
-        //                     this.bullets[key][i].dir_norm = bullets[key][i].direction;
-        //                 }
-        //             }
-                    
-        //         } else if (key !== this.name) {
-        //             this.tanks[key] = new Tank(key, 0xFF0000, tanks[key].tankx, tanks[key].tanky, 100, 100, 0, 10, 17, 2);
-        //             this.bullets[key] = [];
-        //         }
-        //     }
-        // } else if (event === "remove_tank") {
-        //     console.log("trying to remove tank: ", name);
-        //     if (this.tanks[data]) {
-        //         this.tanks[data].container.destroy();
-        //         this.bullets[data].forEach(bullet => {
-        //             bullet.bullet.destroy();
-        //         });
-        //         delete this.tanks[data];
-        //     }
-        // }
     }
 
     async init() {

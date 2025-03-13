@@ -1,7 +1,11 @@
 import { Graphics } from "pixi.js";
 
 class Bullets {
-    constructor(x,y,dir_norm,damage,speed, app){
+    constructor(id, x,y,dir_norm,damage,speed, app){
+        this.id = id;
+        this.x = x;
+        this.y = y;
+        console.log(x,y)
         this.damage = damage;
         this.app = app;
         this.speed = speed;

@@ -26,6 +26,7 @@ class Tank:
         self.groupIndex = -id
         self.cooldown = 0.5
         self.shoot_time = 0
+        self.bullet_id_counter = 0
 
         self.tank = utils.world.CreateDynamicBody(
             position=utils.vec2_to_world(pos),
@@ -42,8 +43,9 @@ class Tank:
             return
         
         bullet_pos = (self.pos[0] + self.w * math.cos(self.angle), self.pos[1] + self.h * math.sin(self.angle))
-        self.alive_bullets.append(Bullet(bullet_pos, self.angle, self.damage, self.bullet_speed, self.groupIndex))
+        self.alive_bullets.append(Bullet(self.bullet_id_counter, bullet_pos, self.angle, self.damage, self.bullet_speed, self.groupIndex))
         
+        self.bullet_id_counter += 1
         self.shoot_time = time.time()
 
     def update(self):
@@ -81,9 +83,6 @@ class Tank:
         if self.is_shooting:
             self.shoot()
 
-        for bullet in self.alive_bullets:
-            if bullet.update():
-                self.alive_bullets.remove(bullet)
         
     def get_state(self):
         return {

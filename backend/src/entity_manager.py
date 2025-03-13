@@ -27,19 +27,33 @@ class EntityManager:
         Updates all tanks and bullets in the game.
         Returns state of tanks and bullets and a list of tanks to remove if they died
         '''
-        to_remove = []
-        for tank in self.tanks.values():
+        tanks_to_remove = []
+        bullets_to_remove = {}
+
+        tanks_to_process = list(self.tanks.values())
+        for tank in tanks_to_process:
             if tank.update():
-                to_remove.append(tank.id)
+                tanks_to_remove.append(tank.id)
                 self.tanks.pop(tank.id)
-                self.bullets.pop(tank.id)
-        return self.__get_state(to_remove)
+
+        for tank_id, bullets in self.bullets.items():
+            if not tank_id in bullets_to_remove:
+                bullets_to_remove[tank_id] = []
+
+            bullets_to_process = bullets.copy()
+            for bullet in bullets_to_process:
+                if bullet.update():
+                    bullets_to_remove[tank_id].append(bullet.id)
+                    self.bullets[tank_id].remove(bullet)
+                
+        return self.__get_state(tanks_to_remove, bullets_to_remove)
     
-    def __get_state(self, tanks_to_remove):
+    def __get_state(self, tanks_to_remove, bullets_to_remove):
         state = {
             "tanks": {id: tank.get_state() for id, tank in self.tanks.items()},
             "bullets": {id: [bullet.get_state() for bullet in bullets] for id, bullets in self.bullets.items()},
             "tanks_to_remove": tanks_to_remove,
+            "bullets_to_remove": bullets_to_remove
         }
         return state
 
