@@ -1,10 +1,8 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, status, HTTPException
 from pydantic import BaseModel
-from api.ws import manager
 from db.game_service import gs
 from src.lobby import Lobby
 from src.player import Player
-import json
 
 gr = APIRouter()
 

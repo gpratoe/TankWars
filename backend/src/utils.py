@@ -1,5 +1,4 @@
 from Box2D import b2Vec2
-from src.contactlistener import ContactListener
 
 class Utils:
     API_URL = "http://localhost:8000"

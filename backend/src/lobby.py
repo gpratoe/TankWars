@@ -1,6 +1,5 @@
 from db.game_service import gs
 from src.player import Player
-from src.utils import Utils
 from fastapi import WebSocket
 from src.game import Game
 import asyncio
@@ -28,8 +27,7 @@ class Lobby:
         if owner:
             self.players = [owner]
             owner.color = self.__find_color()
-        
-        self.websocket_url = Utils.API_URL + f'/game/{self.lobby_id}/ws'
+
         self.manager = manager
         self.game = None
 

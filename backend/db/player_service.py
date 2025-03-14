@@ -1,4 +1,4 @@
-from db.models import Player as PlayerModel, Game
+from db.models import Player as PlayerModel
 from pony.orm import db_session, commit
 
 class PlayerService:

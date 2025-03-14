@@ -1,8 +1,3 @@
-from Box2D import b2World
-from src.utils import utils
-from src.tank import Tank
-from src.bullet import Bullet
-from src.contactlistener import ContactListener
 import math
 import asyncio
 from src.settings import *

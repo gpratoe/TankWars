@@ -1,5 +1,4 @@
 from db.player_service import ps
-from fastapi import WebSocket
 
 class Player:
     def __init__(self, name:str, id=None, is_owner=False):

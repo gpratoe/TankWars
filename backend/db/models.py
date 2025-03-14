@@ -1,4 +1,4 @@
-from pony.orm import Database, Required, Optional, PrimaryKey, Set, Json
+from pony.orm import Database, Required, Optional, PrimaryKey, Set
 from db.settings import DATABASE_FILENAME
 
 
