@@ -18,7 +18,6 @@ class PhysicsManager:
         self.world.Step(self.time_step, 10, 3)
 
     def create_body(self, body_type, position, fixture_def, **kwargs):
-        print(body_type)
         return self.world.CreateBody(
             type=body_type,
             position=position,
