@@ -21,7 +21,7 @@ class Bullet:
                                                     shape=b2CircleShape(radius=utils.to_world(3)),
                                                     density=0.5,
                                                     friction=0,
-                                                    restitution=0.5,
+                                                    restitution=1,
                                                     groupIndex = groupIndex
                                                 ),
                                                 bullet=True,
