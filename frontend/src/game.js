@@ -1,6 +1,7 @@
 import {Application, Assets} from "pixi.js";
 import { Tank } from "./tank";
 import { Bullets } from "./bullets";
+import { GameMap} from "./gameMap";
 
 class Game {
     constructor(settings, game_id, player_id, sendMessage) {
@@ -122,7 +123,8 @@ class Game {
         await Assets.load(["/assets/tank_sprite_green.png",
                         "/assets/tank_sprite_yellow.png",
                         "/assets/tank_sprite_blue.png",
-                        "/assets/tank_sprite_orange.png"]);
+                        "/assets/tank_sprite_orange.png",
+                        "/assets/boundries_tile.png"]);
         this.app = new Application();
         await this.app.init({
             width: this.width,
@@ -134,6 +136,7 @@ class Game {
         this.app.stage.hitArea = this.app.screen
         this.app.stage.interactive = true;
         this.container.appendChild(this.canvas)
+        this.gameMap = new GameMap(this.app);
     }
 
     send_state(){

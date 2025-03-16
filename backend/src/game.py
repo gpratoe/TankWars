@@ -4,6 +4,7 @@ from src.settings import *
 from src.entity_manager import EntityManager
 from api.ws import ConnectionManager
 from src.physics_manager import PhysicsManager
+from src.map import Map
 
 class Game:
     def __init__(self, players, lobby_id, connection_manager: ConnectionManager,
@@ -42,6 +43,8 @@ class Game:
 
     async def first_setup(self):
         middle = (self.w/2, self.h/2)
+        self.map = Map(self.physics_manager, self.w, self.h)
+        self.map.create_boundaries()
         
         corners = [(TANK_WIDTH,TANK_HEIGHT),
                     (self.w - TANK_WIDTH, self.h - TANK_HEIGHT),
