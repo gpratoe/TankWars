@@ -84,6 +84,10 @@ class Tank {
         this.container.position.y += (this.y - this.container.position.y) * lerp_factor;
         this.container.rotation = this.#lerpAngle(this.container.rotation, this.angle, lerp_factor);
     }
+
+    destroy() {
+        this.container.destroy({children: true});
+    }
 }
 
 export {Tank};

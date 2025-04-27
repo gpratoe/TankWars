@@ -64,8 +64,11 @@ class Game {
                 
                 for (const player_id in tanks) {
                     this.tanks[player_id].set_state(tanks[player_id]);
+                    if (tanks[player_id].is_dead) {
+                        this.tanks[player_id].destroy();
+                        delete this.tanks[player_id];
+                    }
                 }
-
 
                 for (const player_id in bullets) {
                     if (!this.bullets.has(player_id)) {
