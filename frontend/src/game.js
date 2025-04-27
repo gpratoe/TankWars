@@ -63,10 +63,14 @@ class Game {
 
                 
                 for (const player_id in tanks) {
-                    this.tanks[player_id].set_state(tanks[player_id]);
-                    if (tanks[player_id].is_dead) {
-                        this.tanks[player_id].destroy();
-                        delete this.tanks[player_id];
+                    if (this.tanks[player_id]) {
+                        if (tanks[player_id].is_dead) {
+                            this.tanks[player_id].destroy();
+                            delete this.tanks[player_id];
+                        } 
+                        else {
+                            this.tanks[player_id].set_state(tanks[player_id]);
+                        }
                     }
                 }
 
@@ -155,10 +159,12 @@ class Game {
     }
     update() {
         this.app.stage.on("pointermove", (event) => {
-            const mousePos = event.global;
-            this.tanks[this.player_id].mouseX = mousePos.x;
-            this.tanks[this.player_id].mouseY = mousePos.y;
-            this.send_state()
+            if (this.tanks[this.player_id]) {
+                const mousePos = event.global;
+                this.tanks[this.player_id].mouseX = mousePos.x;
+                this.tanks[this.player_id].mouseY = mousePos.y;
+                this.send_state()
+            }
         });
         this.app.stage.on("mousedown", (event) => {
             if(this.tanks[this.player_id]){
@@ -167,10 +173,12 @@ class Game {
             }
         })
         this.app.stage.on("mouseup", (event) => {
-            this.tanks[this.player_id].isShooting = false
-            this.send_state()
-
+            if(this.tanks[this.player_id]){
+                this.tanks[this.player_id].isShooting = false
+                this.send_state()
+            }
         })
+
         this.app.ticker.add(() => {
             for (const key in this.tanks) {
                 this.tanks[key].update();
