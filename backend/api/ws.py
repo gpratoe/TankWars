@@ -20,7 +20,8 @@ class ConnectionManager:
     async def disconnect(self, lobby_id: int, player_id: int):
         try:
            if lobby_id in self.active_connections and player_id in self.active_connections[lobby_id]:
-                await self.active_connections[lobby_id][player_id].close()
+                if self.active_connections[lobby_id][player_id].client_state == 'connected':
+                    await self.active_connections[lobby_id][player_id].close()
                 self.active_connections[lobby_id].pop(player_id)
 
         except Exception as e:
