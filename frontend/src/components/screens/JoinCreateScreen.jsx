@@ -19,7 +19,6 @@ function JoinCreateScreen({}) {
       try{
         const data = await get_lobbies();
         setLobbies(data);
-        console.log(data);
       }
       catch(err){
         console.error(err);

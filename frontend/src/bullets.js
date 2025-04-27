@@ -5,7 +5,6 @@ class Bullets {
         this.id = id;
         this.x = x;
         this.y = y;
-        console.log(x,y)
         this.damage = damage;
         this.app = app;
         this.speed = speed;
