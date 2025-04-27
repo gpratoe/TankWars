@@ -30,7 +30,8 @@ class ConnectionManager:
     async def broadcast(self, data: dict, lobby_id: int):
         if lobby_id not in self.active_connections:
             return
-        for player_id, connection in self.active_connections[lobby_id].items():
+        connections_copy = self.active_connections[lobby_id].copy()
+        for player_id, connection in connections_copy.items():
             try:
                 await connection.send_json(data)
             except Exception as e:
