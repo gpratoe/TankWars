@@ -8,6 +8,7 @@ class EntityManager:
         self.tanks: dict[int, Tank] = {}
         self.bullets: dict[int, list[Bullet]] = {}
         self.physics_manager = physics_manager
+        self.tanks_to_stop_updating = []
 
     def add_tank(self, player, pos, angle):
         if player.id in self.tanks:
@@ -30,14 +31,21 @@ class EntityManager:
         Updates all tanks and bullets in the game.
         Returns state of tanks and bullets and a list of tanks to remove if they died
         '''
-        tanks_to_remove = []
+        for tank_id in self.tanks_to_stop_updating:
+            if tank_id in self.tanks:
+                self.tanks.pop(tank_id)
+        
+        self.tanks_to_stop_updating = []
+        
         bullets_to_remove = {}
 
         tanks_to_process = list(self.tanks.values())
         for tank in tanks_to_process:
-            if tank.update():
-                tanks_to_remove.append(tank.id)
-                self.tanks.pop(tank.id)
+            tank.update()
+            if tank.is_dead:
+                self.physics_manager.destroy_body(tank.tank)
+                self.tanks_to_stop_updating.append(tank.id)
+
 
         for tank_id, bullets in self.bullets.items():
             if not tank_id in bullets_to_remove:
@@ -49,13 +57,12 @@ class EntityManager:
                     bullets_to_remove[tank_id].append(bullet.id)
                     self.bullets[tank_id].remove(bullet)
                 
-        return self.__get_state(tanks_to_remove, bullets_to_remove)
+        return self.__get_state(bullets_to_remove)
     
-    def __get_state(self, tanks_to_remove, bullets_to_remove):
+    def __get_state(self, bullets_to_remove):
         state = {
             "tanks": {id: tank.get_state() for id, tank in self.tanks.items()},
             "bullets": {id: [bullet.get_state() for bullet in bullets] for id, bullets in self.bullets.items()},
-            "tanks_to_remove": tanks_to_remove,
             "bullets_to_remove": bullets_to_remove
         }
         return state

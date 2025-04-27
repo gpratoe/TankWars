@@ -27,6 +27,7 @@ class Tank:
         self.cooldown = 0.5
         self.shoot_time = 0
         self.bullet_id_counter = 0
+        self.is_dead = False
 
         self.physics_manager = physics_manager
         self.tank = physics_manager.create_body(body_type=BodyType.dynamic,
@@ -56,8 +57,7 @@ class Tank:
         Needs to modify the tank's mousex, mousey and is_shooting first
         '''
         if self.health <= 0:
-            self.physics_manager.destroy_body(self.tank)
-            return 1
+            self.is_dead = True
         
         # calculate angle to where the mouse is
         dx = self.mouseX - utils.to_pixel(self.tank.position.x)
@@ -96,7 +96,8 @@ class Tank:
             'mousey': self.mouseY,
             'angle': self.angle,
             'shooting': self.is_shooting,
-            'health': self.health
+            'health': self.health,
+            'is_dead': self.is_dead,
         }
         
     def set_state(self, state):
