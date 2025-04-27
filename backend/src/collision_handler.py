@@ -10,7 +10,7 @@ class CollisionHandler:
             elif isinstance(bodyA.userData, Tank) and isinstance(bodyB.userData, Bullet):
                 print("Tank and bullet collided")
                 bodyA.userData.health -= bodyB.userData.damage
-                #bodyB.userData.isDead = True
+                bodyB.userData.isDead = True
             elif isinstance(bodyA.userData, Bullet) and isinstance(bodyB.userData, Tank):
                 print("Bullet and tank collided")
                 bodyB.userData.health -= bodyA.userData.damage
