@@ -46,8 +46,9 @@ class Bullet:
         returns 1 if the bullet is out of bounds
         0 otherwise
         '''
-        pixel_pos = utils.vec2_to_pixel(self.bullet.position)
-        if pixel_pos[0] < 0 or pixel_pos[0] > GAME_WIDTH or pixel_pos[1] < 0 or pixel_pos[1] > GAME_HEIGHT:
+        self.x, self.y = utils.vec2_to_pixel(self.bullet.position)
+        self.direction = (math.cos(self.bullet.angle), math.sin(self.bullet.angle))
+        if self.x < 0 or self.x > GAME_WIDTH or self.y < 0 or self.y > GAME_HEIGHT:
             self.physics_manager.destroy_body(self.bullet)
             return 1
         if(self.isDead):
