@@ -106,9 +106,7 @@ class Game {
                         
                         } else {
                             const bullet = player_bullets.get(bullet_id);
-                            bullet.bullet.x = bullet_data.x;
-                            bullet.bullet.y = bullet_data.y;
-                            bullet.dir_norm = bullet_data.direction;
+                            bullet.set_state(bullet_data);
                         }
 
 
@@ -182,6 +180,11 @@ class Game {
         this.app.ticker.add(() => {
             for (const key in this.tanks) {
                 this.tanks[key].update();
+            }
+            for (const [player_id, player_bullets] of this.bullets) {
+                for (const bullet of player_bullets.values()) {
+                    bullet.update();
+                }
             }
         })
     }
