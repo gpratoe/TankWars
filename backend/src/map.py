@@ -11,13 +11,12 @@ class Map:
         self.create_boundaries()
     
     def create_boundaries(self):
-        boundries_thickness = BOUNDRIES_THICKNESS
 
         self.physics_manager.create_body(
             body_type=BodyType.static,
             position=utils.vec2_to_world((0, 0)),
             fixture_def=b2FixtureDef(
-                shape=b2PolygonShape(box=utils.vec2_to_world((self.w, boundries_thickness))),
+                shape=b2PolygonShape(box=utils.vec2_to_world((self.w, BOUNDARIES_THICKNESS))),
                 density=0,
                 friction=0
             )
@@ -26,7 +25,7 @@ class Map:
             body_type=BodyType.static,
             position=utils.vec2_to_world((0, self.h)),
             fixture_def=b2FixtureDef(
-                shape=b2PolygonShape(box=utils.vec2_to_world((boundries_thickness, self.h))),
+                shape=b2PolygonShape(box=utils.vec2_to_world((BOUNDARIES_THICKNESS, self.h))),
                 density=0,
                 friction=0
             )
@@ -35,7 +34,7 @@ class Map:
             body_type=BodyType.static,
             position=utils.vec2_to_world((0, self.h)),
             fixture_def=b2FixtureDef(
-                shape=b2PolygonShape(box=utils.vec2_to_world((self.w, boundries_thickness))),
+                shape=b2PolygonShape(box=utils.vec2_to_world((self.w, BOUNDARIES_THICKNESS))),
                 density=0,
                 friction=0
             )
@@ -44,7 +43,7 @@ class Map:
             body_type=BodyType.static,
             position=utils.vec2_to_world((self.w, self.h)),
             fixture_def=b2FixtureDef(
-                shape=b2PolygonShape(box=utils.vec2_to_world((boundries_thickness, self.h))),
+                shape=b2PolygonShape(box=utils.vec2_to_world((BOUNDARIES_THICKNESS, self.h))),
                 density=0,
                 friction=0
             )
@@ -58,26 +57,25 @@ class Map:
         # |   |         ----|
         # |   |             |
         # ----|--------------
-        #
-        # self.physics_manager.create_body(
-        #     body_type=BodyType.static,
-        #     position=utils.vec2_to_world((0, TANK_HEIGHT * 4)),
-        #     fixture_def=b2FixtureDef(
-        #         shape=b2PolygonShape(box=utils.vec2_to_world((100,
-        #                                                       boundries_thickness))),
-        #         density=0,
-        #         friction=0
-        #     )
-        # )
-       
-        # self.physics_manager.create_body(
-        #     body_type=BodyType.static,
-        #     position=utils.vec2_to_world((self.w - BASES_TLEFT_BRIGHT_WIDTH,
-        #                                   self.h - TANK_HEIGHT * 2)),
-        #     fixture_def=b2FixtureDef(
-        #         shape=b2PolygonShape(box=utils.vec2_to_world((BASES_TLEFT_BRIGHT_WIDTH,
-        #                                                       BASES_TLEFT_BRIGHT_HEIGHT))),
-        #         density=0,
-        #         friction=0
-        #     )
-        # )
+
+        self.physics_manager.create_body(
+            body_type=BodyType.static,
+            position=utils.vec2_to_world((BASES_TLEFT_X, BASES_TLEFT_Y)),
+            fixture_def=b2FixtureDef(
+                shape=b2PolygonShape(box=utils.vec2_to_world((BASES_TLEFT_BRIGHT_WIDTH/2,
+                                                              BASES_TLEFT_BRIGHT_HEIGHT/2))),
+                density=0,
+                friction=0
+            )
+        )
+
+        self.physics_manager.create_body(
+            body_type=BodyType.static,
+            position=utils.vec2_to_world((BASES_BRIGHT_X, BASES_BRIGHT_Y)),
+            fixture_def=b2FixtureDef(
+                shape=b2PolygonShape(box=utils.vec2_to_world((BASES_TLEFT_BRIGHT_WIDTH/2,
+                                                              BASES_TLEFT_BRIGHT_HEIGHT/2))),
+                density=0,
+                friction=0
+            )
+        )

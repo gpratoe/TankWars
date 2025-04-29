@@ -9,13 +9,18 @@ TANK_INITIAL_BULLETSPEED = 50
 TANK_INITIAL_DAMAGE = 10
 
 # Map settings
-BOUNDRIES_THICKNESS = 20
+BOUNDARIES_THICKNESS = 20
 
-BASES_TLEFT_BRIGHT_WIDTH = 20
-BASES_TLEFT_BRIGHT_HEIGHT = TANK_HEIGHT * 2
+BASES_TLEFT_BRIGHT_WIDTH = 100
+BASES_TLEFT_BRIGHT_HEIGHT = BOUNDARIES_THICKNESS
 
-BASES_BLEFT_TRIGHT_WIDTH = TANK_WIDTH * 2
-BASES_BLEFT_TRIGHT_HEIGHT = 20
+BASES_TLEFT_X = 0 + BOUNDARIES_THICKNESS + BASES_TLEFT_BRIGHT_WIDTH/2
+BASES_TLEFT_Y = 0 + BOUNDARIES_THICKNESS + TANK_HEIGHT * 3
+BASES_BRIGHT_X = GAME_WIDTH - BOUNDARIES_THICKNESS - BASES_TLEFT_BRIGHT_WIDTH/2
+BASES_BRIGHT_Y = GAME_HEIGHT - BOUNDARIES_THICKNESS - TANK_HEIGHT * 3 
+
+BASES_BLEFT_TRIGHT_WIDTH = BOUNDARIES_THICKNESS
+BASES_BLEFT_TRIGHT_HEIGHT = 100
 
 SETTINGS_JSON = { 
             'world': {
@@ -27,5 +32,16 @@ SETTINGS_JSON = {
                 'height': TANK_HEIGHT,
                 'bullet_speed': TANK_INITIAL_BULLETSPEED,
                 'damage': TANK_INITIAL_DAMAGE,
+            },
+            'map': {
+                'boundaries_thickness': BOUNDARIES_THICKNESS,
+                'bases_tleft_bright_width': BASES_TLEFT_BRIGHT_WIDTH,
+                'bases_tleft_bright_height': BASES_TLEFT_BRIGHT_HEIGHT,
+                'bases_bleft_tright_width': BASES_BLEFT_TRIGHT_WIDTH,
+                'bases_bleft_tright_height': BASES_BLEFT_TRIGHT_HEIGHT,
+                'bases_tleft_x': BASES_TLEFT_X,
+                'bases_tleft_y': BASES_TLEFT_Y,
+                'bases_bright_x': BASES_BRIGHT_X,
+                'bases_bright_y': BASES_BRIGHT_Y,
             }
         }

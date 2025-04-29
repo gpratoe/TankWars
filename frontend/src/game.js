@@ -22,11 +22,12 @@ class Game {
 
         this.sendMessage = sendMessage;
 
-
+        this.settings = settings;
         this.tank_height = settings.tank.height;
         this.tank_width = settings.tank.width;
         this.damage = settings.tank.damage;
         this.bullet_speed = settings.tank.bullet_speed;
+        this.last_mousePos = null;
     }
 
     #handleEvent(event, payload) {
@@ -141,7 +142,7 @@ class Game {
         this.app.stage.hitArea = this.app.screen
         this.app.stage.interactive = true;
         this.container.appendChild(this.canvas)
-        this.gameMap = new GameMap(this.app);
+        this.gameMap = new GameMap(this.app, this.settings);
     }
 
     send_state(){
@@ -161,12 +162,12 @@ class Game {
             const rect = this.app.stage.getBounds();
             const inside_canvas = mousePos.x >= rect.x && mousePos.y >= rect.y;
             if (!inside_canvas) return;
-            
-            
-            if (this.tanks[this.player_id]) {
+
+            if (this.tanks[this.player_id] && this.last_mousePos != mousePos) {
                 this.tanks[this.player_id].mouseX = mousePos.x;
                 this.tanks[this.player_id].mouseY = mousePos.y;
                 this.send_state()
+                this.last_mousePos = mousePos.clone();
             }
         });
         this.app.stage.on("mousedown", (event) => {
