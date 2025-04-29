@@ -99,8 +99,8 @@ class Game {
                                                             bullet_data.x,
                                                             bullet_data.y,
                                                             bullet_data.direction,
-                                                            this.damage,
-                                                            this.bullet_speed,
+                                                            bullet_data.damage,
+                                                            bullet_data.speed,
                                                             this.app);
                             player_bullets.set(bullet_id, newBullet);
                         
