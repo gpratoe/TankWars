@@ -1,1 +1,1 @@
-uvicorn api.api:app --reload --host 127.0.0.0 --port 8000
+uvicorn api.api:app --reload --host 0.0.0.0 --port 8000
