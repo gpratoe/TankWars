@@ -30,8 +30,18 @@ class Bullet:
         
         self.isDead = False
 
+    def _update_locals(self):
+        self.x, self.y = utils.vec2_to_pixel(self.bullet.position)
+
+        velocity = self.bullet.linearVelocity
+        self.speed = utils.to_pixel(velocity.length)
+
+        if velocity.lengthSquared > 0:
+            direction_norm = velocity / velocity.length
+            self.direction = (direction_norm.x, direction_norm.y)
     
     def get_state(self):
+        self._update_locals()
         return {
             "id": self.id,
             "x": utils.to_pixel(self.bullet.position.x),
@@ -46,8 +56,6 @@ class Bullet:
         returns 1 if the bullet is out of bounds
         0 otherwise
         '''
-        self.x, self.y = utils.vec2_to_pixel(self.bullet.position)
-        self.direction = (math.cos(self.bullet.angle), math.sin(self.bullet.angle))
         if self.x < 0 or self.x > GAME_WIDTH or self.y < 0 or self.y > GAME_HEIGHT:
             self.physics_manager.destroy_body(self.bullet)
             return 1
