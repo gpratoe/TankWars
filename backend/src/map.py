@@ -79,3 +79,25 @@ class Map:
                 friction=0
             )
         )
+
+        self.physics_manager.create_body(
+            body_type=BodyType.static,
+            position=utils.vec2_to_world((BASES_TRIGHT_X, BASES_TRIGHT_Y)),
+            fixture_def=b2FixtureDef(
+                shape=b2PolygonShape(box=utils.vec2_to_world((BASES_BLEFT_TRIGHT_WIDTH/2,
+                                                              BASES_BLEFT_TRIGHT_HEIGHT/2))),
+                density=0,
+                friction=0
+            )
+        )
+
+        self.physics_manager.create_body(
+            body_type=BodyType.static,
+            position=utils.vec2_to_world((BASES_BLEFT_X, BASES_BLEFT_Y)),
+            fixture_def=b2FixtureDef(
+                shape=b2PolygonShape(box=utils.vec2_to_world((BASES_BLEFT_TRIGHT_WIDTH/2,
+                                                              BASES_BLEFT_TRIGHT_HEIGHT/2))),
+                density=0,
+                friction=0
+            )
+        )

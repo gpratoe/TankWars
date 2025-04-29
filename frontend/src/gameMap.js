@@ -64,7 +64,25 @@ class GameMap {
             position: { x: x - bases_tleft_bright_width/2, y: y - bases_tleft_bright_height/2 } 
         });
 
-        const boundaries = [sprite1, sprite2, sprite3, sprite4, base1, base2];
+        x = this.map_settings.bases_tright_x;
+        y = this.map_settings.bases_tright_y;
+        const base3 = new TilingSprite({
+            texture: this.texture,
+            width: bases_bleft_tright_width,
+            height: bases_bleft_tright_height,
+            position: { x: x - bases_bleft_tright_width/2, y: y - bases_bleft_tright_height/2 } 
+        });
+
+        x = this.map_settings.bases_bleft_x;
+        y = this.map_settings.bases_bleft_y;
+        const base4 = new TilingSprite({
+            texture: this.texture,
+            width: bases_bleft_tright_width,
+            height: bases_bleft_tright_height,
+            position: { x: x - bases_bleft_tright_width/2, y: y - bases_bleft_tright_height/2 } 
+        });
+
+        const boundaries = [sprite1, sprite2, sprite3, sprite4, base1, base2, base3, base4];
         for (const boundary of boundaries) {
             this.app.stage.addChild(boundary);
         }
