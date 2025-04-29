@@ -46,10 +46,10 @@ class Game:
         self.map = Map(self.physics_manager, self.w, self.h)
         self.map.create_boundaries()
         
-        corners = [(TANK_WIDTH,TANK_HEIGHT),
-                    (self.w - TANK_WIDTH, self.h - TANK_HEIGHT),
-                    (self.w - TANK_WIDTH, 0 +TANK_HEIGHT),
-                    (0 + TANK_WIDTH, self.h - TANK_HEIGHT)]
+        corners = [(TANK_WIDTH + BOUNDRIES_THICKNESS, TANK_HEIGHT + BOUNDRIES_THICKNESS),
+                    (self.w - TANK_WIDTH - BOUNDRIES_THICKNESS, self.h - TANK_HEIGHT - BOUNDRIES_THICKNESS),
+                    (self.w - TANK_WIDTH - BOUNDRIES_THICKNESS, 0 + TANK_HEIGHT + BOUNDRIES_THICKNESS),
+                    (0 + TANK_WIDTH + BOUNDRIES_THICKNESS, self.h - TANK_HEIGHT - BOUNDRIES_THICKNESS)]
         
         angles = [math.degrees(math.atan2(middle[1] - corner[1], middle[0] - corner[0])) for corner in corners]
 

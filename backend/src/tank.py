@@ -16,8 +16,8 @@ class Tank:
         self.pos = pos
         self.w = w
         self.h = h
-        self.mouseX = 0
-        self.mouseY = 0
+        self.mouseX = pos[0]
+        self.mouseY = pos[1]
         self.is_shooting = False
         self.angle = angle
         self.alive_bullets = []

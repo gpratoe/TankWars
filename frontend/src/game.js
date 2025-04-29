@@ -157,8 +157,13 @@ class Game {
     }
     update() {
         this.app.stage.on("pointermove", (event) => {
+            const mousePos = event.global;
+            const rect = this.app.stage.getBounds();
+            const inside_canvas = mousePos.x >= rect.x && mousePos.y >= rect.y;
+            if (!inside_canvas) return;
+            
+            
             if (this.tanks[this.player_id]) {
-                const mousePos = event.global;
                 this.tanks[this.player_id].mouseX = mousePos.x;
                 this.tanks[this.player_id].mouseY = mousePos.y;
                 this.send_state()

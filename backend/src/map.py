@@ -11,7 +11,7 @@ class Map:
         self.create_boundaries()
     
     def create_boundaries(self):
-        boundries_thickness = 20
+        boundries_thickness = BOUNDRIES_THICKNESS
 
         self.physics_manager.create_body(
             body_type=BodyType.static,
