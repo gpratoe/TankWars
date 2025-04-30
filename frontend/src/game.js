@@ -142,7 +142,7 @@ class Game {
         this.app.stage.hitArea = this.app.screen
         this.app.stage.interactive = true;
         this.container.appendChild(this.canvas)
-        this.gameMap = new GameMap(this.app, this.settings);
+        this.gameMap = new GameMap(this.app, this.settings.map);
     }
 
     send_state(){

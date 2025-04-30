@@ -6,18 +6,16 @@ class GameMap {
         this.app = app;
         this.texture = Assets.get('/assets/boundries_tile.png');
         this.settings = settings;
-        this.map_settings = settings.map;
         this.set_boundries();
     }
 
     set_boundries() {
         
-        const boundaries_thickness = this.map_settings.boundaries_thickness;
-        const bases_tleft_bright_width = this.map_settings.bases_tleft_bright_width;
-        const bases_tleft_bright_height = this.map_settings.bases_tleft_bright_height;
-        const bases_bleft_tright_width = this.map_settings.bases_bleft_tright_width;
-        const bases_bleft_tright_height = this.map_settings.bases_bleft_tright_height;
-        const tank_height = this.settings.tank_height;
+        const boundaries_thickness = this.settings.boundaries_thickness;
+        const bases_tleft_bright_width = this.settings.bases_tleft_bright_width;
+        const bases_tleft_bright_height = this.settings.bases_tleft_bright_height;
+        const bases_bleft_tright_width = this.settings.bases_bleft_tright_width;
+        const bases_bleft_tright_height = this.settings.bases_bleft_tright_height;
 
         const sprite1 = new TilingSprite({
             texture: this.texture,
@@ -46,8 +44,8 @@ class GameMap {
             position: { x: 0, y: this.app.screen.height - boundaries_thickness }
         });
 
-        let x = this.map_settings.bases_tleft_x;
-        let y = this.map_settings.bases_tleft_y;
+        let x = this.settings.bases_tleft_x;
+        let y = this.settings.bases_tleft_y;
         const base1 = new TilingSprite({
             texture: this.texture,
             width: bases_tleft_bright_width,
@@ -55,8 +53,8 @@ class GameMap {
             position: { x: x - bases_tleft_bright_width/2, y: y - bases_tleft_bright_height/2 } // position is based on the center of the object somehow so i have to substract half the height to compensate
         });
 
-        x = this.map_settings.bases_bright_x;
-        y = this.map_settings.bases_bright_y;
+        x = this.settings.bases_bright_x;
+        y = this.settings.bases_bright_y;
         const base2 = new TilingSprite({
             texture: this.texture,
             width: bases_tleft_bright_width,
@@ -64,8 +62,8 @@ class GameMap {
             position: { x: x - bases_tleft_bright_width/2, y: y - bases_tleft_bright_height/2 } 
         });
 
-        x = this.map_settings.bases_tright_x;
-        y = this.map_settings.bases_tright_y;
+        x = this.settings.bases_tright_x;
+        y = this.settings.bases_tright_y;
         const base3 = new TilingSprite({
             texture: this.texture,
             width: bases_bleft_tright_width,
@@ -73,8 +71,8 @@ class GameMap {
             position: { x: x - bases_bleft_tright_width/2, y: y - bases_bleft_tright_height/2 } 
         });
 
-        x = this.map_settings.bases_bleft_x;
-        y = this.map_settings.bases_bleft_y;
+        x = this.settings.bases_bleft_x;
+        y = this.settings.bases_bleft_y;
         const base4 = new TilingSprite({
             texture: this.texture,
             width: bases_bleft_tright_width,
