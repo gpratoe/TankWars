@@ -3,6 +3,10 @@ from src.utils import utils
 from Box2D import b2FixtureDef, b2PolygonShape
 
 class Wall:
+    '''
+    Class representing a wall in the game.
+    x and y are the coordinates of the center of the wall.
+    '''
     def __init__(self, x, y, width, height, physics_manager: PhysicsManager):
         self.physics_manager = physics_manager
         self.x = x
