@@ -2,7 +2,7 @@ from src.physics_manager import PhysicsManager, BodyType
 from src.utils import utils
 from Box2D import b2FixtureDef, b2PolygonShape
 from src.settings import *
-from wall import Wall
+from src.wall import Wall
 
 class Map:
     def __init__(self, physics_manager: PhysicsManager, w=100, h=100):
@@ -17,7 +17,7 @@ class Map:
             body_type=BodyType.static,
             position=utils.vec2_to_world((0, 0)),
             fixture_def=b2FixtureDef(
-                shape=b2PolygonShape(box=utils.vec2_to_world((self.w, BOUNDARIES_THICKNESS))),
+                shape=b2PolygonShape(box=utils.vec2_to_world((self.w/2, BOUNDARIES_THICKNESS/2))),
                 density=0,
                 friction=0
             )
@@ -26,7 +26,7 @@ class Map:
             body_type=BodyType.static,
             position=utils.vec2_to_world((0, self.h)),
             fixture_def=b2FixtureDef(
-                shape=b2PolygonShape(box=utils.vec2_to_world((BOUNDARIES_THICKNESS, self.h))),
+                shape=b2PolygonShape(box=utils.vec2_to_world((BOUNDARIES_THICKNESS/2, self.h/2))),
                 density=0,
                 friction=0
             )
@@ -35,7 +35,7 @@ class Map:
             body_type=BodyType.static,
             position=utils.vec2_to_world((0, self.h)),
             fixture_def=b2FixtureDef(
-                shape=b2PolygonShape(box=utils.vec2_to_world((self.w, BOUNDARIES_THICKNESS))),
+                shape=b2PolygonShape(box=utils.vec2_to_world((self.w/2, BOUNDARIES_THICKNESS/2))),
                 density=0,
                 friction=0
             )
@@ -44,7 +44,7 @@ class Map:
             body_type=BodyType.static,
             position=utils.vec2_to_world((self.w, self.h)),
             fixture_def=b2FixtureDef(
-                shape=b2PolygonShape(box=utils.vec2_to_world((BOUNDARIES_THICKNESS, self.h))),
+                shape=b2PolygonShape(box=utils.vec2_to_world((BOUNDARIES_THICKNESS/2, self.h/2))),
                 density=0,
                 friction=0
             )
