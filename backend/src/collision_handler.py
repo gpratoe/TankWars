@@ -5,40 +5,43 @@ from src.wall import Wall
 class CollisionHandler:
     
     def begin_contact_callback(self, bodyA, bodyB):
-        if bodyA.userData is not None and bodyB.userData is not None:
-            a_data = bodyA.userData
-            b_data = bodyB.userData
-            types = (type(a_data).__name__, type(b_data).__name__)
+        if bodyA.userData is None or bodyB.userData is None:
+            return
+        
+        first = bodyA.userData
+        second = bodyB.userData
+        a_type = type(first).__name__
+        b_type = type(second).__name__
+
+        # Just so i dont have to duplicte cases
+        if a_type < b_type:
+            types = (a_type, b_type)
+        else:
+            types = (b_type, a_type)
+            first, second = second, first
             
-            match types:
-                
-                case ("Tank", "Tank"):
-                    print("Tanks collided")
+        
+        match types:
 
-                case ("Tank", "Bullet"):
-                    print("Tank and bullet collided")
-                    bodyA.userData.health -= bodyB.userData.damage
-                    bodyB.userData.isDead = True
+            case ("Tank", "Tank"):
+                print("Tanks collided")
 
-                case ("Bullet", "Tank"):
-                    print("Bullet and tank collided")
-                    bodyB.userData.health -= bodyA.userData.damage
+            case ("Bullet", "Tank"):
+                print("Tank and bullet collided")
+                second.health -= first.damage
+                first.isDead = True
 
-                case ("Bullet", "Bullet"):
-                    bodyA.userData.isDead = True
-                    bodyB.userData.isDead = True
-                    print("Bullets collided")
+            case ("Bullet", "Bullet"):
+                first.isDead = True
+                second.isDead = True
+                print("Bullets collided")
 
-                case ("Wall", "Bullet"):
-                    print("Bullet and wall collided")
-                    bodyB.userData.isDead = True
+            case ("Bullet", "Wall"):
+                print("Bullet and wall collided")
+                first.bounces_left -= 1
 
-                case ("Bullet", "Wall"):
-                    print("Bullet and wall collided")
-                    bodyA.userData.isDead = True
-
-                case _:
-                    print("Unknown collision")
+            case _:
+                print("Unknown collision")
             
     def end_contact_callback(self, bodyA, bodyB):
         pass
