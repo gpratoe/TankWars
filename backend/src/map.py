@@ -1,6 +1,4 @@
-from src.physics_manager import PhysicsManager, BodyType
-from src.utils import utils
-from Box2D import b2FixtureDef, b2PolygonShape
+from src.physics_manager import PhysicsManager
 from src.settings import *
 from src.wall import Wall
 
