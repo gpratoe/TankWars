@@ -13,43 +13,34 @@ class Map:
     
     def create_boundaries(self):
 
-        self.physics_manager.create_body(
-            body_type=BodyType.static,
-            position=utils.vec2_to_world((0, 0)),
-            fixture_def=b2FixtureDef(
-                shape=b2PolygonShape(box=utils.vec2_to_world((self.w/2, BOUNDARIES_THICKNESS/2))),
-                density=0,
-                friction=0
-            )
+        Wall(
+            x= self.w/2,
+            y= 0 + BOUNDARIES_THICKNESS/2,
+            width= self.w,
+            height= BOUNDARIES_THICKNESS,
+            physics_manager=self.physics_manager
         )
-        self.physics_manager.create_body(
-            body_type=BodyType.static,
-            position=utils.vec2_to_world((0, self.h)),
-            fixture_def=b2FixtureDef(
-                shape=b2PolygonShape(box=utils.vec2_to_world((BOUNDARIES_THICKNESS/2, self.h/2))),
-                density=0,
-                friction=0
-            )
+        Wall(
+            x= BOUNDARIES_THICKNESS/2,
+            y= self.h/2,
+            width= BOUNDARIES_THICKNESS,
+            height= self.h,
+            physics_manager=self.physics_manager
         )
-        self.physics_manager.create_body(
-            body_type=BodyType.static,
-            position=utils.vec2_to_world((0, self.h)),
-            fixture_def=b2FixtureDef(
-                shape=b2PolygonShape(box=utils.vec2_to_world((self.w/2, BOUNDARIES_THICKNESS/2))),
-                density=0,
-                friction=0
-            )
+        Wall(
+            x = self.w - BOUNDARIES_THICKNESS/2,
+            y = self.h/2,
+            width= BOUNDARIES_THICKNESS,
+            height= self.h,
+            physics_manager=self.physics_manager
         )
-        self.physics_manager.create_body(
-            body_type=BodyType.static,
-            position=utils.vec2_to_world((self.w, self.h)),
-            fixture_def=b2FixtureDef(
-                shape=b2PolygonShape(box=utils.vec2_to_world((BOUNDARIES_THICKNESS/2, self.h/2))),
-                density=0,
-                friction=0
-            )
+        Wall(
+            x= self.w/2,
+            y= self.h - BOUNDARIES_THICKNESS/2,
+            width= self.w,
+            height= BOUNDARIES_THICKNESS,
+            physics_manager=self.physics_manager
         )
-
         # need to make this:
         # --------------|----
         # |             |   |
@@ -60,30 +51,30 @@ class Map:
         # ----|--------------
 
         Wall(
-            x=utils.to_pixel(BASES_TLEFT_X),
-            y=utils.to_pixel(BASES_TLEFT_Y),
-            width=utils.to_pixel(BASES_TLEFT_BRIGHT_WIDTH),
-            height=utils.to_pixel(BASES_TLEFT_BRIGHT_HEIGHT),
+            x=BASES_TLEFT_X,
+            y=BASES_TLEFT_Y,
+            width=BASES_TLEFT_BRIGHT_WIDTH,
+            height=BASES_TLEFT_BRIGHT_HEIGHT,
             physics_manager=self.physics_manager
         )
         Wall(
-            x=utils.to_pixel(BASES_BRIGHT_X),
-            y=utils.to_pixel(BASES_BRIGHT_Y),
-            width=utils.to_pixel(BASES_BLEFT_TRIGHT_WIDTH),
-            height=utils.to_pixel(BASES_BLEFT_TRIGHT_HEIGHT),
+            x=BASES_BRIGHT_X,
+            y=BASES_BRIGHT_Y,
+            width=BASES_TLEFT_BRIGHT_WIDTH,
+            height=BASES_TLEFT_BRIGHT_HEIGHT,
             physics_manager=self.physics_manager
         )
         Wall(
-            x=utils.to_pixel(BASES_BLEFT_X),
-            y=utils.to_pixel(BASES_BLEFT_Y),
-            width=utils.to_pixel(BASES_BLEFT_TRIGHT_WIDTH),
-            height=utils.to_pixel(BASES_BLEFT_TRIGHT_HEIGHT),
+            x=BASES_BLEFT_X,
+            y=BASES_BLEFT_Y,
+            width=BASES_BLEFT_TRIGHT_WIDTH,
+            height=BASES_BLEFT_TRIGHT_HEIGHT,
             physics_manager=self.physics_manager
         )
         Wall(
-            x=utils.to_pixel(BASES_BLEFT_X),
-            y=utils.to_pixel(BASES_BLEFT_Y),
-            width=utils.to_pixel(BASES_BLEFT_TRIGHT_WIDTH),
-            height=utils.to_pixel(BASES_BLEFT_TRIGHT_HEIGHT),
+            x=BASES_TRIGHT_X,
+            y=BASES_TRIGHT_Y,
+            width=BASES_BLEFT_TRIGHT_WIDTH,
+            height=BASES_BLEFT_TRIGHT_HEIGHT,
             physics_manager=self.physics_manager
         )
