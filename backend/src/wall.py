@@ -1,5 +1,5 @@
-from physics_manager import PhysicsManager, BodyType
-from utils import utils
+from src.physics_manager import PhysicsManager, BodyType
+from src.utils import utils
 from Box2D import b2FixtureDef, b2PolygonShape
 
 class Wall:
