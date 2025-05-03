@@ -29,6 +29,8 @@ class Bullet:
                                                 userData=self)
         
         self.isDead = False
+        self.bounces_left = 1
+
 
     def _update_locals(self):
         self.x, self.y = utils.vec2_to_pixel(self.bullet.position)
@@ -56,9 +58,10 @@ class Bullet:
         returns 1 if the bullet is out of bounds
         0 otherwise
         '''
+        if (self.bounces_left < 0):
+            self.isDead = True
         if self.x < 0 or self.x > GAME_WIDTH or self.y < 0 or self.y > GAME_HEIGHT:
-            self.physics_manager.destroy_body(self.bullet)
-            return 1
+            self.isDead = True
         if(self.isDead):
             self.physics_manager.destroy_body(self.bullet)
             return 1
