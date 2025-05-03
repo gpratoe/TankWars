@@ -12,7 +12,7 @@ class Wall:
         
         self.body = physics_manager.create_body(
             body_type=BodyType.static,
-            position=utils.vec2_to_world((0, 0)),
+            position=utils.vec2_to_world((x, y)),
             fixture_def=b2FixtureDef(
                 shape=b2PolygonShape(box=utils.vec2_to_world((width/2, height/2))),
                 density=0,
