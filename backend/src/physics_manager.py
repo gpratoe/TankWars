@@ -13,10 +13,12 @@ class PhysicsManager:
         self.world = b2World(gravity=(0, 0), doSleep=True)
         self.world.contactListener = ContactListener(CollisionHandler())
         self.time_step = 1.0 / 60
+        self.tick = 0
 
     
     def update(self):
         self.world.Step(self.time_step, 10, 3)
+        self.tick += 1
 
     def create_body(self, body_type, position, fixture_def, **kwargs):
         return self.world.CreateBody(
