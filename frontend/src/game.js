@@ -172,13 +172,13 @@ class Game {
             }
         });
         this.app.stage.on("mousedown", (event) => {
-            if(this.tanks[this.player_id]){
+            if(this.tanks[this.player_id] && !this.tanks[this.player_id].isShooting){
                 this.tanks[this.player_id].isShooting = true
                 this.send_state()
             }
         })
         this.app.stage.on("mouseup", (event) => {
-            if(this.tanks[this.player_id]){
+            if(this.tanks[this.player_id] && this.tanks[this.player_id].isShooting){
                 this.tanks[this.player_id].isShooting = false
                 this.send_state()
             }
