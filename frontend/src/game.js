@@ -102,7 +102,8 @@ class Game {
                                                             bullet_data.direction,
                                                             bullet_data.damage,
                                                             bullet_data.speed,
-                                                            this.app);
+                                                            this.app,
+                                                            (player_id == this.player_id));
                             player_bullets.set(bullet_id, newBullet);
                         
                         } else {
