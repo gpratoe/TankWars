@@ -48,8 +48,8 @@ class Bullet:
         self._update_locals()
         return {
             "id": self.id,
-            "x": utils.to_pixel(self.bullet.position.x),
-            "y": utils.to_pixel(self.bullet.position.y),
+            "x": self.x,
+            "y": self.y,
             "direction": self.direction,
             "damage": self.damage,
             "speed": self.speed
