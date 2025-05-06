@@ -3,6 +3,7 @@ from src.utils import utils
 import math
 from src.settings import *
 from src.physics_manager import PhysicsManager, BodyType
+from src.collision_handler import CollisionType
 
 class Bullet:
     def __init__(self, id, pos, angle, damage, speed, groupIndex, physics_manager: PhysicsManager):
@@ -28,7 +29,8 @@ class Bullet:
                                                 linearVelocity=(speed * self.direction[0], speed * self.direction[1]),
                                                 userData=self)
         
-        self.isDead = False
+        self.is_dead = False
+        self.collided_with = None
         self.bounces_left = 1
 
 
@@ -52,17 +54,45 @@ class Bullet:
             "damage": self.damage,
             "speed": self.speed
         }
+    
+    def _act_on_collision(self):
+        '''
+        Checks if the bullet has collided with something and acts accordingly
+
+        '''
+        ##
+        # The main reason for this function is to avoid the ocasional double collision
+        # that box2d generates when the bullet hits a wall, generating a fake double bounce that 
+        # leads to the bullet being destroyed when it shouldnt.
+        # Something that will happen if i just act on the collision in the ContactListener / CollisionHandler.       
+
+        if self.collided_with is None:
+            return
+        
+        match self.collided_with:
+            case CollisionType.TANK:
+                self.is_dead = True
+            case CollisionType.BULLET:
+                self.is_dead = True
+            case CollisionType.WALL:
+                self.bounces_left -= 1
+                if self.bounces_left < 0:
+                    self.is_dead = True
+            case _:
+                pass
+        self.collided_with = None
+
     def update(self):
         '''
         Checks if the bullet is out of bounds and destroys it if it is
         returns 1 if the bullet is out of bounds
         0 otherwise
         '''
-        if (self.bounces_left < 0):
-            self.isDead = True
+        self._act_on_collision()
+
         if self.x < 0 or self.x > GAME_WIDTH or self.y < 0 or self.y > GAME_HEIGHT:
-            self.isDead = True
-        if(self.isDead):
+            self.is_dead = True
+        if(self.is_dead):
             self.physics_manager.destroy_body(self.bullet)
             return 1
         return 0

@@ -1,3 +1,10 @@
+from enum import Enum
+
+class CollisionType(Enum):
+    BULLET = 1
+    TANK = 2
+    WALL = 3
+
 class CollisionHandler:
     
     def begin_contact_callback(self, bodyA, bodyB):
@@ -23,22 +30,21 @@ class CollisionHandler:
                 print("Tanks collided")
 
             case ("Bullet", "Tank"):
-                print("Tank and bullet collided")
                 second.health -= first.damage
-                first.isDead = True
+                first.collided_with = CollisionType.TANK
+                print("Tank and bullet collided")
 
             case ("Bullet", "Bullet"):
-                first.isDead = True
-                second.isDead = True
+                first.collided_with = CollisionType.BULLET
+                second.collided_with = CollisionType.BULLET
                 print("Bullets collided")
 
             case ("Bullet", "Wall"):
+                first.collided_with = CollisionType.WALL
                 print("Bullet and wall collided")
-                first.bounces_left -= 1
 
             case _:
                 print("Unknown collision")
             
     def end_contact_callback(self, bodyA, bodyB):
-        print("End contact")
         pass
