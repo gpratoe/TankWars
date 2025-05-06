@@ -169,8 +169,7 @@ class Lobby:
         
         resp = gs.start_game(self.lobby_id, owner_id)
         
-        collision_handler = CollisionHandler()
-        physics_manager = PhysicsManager(begin_contact_callback=collision_handler.begin_contact_callback)
+        physics_manager = PhysicsManager()
         entity_manager = EntityManager(physics_manager=physics_manager)
 
         self.game = Game(players=self.players,

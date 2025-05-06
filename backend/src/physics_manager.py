@@ -1,6 +1,7 @@
 from Box2D import b2World
 from src.contactlistener import ContactListener
 from enum import IntEnum
+from src.collision_handler import CollisionHandler
 
 class BodyType(IntEnum):
     static = 0
@@ -8,9 +9,9 @@ class BodyType(IntEnum):
     dynamic = 2
 
 class PhysicsManager:
-    def __init__(self, begin_contact_callback: callable):
+    def __init__(self):
         self.world = b2World(gravity=(0, 0), doSleep=True)
-        self.world.contactListener = ContactListener(begin_contact_callback)
+        self.world.contactListener = ContactListener(CollisionHandler())
         self.time_step = 1.0 / 60
 
     

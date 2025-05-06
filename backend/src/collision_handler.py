@@ -1,7 +1,3 @@
-from src.tank import Tank
-from src.bullet import Bullet
-from src.wall import Wall
-
 class CollisionHandler:
     
     def begin_contact_callback(self, bodyA, bodyB):
@@ -44,4 +40,5 @@ class CollisionHandler:
                 print("Unknown collision")
             
     def end_contact_callback(self, bodyA, bodyB):
+        print("End contact")
         pass
