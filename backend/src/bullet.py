@@ -4,6 +4,7 @@ import math
 from src.settings import *
 from src.physics_manager import PhysicsManager, BodyType
 from src.collision_handler import CollisionType
+import time
 
 class Bullet:
     def __init__(self, id, pos, angle, damage, speed, groupIndex, physics_manager: PhysicsManager):
@@ -52,7 +53,8 @@ class Bullet:
             "y": self.y,
             "direction": self.direction,
             "damage": self.damage,
-            "speed": self.speed
+            "speed": self.speed,
+            "timestamp": time.time()*1000,
         }
     
     def _act_on_collision(self):

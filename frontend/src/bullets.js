@@ -27,7 +27,7 @@ class Bullets {
             direction: state.direction,
             damage: state.damage,
             speed: state.speed,
-            timestamp: Date.now()
+            timestamp: state.timestamp
         }
         this.state_buffer.push(new_state);
         this.state_buffer = this.state_buffer.filter(s => Date.now() - s.timestamp <= 200);
