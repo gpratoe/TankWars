@@ -1,5 +1,6 @@
 import { Container, Assets, Sprite } from "pixi.js";
 import { HealthBar } from "./healthbar";
+import { InterpolationBuffer } from "./InterpolationBuffer";
 
 class Tank {
     constructor(player_id, name, color, x, y, w , h, angle, damage, bullet_speed, app, is_local = false)
@@ -21,15 +22,36 @@ class Tank {
         this.mouseX = x;
         this.mouseY = y;
         this.is_local = is_local;
-        this.state_buffer = [{
+        const initial_state = {
             x: x,
             y: y,
             angle: angle,
-            timestamp: Date.now()
-        }];
-       // this.#setup();
+
+        }
+        this.interpolation_buffer = new InterpolationBuffer(initial_state, 50, this.interp_states);
     }
 
+    interp_states(older_state, newer_state, t){
+        const x = older_state.x + (newer_state.x - older_state.x) * t;
+        const y = older_state.y + (newer_state.y - older_state.y) * t;
+
+        // Para la rotacion:
+        // Normalizar la diferencia al rango [-π, π]
+        const end = newer_state.angle;
+        const start = older_state.angle;
+        const twoPi = 2 * Math.PI;
+        let diff = (end - start) % twoPi;   // Diferencia módulo 2π
+        if (diff > Math.PI) diff -= twoPi;  // Si es mayor a π, ajusta al camino corto negativo
+        if (diff < -Math.PI) diff += twoPi; // Si es menor a -π, ajusta al camino corto positivo
+        const angle = start + diff * t;     // Interpolar con la diferencia ajustada
+        
+
+        return {
+            x: x,
+            y: y,
+            angle: angle
+        }
+    }
 
     #setup_container(){
         this.container = new Container({
@@ -69,8 +91,7 @@ class Tank {
             angle: state.angle,
             timestamp: Date.now()
         }
-        this.state_buffer.push(new_state);
-        this.state_buffer = this.state_buffer.filter(s => Date.now() - s.timestamp <= 200);
+        this.interpolation_buffer.enqueue(new_state);
 
         this.x = state.tankx;
         this.y = state.tanky;
@@ -81,7 +102,7 @@ class Tank {
         }
         this.health = state.health;
     }
-    
+
     #lerpAngle(start, end, t) {
         // Normalizar la diferencia al rango [-π, π]
         const twoPi = 2 * Math.PI;
@@ -99,18 +120,11 @@ class Tank {
     }
     
     interpolate_from_buffer() {
-        if (this.state_buffer.length < 2) return;
+        const state = this.interpolation_buffer.getInterpolatedState(Date.now());
+        this.container.position.x = state.x;
+        this.container.position.y = state.y;
+        this.container.rotation = state.angle;
 
-        const render_time = Date.now() - 50;
-        if (this.state_buffer[0].timestamp > render_time){
-            return;
-        }
-        
-        this.x = this.state_buffer[0].x;
-        this.y = this.state_buffer[0].y;
-        this.angle = this.state_buffer[0].angle;
-        this.local_update();
-        this.state_buffer.splice(0, 1);
     }
 
     update() {
