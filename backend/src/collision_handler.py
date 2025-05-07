@@ -27,24 +27,21 @@ class CollisionHandler:
         match types:
 
             case ("Tank", "Tank"):
-                print("Tanks collided")
-
+                pass
+            
             case ("Bullet", "Tank"):
                 second.health -= first.damage
                 first.collided_with = CollisionType.TANK
-                print("Tank and bullet collided")
 
             case ("Bullet", "Bullet"):
                 first.collided_with = CollisionType.BULLET
                 second.collided_with = CollisionType.BULLET
-                print("Bullets collided")
 
             case ("Bullet", "Wall"):
                 first.collided_with = CollisionType.WALL
-                print("Bullet and wall collided")
 
             case _:
-                print("Unknown collision")
-            
+                pass
+    
     def end_contact_callback(self, bodyA, bodyB):
         pass
