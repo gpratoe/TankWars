@@ -45,7 +45,7 @@ class Tank:
         if time.time() - self.shoot_time <= self.cooldown:
             return
         
-        bullet_pos = (self.pos[0] + self.w * math.cos(self.angle), self.pos[1] + self.h * math.sin(self.angle))
+        bullet_pos = (self.pos[0] + self.w/2 * math.cos(self.angle), self.pos[1] + self.h/2 * math.sin(self.angle))
         self.alive_bullets.append(Bullet(self.bullet_id_counter, bullet_pos, self.angle, self.damage, self.bullet_speed, self.groupIndex, self.physics_manager))
         
         self.bullet_id_counter += 1
