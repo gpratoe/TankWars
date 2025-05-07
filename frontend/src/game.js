@@ -49,7 +49,7 @@ class Game {
 
                 this.tanks[player_id] = new Tank(player_id, name, color, x, y,
                                                  this.tank_width, this.tank_height,
-                                                  angle, this.damage, this.bullet_speed, this.app, (player_id == this.player_id));
+                                                  angle, this.app, (player_id == this.player_id));
                 this.bullets[player_id] = [];
                 this.update();
             }

@@ -3,7 +3,7 @@ import { HealthBar } from "./healthbar";
 import { InterpolationBuffer } from "./InterpolationBuffer";
 
 class Tank {
-    constructor(player_id, name, color, x, y, w , h, angle, damage, bullet_speed, app, is_local = false)
+    constructor(player_id, name, color, x, y, w , h, angle, app, is_local = false)
     {
         this.player_id = player_id
         this.app = app;
@@ -15,8 +15,6 @@ class Tank {
         this.w = w;
         this.h = h;
         this.angle = angle;
-        this.damage = damage;
-        this.bullet_speed = bullet_speed;
         this.#setup_container();
         this.isShooting = false;
         this.mouseX = x;
