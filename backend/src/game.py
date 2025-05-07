@@ -73,13 +73,13 @@ class Game:
         while self.running:
             self.physics_manager.update()
             
-            state = self.entity_manager.update()
-            
-            if state != self.prev_state:
-                await self.broadcast({
-                    "event": "state",
-                    "payload": state
-                })
-            self.prev_state = state
+            if self.physics_manager.tick % 3 == 0:
+                state = self.entity_manager.update()
+                if state != self.prev_state:
+                    await self.broadcast({
+                        "event": "state",
+                        "payload": state
+                    })
+                self.prev_state = state
 
             await asyncio.sleep(self.physics_manager.time_step)
