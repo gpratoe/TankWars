@@ -85,7 +85,7 @@ class Game {
                             this.bullets[bullet_id].set_state(bullet_state);
                         }
 
-                    } else if (bullets[bullet_id].is_dead == false) {
+                    } else {
                         this.bullets[bullet_id] = new Bullets(
                                                             bullet_id,
                                                             bullet_state.x,

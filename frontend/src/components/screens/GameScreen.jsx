@@ -13,11 +13,12 @@ function GameScreen({ }) {
   const gameRef = useRef(null);
   const ws_url = `${WS_URL}/game/${lobbyId}/ws?player_id=${player.id}`;
 
-  const {ws, sendMessage} = useWebSocket(ws_url, (data) => {
+  const onMessage = useCallback((data) => {
     if (gameRef.current){
       gameRef.current.handleWebSocketMessage(data);
     }
-  });
+  }, []);
+  const {ws, sendMessage} = useWebSocket(ws_url, onMessage);
 
 
   useEffect(() => {
