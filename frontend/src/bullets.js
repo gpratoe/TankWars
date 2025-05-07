@@ -62,20 +62,6 @@ class Bullets {
         this.speed = state.speed;
     }
 
-    local_update() {
-        let dx = this.x - this.bullet.position.x;
-        let dy = this.y - this.bullet.position.y;
-        let distSq = dx*dx + dy*dy;
-        
-        let lerp_factor = Math.min(1.0, 0.05 + distSq / 2000);
-        
-        // deadzone to prevent micro-movements
-        if (distSq > 0.1) {
-            this.bullet.position.x += (this.x - this.bullet.position.x) * lerp_factor;
-            this.bullet.position.y += (this.y - this.bullet.position.y) * lerp_factor;
-        }
-    }
-
     interpolate_from_buffer() {
         const state = this.interpolation_buffer.getInterpolatedState(Date.now());
         console.log(state);
@@ -85,11 +71,8 @@ class Bullets {
     }
 
     update() {
-        if (this.is_local) {
-            this.local_update();
-        }else{
-            this.interpolate_from_buffer();
-        }
+
+        this.interpolate_from_buffer();
     }
 }
 

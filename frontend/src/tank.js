@@ -103,22 +103,6 @@ class Tank {
         this.health = state.health;
     }
 
-    #lerpAngle(start, end, t) {
-        // Normalizar la diferencia al rango [-π, π]
-        const twoPi = 2 * Math.PI;
-        let diff = (end - start) % twoPi; // Diferencia módulo 2π
-        if (diff > Math.PI) diff -= twoPi; // Si es mayor a π, ajusta al camino corto negativo
-        if (diff < -Math.PI) diff += twoPi; // Si es menor a -π, ajusta al camino corto positivo
-        return start + diff * t; // Interpolar con la diferencia ajustada
-    }
-
-    local_update(){
-        let lerp_factor = 0.1;
-        this.container.position.x += (this.x - this.container.position.x) * lerp_factor;
-        this.container.position.y += (this.y - this.container.position.y) * lerp_factor;
-        this.container.rotation = this.#lerpAngle(this.container.rotation, this.angle, lerp_factor);
-    }
-    
     interpolate_from_buffer() {
         const state = this.interpolation_buffer.getInterpolatedState(Date.now());
         this.container.position.x = state.x;
@@ -128,11 +112,7 @@ class Tank {
     }
 
     update() {
-        if (this.is_local) {
-            this.local_update();
-        }else{
-            this.interpolate_from_buffer();
-        }
+        this.interpolate_from_buffer();
     }
 
     destroy() {
