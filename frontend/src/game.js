@@ -74,9 +74,9 @@ class Game {
                 
                 for (const bullet_id in bullets) {
                     const bullet_state = bullets[bullet_id];
-                    console.log(bullet_state);
+
                     if (this.bullets[bullet_id]) {
-                        console.log(bullets[bullet_id].is_dead);
+
                         if (bullets[bullet_id].is_dead) {
                             this.bullets[bullet_id].destroy();
                             delete this.bullets[bullet_id];
@@ -84,6 +84,7 @@ class Game {
                         else {
                             this.bullets[bullet_id].set_state(bullet_state);
                         }
+
                     } else if (bullets[bullet_id].is_dead == false) {
                         this.bullets[bullet_id] = new Bullets(
                                                             bullet_id,
