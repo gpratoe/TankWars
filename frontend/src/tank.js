@@ -60,6 +60,7 @@ class Tank {
         this.container.pivot.set(this.container.width/2, this.container.height/2);
 
         this.container.angle = this.angle;
+        this.container.zIndex = 9999;
         
         this.app.stage.addChild(this.container);
         
