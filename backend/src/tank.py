@@ -98,6 +98,7 @@ class Tank:
             'shooting': self.is_shooting,
             'health': self.health,
             'is_dead': self.is_dead,
+            'timestamp': time.time()*1000,
         }
         
     def set_state(self, state):
