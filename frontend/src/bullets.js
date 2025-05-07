@@ -1,4 +1,5 @@
 import { Graphics } from "pixi.js";
+import { InterpolationBuffer } from "./InterpolationBuffer";
 
 class Bullets {
     constructor(id, x,y,dir_norm,damage,speed, app, is_local = false) {
@@ -16,8 +17,31 @@ class Bullets {
         this.bullet.pivot.set(this.bullet.width/2, this.bullet.height/2);
         this.bullet.position.x = x;
         this.bullet.position.y = y;
-        this.state_buffer = [];
+        this.initial_state = {
+            x: x,
+            y: y,
+            direction: dir_norm,
+            damage: damage,
+            speed: speed,
+        }
+        this.interpolation_buffer = new InterpolationBuffer(this.initial_state, 50, this.interp_states);
         app.stage.addChild(this.bullet);
+    }
+
+    interp_states(older_state, newer_state, t){
+        const x = older_state.x + (newer_state.x - older_state.x) * t;
+        const y = older_state.y + (newer_state.y - older_state.y) * t;
+        const direction = older_state.direction + (newer_state.direction - older_state.direction) * t;
+        const speed = older_state.speed + (newer_state.speed - older_state.speed) * t;
+        const damage = this.damage;
+
+        return {
+            x: x,
+            y: y,
+            direction: direction,
+            damage: damage,
+            speed: speed
+        }
     }
 
     set_state(state){
@@ -29,8 +53,7 @@ class Bullets {
             speed: state.speed,
             timestamp: state.timestamp
         }
-        this.state_buffer.push(new_state);
-        this.state_buffer = this.state_buffer.filter(s => Date.now() - s.timestamp <= 200);
+        this.interpolation_buffer.enqueue(new_state);
 
         this.x = state.x;
         this.y = state.y;
@@ -54,26 +77,11 @@ class Bullets {
     }
 
     interpolate_from_buffer() {
-        if (this.state_buffer.length < 2) return;
-
-        const render_time = Date.now() - 50;
-        let older_state = null;
-        let newer_state = null;
-
-        for (let i = 0; i < this.state_buffer.length - 1; i++) {
-            const a = this.state_buffer[i];
-            const b = this.state_buffer[i + 1];
-            if (a.timestamp <= render_time && b.timestamp > render_time) {
-                older_state = a;
-                newer_state = b;
-                break;
-            }
-        }
-
-        if (!older_state || !newer_state) return;
-        const t = (render_time - older_state.timestamp) / (newer_state.timestamp - older_state.timestamp);
-        this.bullet.position.x = older_state.x + (newer_state.x - older_state.x) * t;
-        this.bullet.position.y = older_state.y + (newer_state.y - older_state.y) * t;
+        const state = this.interpolation_buffer.getInterpolatedState(Date.now());
+        console.log(state);
+        this.bullet.position.x = state.x;
+        this.bullet.position.y = state.y;
+        this.dir_norm = state.direction;
     }
 
     update() {
