@@ -1,6 +1,5 @@
-import { Graphics, Container, Assets, Sprite } from "pixi.js";
+import { Container, Assets, Sprite } from "pixi.js";
 import { HealthBar } from "./healthbar";
-import { Bullets } from "./bullets";
 
 class Tank {
     constructor(player_id, name, color, x, y, w , h, angle, damage, bullet_speed, app, is_local = false)
