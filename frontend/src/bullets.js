@@ -64,7 +64,6 @@ class Bullets {
 
     interpolate_from_buffer() {
         const state = this.interpolation_buffer.getInterpolatedState(Date.now());
-        console.log(state);
         this.bullet.position.x = state.x;
         this.bullet.position.y = state.y;
         this.dir_norm = state.direction;
@@ -73,6 +72,10 @@ class Bullets {
     update() {
 
         this.interpolate_from_buffer();
+    }
+
+    destroy() {
+        this.bullet.destroy({children: true});
     }
 }
 

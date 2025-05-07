@@ -5,6 +5,7 @@ from src.entity_manager import EntityManager
 from api.ws import ConnectionManager
 from src.physics_manager import PhysicsManager
 from src.map import Map
+import pprint
 
 class Game:
     def __init__(self, players, lobby_id, connection_manager: ConnectionManager,
@@ -33,7 +34,7 @@ class Game:
                         player.ready = True
                 first_state = {
                     'event': 'init_game',
-                    'payload': {'tanks':{t.id: t.get_state() for t in self.entity_manager.tanks.values()}}
+                    'payload': {'tanks':{t.id: t.get_state()[0] for t in self.entity_manager.tanks.values()}}
                 }
                 await self.connection_manager.send_message(first_state, self.id, player_id)
                 
@@ -75,11 +76,11 @@ class Game:
             
             if self.physics_manager.tick % 3 == 0:
                 state = self.entity_manager.update()
-                if state != self.prev_state:
+                if state and state != self.prev_state:
                     await self.broadcast({
                         "event": "state",
                         "payload": state
                     })
-                self.prev_state = state
+                    self.prev_state = state
 
             await asyncio.sleep(self.physics_manager.time_step)

@@ -13,7 +13,7 @@ class Game {
         this.app = null;
         this.canvas = null;
         this.tanks = {};
-        this.bullets = new Map();
+        this.bullets = {};
         this.main_tank = null;
         this.seconds = new Date().getTime() / 1000;
         this.name = "Player " + this.seconds;
@@ -50,7 +50,6 @@ class Game {
                 this.tanks[player_id] = new Tank(player_id, name, color, x, y,
                                                  this.tank_width, this.tank_height,
                                                   angle, this.app, (player_id == this.player_id));
-                this.bullets[player_id] = [];
                 this.update();
             }
             this.initialized = true;
@@ -59,8 +58,6 @@ class Game {
             if (this.initialized){
                 const tanks = payload.tanks;
                 const bullets = payload.bullets;
-                const tanks_to_remove = payload.tanks_to_remove;
-                const bullets_to_remove = payload.bullets_to_remove;
 
                 
                 for (const player_id in tanks) {
@@ -74,44 +71,29 @@ class Game {
                         }
                     }
                 }
-
-                for (const player_id in bullets) {
-                    if (!this.bullets.has(player_id)) {
-                        this.bullets.set(player_id, new Map());
-                    }
-
-                    const player_bullets = this.bullets.get(player_id);
-
-                    if(bullets_to_remove[player_id]) {
-                        for (const bullet_id of bullets_to_remove[player_id]) {
-                            if (player_bullets.has(bullet_id)) {
-                                const bullet = player_bullets.get(bullet_id);
-                                bullet.bullet.destroy();
-                                player_bullets.delete(bullet_id);
-                            }
+                
+                for (const bullet_id in bullets) {
+                    const bullet_state = bullets[bullet_id];
+                    console.log(bullet_state);
+                    if (this.bullets[bullet_id]) {
+                        console.log(bullets[bullet_id].is_dead);
+                        if (bullets[bullet_id].is_dead) {
+                            this.bullets[bullet_id].destroy();
+                            delete this.bullets[bullet_id];
+                        } 
+                        else {
+                            this.bullets[bullet_id].set_state(bullet_state);
                         }
-                    }
-
-                    for (const bullet_data of bullets[player_id]) {
-                        const bullet_id = bullet_data.id;
-
-                        if (!player_bullets.has(bullet_id)) {
-                            const newBullet = new Bullets(bullet_id,
-                                                            bullet_data.x,
-                                                            bullet_data.y,
-                                                            bullet_data.direction,
-                                                            bullet_data.damage,
-                                                            bullet_data.speed,
+                    } else if (bullets[bullet_id].is_dead == false) {
+                        this.bullets[bullet_id] = new Bullets(
+                                                            bullet_id,
+                                                            bullet_state.x,
+                                                            bullet_state.y,
+                                                            bullet_state.direction,
+                                                            bullet_state.damage,
+                                                            bullet_state.speed,
                                                             this.app,
-                                                            (player_id == this.player_id));
-                            player_bullets.set(bullet_id, newBullet);
-                        
-                        } else {
-                            const bullet = player_bullets.get(bullet_id);
-                            bullet.set_state(bullet_data);
-                        }
-
-
+                                                            bullet_state.owner_id == this.player_id);
                     }
                 }
             }
@@ -188,10 +170,8 @@ class Game {
             for (const key in this.tanks) {
                 this.tanks[key].update();
             }
-            for (const [player_id, player_bullets] of this.bullets) {
-                for (const bullet of player_bullets.values()) {
-                    bullet.update();
-                }
+            for (const key in this.bullets) {
+                this.bullets[key].update();
             }
         })
     }

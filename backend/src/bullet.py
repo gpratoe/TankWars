@@ -7,9 +7,10 @@ from src.collision_handler import CollisionType
 import time
 
 class Bullet:
-    def __init__(self, id, pos, angle, damage, speed, groupIndex, physics_manager: PhysicsManager):
+    def __init__(self, id, owner_id, pos, angle, damage, speed, groupIndex, physics_manager: PhysicsManager):
        # self.shooter = shooter
         self.id = id
+        self.owner_id = owner_id
         self.x = pos[0]
         self.y = pos[1]
         self.direction = (math.cos(angle), math.sin(angle))
@@ -46,16 +47,35 @@ class Bullet:
             self.direction = (direction_norm.x, direction_norm.y)
     
     def get_state(self):
+        prevx = self.x
+        prevy = self.y
+        prevdir = self.direction
+        prevspeed = self.speed
+        prevdamage = self.damage
+        previs_dead = self.is_dead
+
         self._update_locals()
+        
+        same_state =(
+            prevx == self.x and
+            prevy == self.y and
+            prevdir == self.direction and
+            prevspeed == self.speed and
+            prevdamage == self.damage and
+            previs_dead == self.is_dead
+        )
+
         return {
             "id": self.id,
+            "owner_id": self.owner_id,
             "x": self.x,
             "y": self.y,
             "direction": self.direction,
             "damage": self.damage,
             "speed": self.speed,
+            "is_dead": self.is_dead,
             "timestamp": time.time()*1000,
-        }
+        }, same_state
     
     def _act_on_collision(self):
         '''
@@ -94,7 +114,4 @@ class Bullet:
 
         if self.x < 0 or self.x > GAME_WIDTH or self.y < 0 or self.y > GAME_HEIGHT:
             self.is_dead = True
-        if(self.is_dead):
-            self.physics_manager.destroy_body(self.bullet)
-            return 1
-        return 0
+        
