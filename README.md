@@ -1,77 +1,21 @@
 # TODO:
 
-* database models
-    
-    * tanks (players)
-    
-    * bullets
+## Backend:
 
-    * games
+- **(A)** Kick player endpoint.
+- Check that you can only use the delete player from game on you. (Maybe add logic to this endpoin to use it also as kick player?).
+- G4m30v3r state (GameStateMachine).
 
-* check for collisions in the backend
+## Frontend:
 
-* basically everything from the frontend
+- Countdown logic and visuals.
+- **(A)** Make the kick button functional.
+- Add chat to game screen.
+- G4m30v3r screen (or maybe just go back to lobby).
 
-# JSONs:
+## General funcionalities:
 
-Each player will send their state to the server and the server will broadcast relevant data for each player to render the game. Will struct the data on event-type jsons:
-
-## event: state
-
-### Client to server:
-
-~~~ py
-{
-    event: "state",
-    data: {
-        name: string,
-        mousex: int,
-        mousey: int,
-        tankx: int,
-        tanky: int,
-        shooting: bool 
-    }
-}
-~~~
-
-### Server to client:
-
-~~~ py
-{
-    event: "state",
-    data: {
-        name: string,
-        tankx: int,
-        tanky: int,
-        angle: float,
-        health: int,
-    }
-}
-~~~
-
-## Event add_tank:
-
-### Client to server:
-
-~~~ py
-{
-    event: "add_tank",
-    data: {
-        name: string
-    } 
-}
-~~~
-
-### Server to client
-
-~~~ py
-{
-    event: "init_tank"
-    data: {
-        name: string,
-        tankx: int,
-        tanky: int,
-        angle: float,
-        health: int,
-    }
-}
+- Booster entities for improved cooldown, tank speed, bullet speed, etc.
+- Maybe add a way of stoping the tank whenever you feel like it so aiming gets easier.
+- Separated visual for dead players???
+- Maybe add some tests ( :'c ) 
