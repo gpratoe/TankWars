@@ -72,7 +72,7 @@ class Lobby:
         lobby = cls(name, owner, max_players)
         game_dict = lobby.create_db_entry()
         cls.ACTIVE_LOBBIES[lobby.lobby_id] = lobby
-        return game_dict
+        return lobby, game_dict
 
     
     @classmethod

@@ -5,7 +5,6 @@ from src.entity_manager import EntityManager
 from api.ws import ConnectionManager
 from src.physics_manager import PhysicsManager
 from src.map import Map
-import pprint
 
 class Game:
     def __init__(self, players, lobby_id, connection_manager: ConnectionManager,
@@ -27,17 +26,6 @@ class Game:
             payload = data['payload']
             if event == 'input':
                 self.entity_manager.handle_client_input(payload, player_id)
-
-            if event == 'player_ready':
-                for player in self.players:
-                    if player.id == player_id:
-                        player.ready = True
-                first_state = {
-                    'event': 'init_game',
-                    'payload': {'tanks':{t.id: t.get_state()[0] for t in self.entity_manager.tanks.values()}}
-                }
-                await self.connection_manager.send_message(first_state, self.id, player_id)
-                
         else:
             print("Invalid data received")
 
