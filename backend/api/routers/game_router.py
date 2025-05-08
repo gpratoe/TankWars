@@ -32,7 +32,7 @@ async def get_game(id:int, include_players:bool=False):
 @gr.get(path="/{id}/players", status_code=status.HTTP_200_OK)
 async def get_game_players(id:int):
     try:
-        lobby = Lobby.get_lobby(id)
+        lobby = GameStateMachine.get_gsm(id).lobby
         players = lobby.get_players()
         return players
     except Exception as e:

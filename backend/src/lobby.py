@@ -8,10 +8,8 @@ import time
 from src.settings import *
 from src.entity_manager import EntityManager
 from src.physics_manager import PhysicsManager
-from src.collision_handler import CollisionHandler
 
 class Lobby:
-    ACTIVE_LOBBIES = {}
 
     def __init__(self, name: (str | None), owner: (Player | None),
                   max_players: int, id: (int | None) = None):
@@ -71,7 +69,6 @@ class Lobby:
     def new(cls, name: str, owner: Player, max_players: int):
         lobby = cls(name, owner, max_players)
         game_dict = lobby.create_db_entry()
-        cls.ACTIVE_LOBBIES[lobby.lobby_id] = lobby
         return lobby, game_dict
 
     
@@ -79,23 +76,11 @@ class Lobby:
     def from_db(cls, lobby_id):
         '''
         Use only for debbugging or handling data from past games.
-        To get an active lobby use get_lobby() instead.
         '''
         lobby = cls(None, None, 2, lobby_id) # dummy values
         lobby.load_from_db()
         return lobby
     
-    @classmethod
-    def get_lobby(cls, lobby_id):
-        '''
-        Gets an active lobby from memory or pulls it from the db and set it as active.
-        This method won't create a new lobby if it doesn't exist.
-        '''
-        lobby = cls.ACTIVE_LOBBIES.get(lobby_id)
-        if not lobby:
-            lobby = cls.from_db(lobby_id)
-            cls.ACTIVE_LOBBIES[lobby_id] = lobby
-        return lobby
 
     def add_player(self, player: Player):
         gs.add_player_to_game(self.lobby_id, player.id)
