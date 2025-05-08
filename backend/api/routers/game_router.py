@@ -16,8 +16,9 @@ class GameSchema(BaseModel):
 async def create_game(game_data: GameSchema):
     try:
         owner = Player("", game_data.owner_id)
-        game_resp = GameStateMachine.new(game_data.name, owner, game_data.max_players)
-        return game_resp
+        lobby, resp = Lobby.new(game_data.name, owner, game_data.max_players)
+        gsm = GameStateMachine.new(lobby)
+        return resp
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     

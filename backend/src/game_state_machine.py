@@ -65,12 +65,9 @@ class GameStateMachine:
         return resp
 
     @classmethod
-    def new(cls, name, owner, max_players):
-        # game_data.name, owner, game_data.max_players
-        lobby, resp = Lobby.new(name, owner, max_players)
+    def new(cls, lobby):
         gsm = cls(lobby)
         cls.ACTIVE_GSM[lobby.lobby_id] = gsm
-        return resp
 
     @classmethod
     def get_gsm(cls, lobby_id):
