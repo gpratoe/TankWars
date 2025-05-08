@@ -34,7 +34,6 @@ class EntityManager:
     def remove_tank(self, player_id):
         if player_id in self.tanks:
             del self.tanks[player_id]
-            del self.bullets[player_id]
 
     def update(self):
         state = {'tanks': {}, 'bullets': {}}
