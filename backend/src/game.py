@@ -53,10 +53,6 @@ class Game:
         await self.connection_manager.broadcast(data, self.id)
 
     async def run(self):
-        await self.first_setup()
-
-        # TODO: esperar a que todos los jugadores esten ready y meter un countdown
-        await asyncio.sleep(3)
         
         self.running = True
         while self.running:
