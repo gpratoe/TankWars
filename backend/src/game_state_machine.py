@@ -27,11 +27,11 @@ class State(ABC):
         pass
 
     @abstractmethod
-    async def enter(self, args: (dict | None)):
+    async def enter(self):
         pass
 
     @abstractmethod
-    async def exit(self, args: (dict | None)):
+    async def exit(self):
         pass
 
 class GameStateMachine:
@@ -51,11 +51,18 @@ class GameStateMachine:
     async def handle_data(self, data: dict, player_id: int):
         await self.current_state.handle_data(data, player_id)
 
-    async def change_state(self, new_state: GameState, exit_args = {}, enter_args = {}):
+    async def change_state(self, new_state: GameState):
         if self.current_state:
-            await self.current_state.exit(exit_args)
+            await self.current_state.exit()
         self.current_state = self.states[new_state]
-        await self.current_state.enter(enter_args)
+        await self.current_state.enter()
+
+    async def start_game(self, owner_id: int):
+        if not self.lobby:
+            raise ValueError('Lobby not set in GameStateMachine')
+        resp = await self.lobby.start_game(owner_id)
+        await self.change_state(GameState.PREV_GAME_CONFIG)
+        return resp
 
     @classmethod
     def new(cls, name, owner, max_players):
@@ -84,14 +91,11 @@ class LobbyState(State):
     async def handle_data(self, data: dict, player_id: int):
         await self.lobby.handle_data(data, player_id)
 
-    async def enter(self, args):
+    async def enter(self):
         pass
 
-    async def exit(self, args):
-        owner_id = args.get('owner_id')
-        resp = await self.lobby.start_game(owner_id)
-        return resp
-
+    async def exit(self):
+        pass
 
 class PrevGameConfigState(State):
     '''
@@ -132,7 +136,7 @@ class PrevGameConfigState(State):
                 pass
 
 
-    async def enter(self, args):
+    async def enter(self):
         self.game = self.lobby.game
         if not self.game:
             raise Exception("Game not found in PrevGameConfigState")
@@ -143,7 +147,7 @@ class PrevGameConfigState(State):
                 'payload': {'tanks':{t.id: t.get_state()[0] for t in self.game.entity_manager.tanks.values()}}
             }
         
-    async def exit(self, args):
+    async def exit(self):
         pass
         
             
@@ -168,7 +172,7 @@ class CountdownState(State):
             msg = payload['msg']
             await self.lobby.handle_chat_msg(msg, player_id)
 
-    async def enter(self, args):
+    async def enter(self):
         self.game = self.lobby.game
         if not self.game:
             raise Exception("Game not found in CountdownState")
@@ -187,7 +191,7 @@ class CountdownState(State):
     
 
 
-    async def exit(self, args):
+    async def exit(self):
         pass
 
 
@@ -213,10 +217,10 @@ class InGameState(State):
         else:
             await self.game.handle_data(data, player_id)
     
-    async def enter(self, args):
+    async def enter(self):
         self.game = self.lobby.game
         if not self.game:
             raise Exception("Game not found in InGameState")
         pass
-    async def exit(self, args):
+    async def exit(self):
         pass

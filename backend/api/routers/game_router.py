@@ -74,7 +74,7 @@ async def remove_player_from_game(game_id:int, player_id:int):
 async def start_game(game_id:int, owner_id:int):
     try:
         gsm = GameStateMachine.get_gsm(game_id)
-        resp = await gsm.change_state(GameState.PREV_GAME_CONFIG, exit_args={'owner_id': owner_id})
+        resp = await gsm.start_game(owner_id)
         return resp
     except Exception as e:
         print(e)
