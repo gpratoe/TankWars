@@ -1,4 +1,4 @@
-from fastapi.websockets import WebSocket
+from fastapi.websockets import WebSocket, WebSocketState
 
 
 class ConnectionManager:
@@ -20,7 +20,7 @@ class ConnectionManager:
     async def disconnect(self, lobby_id: int, player_id: int):
         try:
            if lobby_id in self.active_connections and player_id in self.active_connections[lobby_id]:
-                if self.active_connections[lobby_id][player_id].client_state == 'connected':
+                if self.active_connections[lobby_id][player_id].client_state == WebSocketState.CONNECTED:
                     await self.active_connections[lobby_id][player_id].close()
                 self.active_connections[lobby_id].pop(player_id)
 
