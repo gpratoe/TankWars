@@ -135,9 +135,6 @@ class PrevGameConfigState(State):
 
     async def enter(self):
         self.game = self.lobby.game
-        if not self.game:
-            raise Exception("Game not found in PrevGameConfigState")
-    
         await self.game.first_setup()
         self.first_state = {
                 'event': 'init_game',
@@ -171,9 +168,7 @@ class CountdownState(State):
 
     async def enter(self):
         self.game = self.lobby.game
-        if not self.game:
-            raise Exception("Game not found in CountdownState")
-        
+
         now = time.time() * 1000
         countdown_ms = self.countdown_seconds * 1000
         countdown_event = {
