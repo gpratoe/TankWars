@@ -5,6 +5,7 @@ from src.entity_manager import EntityManager
 from api.ws import ConnectionManager
 from src.physics_manager import PhysicsManager
 from src.map import Map
+import threading
 
 class Game:
     def __init__(self, players, lobby_id, connection_manager: ConnectionManager,
@@ -19,6 +20,25 @@ class Game:
         self.entity_manager = entity_manager
         
 
+    async def handle_disconnect(self, player_id):
+        player = next(filter(lambda p : p.id == player_id, self.players))
+
+        if player in self.players:
+            print(self.players)
+            self.players.remove(player)
+            await self.connection_manager.disconnect(self.id, player_id)
+            print(self.players)
+            if len(self.players) == 0:
+                self.running = False
+                print("stoping loop")
+                return
+            else:
+                await self.broadcast({
+                    "event": "player_dcd",
+                    "payload": {"player_id": player_id}
+                })
+        else:
+            print(f"Player {player_id} not found in players list")
     
     async def handle_data(self, data, player_id):
         if 'event' in data and 'payload' in data:
@@ -51,6 +71,14 @@ class Game:
     async def broadcast(self, data):
         await self.connection_manager.broadcast(data, self.id)
 
+    def run_in_thread(self):
+        def foo():
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            loop.run_until_complete(self.run())
+            loop.close()
+        threading.Thread(target=foo).start()
+    
     async def run(self):
         
         self.running = True
@@ -67,3 +95,4 @@ class Game:
                     self.prev_state = state
 
             await asyncio.sleep(self.physics_manager.time_step)
+        print("Game loop stopped")

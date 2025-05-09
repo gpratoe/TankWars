@@ -34,6 +34,10 @@ class State(ABC):
     async def exit(self):
         pass
 
+    @abstractmethod
+    async def handle_disconnect(self, player_id: int):
+        pass
+
 class GameStateMachine:
     ACTIVE_GSM = {}
 
@@ -47,6 +51,10 @@ class GameStateMachine:
             GameState.GAME_OVER: None,
         }
         self.current_state = self.states[GameState.LOBBY]
+
+    async def handle_disconnect(self, player_id: int):
+        if self.current_state:
+            await self.current_state.handle_disconnect(player_id)
     
     async def handle_data(self, data: dict, player_id: int):
         await self.current_state.handle_data(data, player_id)
@@ -93,6 +101,11 @@ class LobbyState(State):
 
     async def exit(self):
         pass
+    async def handle_disconnect(self, player_id: int):
+        if self.lobby:
+            await self.lobby.disconnect_player(player_id)
+        else:
+            raise ValueError('Lobby not set in GameStateMachine')
 
 class PrevGameConfigState(State):
     '''
@@ -143,7 +156,10 @@ class PrevGameConfigState(State):
         
     async def exit(self):
         pass
-        
+    
+    async def handle_disconnect(self, player_id: int):
+        if self.game:
+            await self.game.handle_disconnect(player_id)
             
 
 class CountdownState(State):
@@ -186,6 +202,11 @@ class CountdownState(State):
     async def exit(self):
         pass
 
+    async def handle_disconnect(self, player_id: int):
+        if self.game:
+            await self.game.handle_disconnect(player_id)
+        else:
+            raise ValueError('Game not set in CountdownState')
 
 class InGameState(State):
     '''
@@ -216,3 +237,8 @@ class InGameState(State):
         pass
     async def exit(self):
         pass
+    async def handle_disconnect(self, player_id: int):
+        if self.game:
+            await self.game.handle_disconnect(player_id)
+        else:
+            raise ValueError('Game not set in InGameState')

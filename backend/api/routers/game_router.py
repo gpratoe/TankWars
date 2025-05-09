@@ -66,8 +66,8 @@ async def add_player_to_game(game_id:int, player_id:int):
 @gr.delete("/{game_id}/players/{player_id}",status_code=status.HTTP_202_ACCEPTED)
 async def remove_player_from_game(game_id:int, player_id:int):
     try:
-        game = GameStateMachine.get_gsm(game_id).lobby
-        await game.remove_player(player_id)
+        gsm = GameStateMachine.get_gsm(game_id)
+        await gsm.handle_disconnect(player_id)
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     
@@ -98,7 +98,7 @@ async def game_lobby_ws(websocket: WebSocket, game_id: int, player_id: int):
 
         except WebSocketDisconnect:
             try:
-                await lobby.disconnect_player(player_id)
+                await gsm.handle_disconnect(player_id)
             except Exception as e:
                 print(str(e))
             break

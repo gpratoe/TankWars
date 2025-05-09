@@ -100,8 +100,6 @@ class Lobby:
         if player:
             self.__color_availability[player.color] = True
             self.players.remove(player)
-        
-        await self.disconnect_player(player_id)
 
         if len(self.players) > 0:
             self.load_from_db() # reload players and owner (if he left), use db as source of truth
@@ -117,6 +115,7 @@ class Lobby:
 
     async def disconnect_player(self, player_id: int):
         await self.manager.disconnect(self.lobby_id, player_id)
+        await self.remove_player(player_id)
         await self.broadcast({'event': 'player_dcd', 'player_id': player_id})
 
     async def broadcast(self, data: dict):
@@ -168,7 +167,7 @@ class Lobby:
 
         await self.broadcast({'event': 'game_settings',
                                'payload': game_settings})
-
+        print("llamando game run para el lobby: ", self.lobby_id)
         asyncio.create_task(self.game.run())
 
         await self.broadcast({'event': 'game_started'})
