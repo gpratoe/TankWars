@@ -33,7 +33,6 @@ class Game:
     async def first_setup(self):
         middle = (self.w/2, self.h/2)
         self.map = Map(self.physics_manager, self.w, self.h)
-        self.map.create_boundaries()
         
         corners = [(TANK_WIDTH + BOUNDARIES_THICKNESS, TANK_HEIGHT + BOUNDARIES_THICKNESS),
                     (self.w - TANK_WIDTH - BOUNDARIES_THICKNESS, self.h - TANK_HEIGHT - BOUNDARIES_THICKNESS),
