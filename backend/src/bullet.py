@@ -18,17 +18,11 @@ class Bullet:
         self.speed = speed
         self.physics_manager = physics_manager
 
-        self.bullet = physics_manager.create_body(body_type=BodyType.dynamic,
-                                                position=utils.vec2_to_world(pos),
-                                                fixture_def=b2FixtureDef(
-                                                    shape=b2CircleShape(radius=utils.to_world(3)),
-                                                    density=0.5,
-                                                    friction=0,
-                                                    restitution=1,
-                                                    groupIndex = groupIndex
-                                                ),
-                                                bullet=True,
-                                                linearVelocity=(speed * self.direction[0], speed * self.direction[1]),
+        self.bullet = physics_manager.create_bullet(
+                                                position=pos,
+                                                direction=self.direction,
+                                                speed=speed,
+                                                groupIndex=groupIndex,
                                                 userData=self)
         
         self.is_dead = False

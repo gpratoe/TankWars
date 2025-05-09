@@ -1,4 +1,4 @@
-from Box2D import b2World, b2FixtureDef, b2PolygonShape
+from Box2D import b2World, b2FixtureDef, b2PolygonShape, b2CircleShape
 from src.contactlistener import ContactListener
 from enum import IntEnum
 from src.collision_handler import CollisionHandler
@@ -48,6 +48,20 @@ class PhysicsManager:
             **kwargs
         )
     
+    def create_bullet(self, position, direction, speed, radius=3, groupIndex=0, **kwargs):
+        return self.create_body(body_type=BodyType.dynamic,
+                                                position=utils.vec2_to_world(position),
+                                                fixture_def=b2FixtureDef(
+                                                    shape=b2CircleShape(radius=utils.to_world(radius)),
+                                                    density=0.5,
+                                                    friction=0,
+                                                    restitution=1,
+                                                    groupIndex = groupIndex
+                                                ),
+                                                bullet=True,
+                                                linearVelocity=(speed * direction[0], speed * direction[1]),
+                                                **kwargs
+                                                )
     
 
     def destroy_body(self, body):
