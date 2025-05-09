@@ -30,16 +30,12 @@ class Tank:
         self.shoot_callback = shoot_callback
 
         self.physics_manager = physics_manager
-        self.tank = physics_manager.create_body(body_type=BodyType.dynamic,
-                                                position=utils.vec2_to_world(pos),
-                                                fixture_def=b2FixtureDef(
-                                                    shape=b2PolygonShape(box=utils.vec2_to_world(self.dimentions * 0.5)), # * 0.5 because box2d uses half width and half height (almost went insane over this)
-                                                    density=2,
-                                                    friction=0.5,
-                                                    groupIndex=self.groupIndex 
-                                                ),
-                                                userData=self
-                                                )
+        self.tank = physics_manager.create_tank(
+            position=(utils.to_world(pos[0]), utils.to_world(pos[1])),
+            dimentions=self.dimentions,
+            groupIndex=self.groupIndex,
+            userData=self
+        )
 
     def shoot(self):
         if time.time() - self.shoot_time <= self.cooldown:

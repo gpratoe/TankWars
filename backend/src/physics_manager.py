@@ -1,7 +1,8 @@
-from Box2D import b2World
+from Box2D import b2World, b2FixtureDef, b2PolygonShape
 from src.contactlistener import ContactListener
 from enum import IntEnum
 from src.collision_handler import CollisionHandler
+from src.utils import utils
 
 class BodyType(IntEnum):
     static = 0
@@ -27,6 +28,21 @@ class PhysicsManager:
             fixtures=fixture_def,
             **kwargs
         )
+
+    def create_tank(self, position, dimentions, groupIndex=0, **kwargs):
+        return self.create_body(
+            body_type=BodyType.dynamic,
+            position=position,
+            fixture_def=b2FixtureDef(
+                shape=b2PolygonShape(box=utils.vec2_to_world(dimentions * 0.5)), # * 0.5 because box2d uses half width and half height (almost went insane over this)
+                density=2,
+                friction=0.5,
+                groupIndex=groupIndex 
+            ),
+            **kwargs
+        )
+    
+    
 
     def destroy_body(self, body):
         self.world.DestroyBody(body)
