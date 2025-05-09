@@ -19,10 +19,13 @@ class PhysicsManager:
 
     
     def update(self):
-        for tank in self.entity_manager.tanks.values():
-            tank.update_physics()
-        self.world.Step(self.time_step, 10, 3)
-        self.tick += 1
+        try:
+            for tank in self.entity_manager.tanks.values():
+                tank.update_physics()
+            self.world.Step(self.time_step, 10, 3)
+            self.tick += 1
+        except Exception as e:
+            print(f"PhysicsManager update error: {e}")
 
     def create_body(self, body_type, position, fixture_def, **kwargs):
         return self.world.CreateBody(
