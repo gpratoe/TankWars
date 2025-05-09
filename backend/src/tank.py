@@ -1,10 +1,9 @@
-from Box2D import (b2FixtureDef, b2PolygonShape, b2Vec2)
-from src.bullet import Bullet
+from Box2D import b2Vec2
 from src.utils import utils
 import math
 from src.settings import *
 import time
-from src.physics_manager import PhysicsManager, BodyType
+from src.physics_manager import PhysicsManager
 
 class Tank:
     def __init__(self, id, name, color, pos, w, h, angle, physics_manager: PhysicsManager, shoot_callback):
