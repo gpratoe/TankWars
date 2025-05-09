@@ -37,13 +37,11 @@ class EntityManager:
 
     def update(self):
         state = {'tanks': {}, 'bullets': {}}
-
         for tank_id, tank in list(self.tanks.items()):
             tank_state, same_state = tank.update_state_and_diff()
             if not same_state and tank_state:
                 state['tanks'][tank_id] = tank_state
             if tank.is_dead:
-                #self.physics_manager.destroy_body(tank.tank)
                 del self.tanks[tank_id]
         
         for bullet_id, bullet in list(self.bullets.items()):
