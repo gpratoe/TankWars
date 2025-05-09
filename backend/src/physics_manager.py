@@ -24,6 +24,7 @@ class PhysicsManager:
                 tank.update_physics()
             self.world.Step(self.time_step, 10, 3)
             self.tick += 1
+            self.cleanup_world()
         except Exception as e:
             print(f"PhysicsManager update error: {e}")
 
@@ -66,4 +67,9 @@ class PhysicsManager:
 
     def destroy_body(self, body):
         self.world.DestroyBody(body)
+
+    def cleanup_world(self):
+        for body in self.world.bodies:
+            if body.userData and hasattr(body.userData, 'is_dead') and body.userData.is_dead:
+                self.destroy_body(body)
 
