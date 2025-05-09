@@ -88,8 +88,6 @@ class Tank:
         if self.is_shooting:
             self.shoot()
         self._update_locals()
-        if self.is_dead:
-            self.physics_manager.destroy_body(self.tank)
 
     def shoot(self):
         # TODO: maybe use just body physics attributes
