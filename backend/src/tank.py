@@ -36,24 +36,32 @@ class Tank:
             userData=self
         )
 
-    def shoot(self):
-        if time.time() - self.shoot_time <= self.cooldown:
-            return
-        
-        bullet_pos = (self.pos[0] + self.w/2 * math.cos(self.angle), self.pos[1] + self.h/2 * math.sin(self.angle))
-        if self.shoot_callback:
-            self.shoot_callback(self.id, bullet_pos, self.angle, self.damage, self.bullet_speed, self.groupIndex)
+        self.last_state = {
+            'tankx': pos[0],
+            'tanky': pos[1],
+            'angle': angle,
+            'shooting': False,
+            'health': self.health,
+            'is_dead': self.is_dead,
+        }
 
-        self.shoot_time = time.time()
 
-    def update(self):
+
+    def apply_input(self, input):
         '''
-        Updates the tank's position, direction and if it is shooting
-        Needs to modify the tank's mousex, mousey and is_shooting first
+        input: {
+            'mouseX': mouseX,
+            'mouseY': mouseY,
+            'shooting': shooting
+        }
         '''
-        if self.health <= 0:
-            self.is_dead = True
-        
+        self.mouseX = input['mouseX']
+        self.mouseY = input['mouseY']
+        self.is_shooting = input['shooting']
+
+
+
+    def _update_body_physics(self):
         # calculate angle to where the mouse is
         dx = self.mouseX - utils.to_pixel(self.tank.position.x)
         dy = self.mouseY - utils.to_pixel(self.tank.position.y)
@@ -71,40 +79,54 @@ class Tank:
         else:
             self.tank.linearVelocity = (0, 0)
 
-            
+    def update_physics(self):
+        '''
+        This needs to be called only in the update method in the phisycs manager.
+        Otherwise might cause problems.
+        '''
+        self._update_body_physics()
         if self.is_shooting:
             self.shoot()
+        self._update_locals()
+        if self.is_dead:
+            self.physics_manager.destroy_body(self.tank)
+
+    def shoot(self):
+        # TODO: maybe use just body physics attributes
+        if time.time() - self.shoot_time <= self.cooldown:
+            return
+        
+        bullet_pos = (self.pos[0] + self.w/2 * math.cos(self.angle), self.pos[1] + self.h/2 * math.sin(self.angle))
+        if self.shoot_callback:
+            self.shoot_callback(self.id, bullet_pos, self.angle, self.damage, self.bullet_speed, self.groupIndex)
+
+        self.shoot_time = time.time()
+            
 
     def _update_locals(self):
+        self.is_dead = self.health <= 0
         self.pos = (utils.to_pixel(self.tank.position.x), utils.to_pixel(self.tank.position.y))
         self.angle = self.tank.angle
 
 
         
-    def get_state(self):
-        prevpos = self.pos
-        prevangle = self.angle
-        self._update_locals()
-
-        same_state = (
-            prevpos == self.pos and
-            prevangle == self.angle
-        )
-
+    def get_toclient(self):
         return {
             'name': self.name,
             'color': self.color,
-            'tankx': utils.to_pixel(self.tank.position.x),
-            'tanky': utils.to_pixel(self.tank.position.y),
+            **self.last_state,
+            'timestamp': time.time()*1000,
+        }
+    
+    def update_state_and_diff(self):
+        new_state = {
+            'tankx': self.pos[0],
+            'tanky': self.pos[1],
             'angle': self.angle,
             'shooting': self.is_shooting,
             'health': self.health,
             'is_dead': self.is_dead,
-            'timestamp': time.time()*1000,
-        }, same_state
-        
-    def set_state(self, state):
-        self.mouseX = state['mouseX']
-        self.mouseY = state['mouseY']
-        #self.pos = (state['tankx'], state['tanky'])
-        self.is_shooting = state['shooting']
+        }
+        same_state = new_state == self.last_state
+        self.last_state = new_state
+        return new_state, same_state

@@ -39,12 +39,11 @@ class EntityManager:
         state = {'tanks': {}, 'bullets': {}}
 
         for tank_id, tank in list(self.tanks.items()):
-            tank.update()
-            tank_state, same_state = tank.get_state()
+            tank_state, same_state = tank.update_state_and_diff()
             if not same_state and tank_state:
                 state['tanks'][tank_id] = tank_state
             if tank.is_dead:
-                self.physics_manager.destroy_body(tank.tank)
+                #self.physics_manager.destroy_body(tank.tank)
                 del self.tanks[tank_id]
         
         for bullet_id, bullet in list(self.bullets.items()):
@@ -64,8 +63,6 @@ class EntityManager:
         try:
             tank = self.tanks.get(player_id)
             if tank:
-                tank.mouseX = input['mouseX']
-                tank.mouseY = input['mouseY']
-                tank.is_shooting = input['shooting']
+                tank.apply_input(input)
         except Exception as e:
             print(f"Error handling input: {e}")

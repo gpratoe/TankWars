@@ -3,7 +3,7 @@ from src.player import Player
 from fastapi import WebSocket
 from src.game import Game
 import asyncio
-from api.ws import manager
+from api.ws import ConnectionManager
 import time
 from src.settings import *
 from src.entity_manager import EntityManager
@@ -26,7 +26,7 @@ class Lobby:
             self.players = [owner]
             owner.color = self.__find_color()
 
-        self.manager = manager
+        self.manager = ConnectionManager()
         self.game = None
 
     def create_db_entry(self):
@@ -156,6 +156,7 @@ class Lobby:
         
         physics_manager = PhysicsManager()
         entity_manager = EntityManager(physics_manager=physics_manager)
+        physics_manager.entity_manager = entity_manager
 
         self.game = Game(players=self.players,
                          lobby_id=self.lobby_id,

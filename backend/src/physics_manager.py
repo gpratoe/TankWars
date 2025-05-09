@@ -13,11 +13,14 @@ class PhysicsManager:
     def __init__(self):
         self.world = b2World(gravity=(0, 0), doSleep=True)
         self.world.contactListener = ContactListener(CollisionHandler())
+        self.entity_manager = None
         self.time_step = 1.0 / 60
         self.tick = 0
 
     
     def update(self):
+        for tank in self.entity_manager.tanks.values():
+            tank.update_physics()
         self.world.Step(self.time_step, 10, 3)
         self.tick += 1
 

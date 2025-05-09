@@ -138,7 +138,7 @@ class PrevGameConfigState(State):
         await self.game.first_setup()
         self.first_state = {
                 'event': 'init_game',
-                'payload': {'tanks':{t.id: t.get_state()[0] for t in self.game.entity_manager.tanks.values()}}
+                'payload': {'tanks':{t.id: t.get_toclient() for t in self.game.entity_manager.tanks.values()}}
             }
         
     async def exit(self):
