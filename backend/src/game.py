@@ -18,7 +18,7 @@ class Game:
         self.connection_manager = connection_manager
         self.physics_manager = physics_manager
         self.entity_manager = entity_manager
-        
+        self.latest_inputs = {}
 
     async def handle_disconnect(self, player_id):
         player = next(filter(lambda p : p.id == player_id, self.players))
@@ -45,7 +45,7 @@ class Game:
             event = data['event']
             payload = data['payload']
             if event == 'input':
-                self.entity_manager.handle_client_input(payload, player_id)
+                self.latest_inputs[player_id] = payload
         else:
             print("Invalid data received")
 
@@ -71,22 +71,19 @@ class Game:
     async def broadcast(self, data):
         await self.connection_manager.broadcast(data, self.id)
 
-    def run_in_thread(self):
-        def foo():
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            loop.run_until_complete(self.run())
-            loop.close()
-        threading.Thread(target=foo).start()
+    def apply_inputs(self):
+        for player_id, input in self.latest_inputs.items():
+            self.physics_manager.handle_input(player_id, input)
     
     async def run(self):
         
         self.running = True
         while self.running:
-            self.physics_manager.update()
+            self.apply_inputs()
+            world_state = self.physics_manager.update()
             
             if self.physics_manager.tick % 3 == 0:
-                state = self.entity_manager.update()
+                state = self.entity_manager.update(world_state)
                 if state and state != self.prev_state:
                     await self.broadcast({
                         "event": "state",

@@ -155,7 +155,6 @@ class Lobby:
         
         physics_manager = PhysicsManager()
         entity_manager = EntityManager(physics_manager=physics_manager)
-        physics_manager.entity_manager = entity_manager
 
         self.game = Game(players=self.players,
                          lobby_id=self.lobby_id,
