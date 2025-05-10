@@ -34,12 +34,6 @@ class TankPhysics:
     def apply_input(self, input):
         """
         To be called just before taking a world step
-
-        input: {
-            'mouseX': mouseX,
-            'mouseY': mouseY,
-            'shooting': shooting
-        }
         """
         mouseX = input['mouseX']
         mouseY = input['mouseY']
