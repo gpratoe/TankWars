@@ -52,16 +52,20 @@ class Tank:
             'timestamp': time.time()*1000,
         }
     
-    def update_state_and_diff(self, state):
+    def update_state_and_diff(self, world_state):
+        self.pos = utils.vec2_to_pixel(world_state["tankx"], world_state["tanky"])
+        self.angle = world_state["angle"]
+        self.shooting = world_state["needs_to_shoot"]
+
         new_state = {
-            'tankx': utils.to_pixel(state["tankx"]),
-            'tanky': utils.to_pixel(state["tanky"]),
-            'angle': state["angle"],
-            'shooting': state["needs_to_shoot"],
+            'tankx': self.pos[0],
+            'tanky': self.pos[1],
+            'angle': self.angle,
+            'shooting': self.shooting,
             #'health': state.health,
             #'is_dead': state.is_dead,
         }
-        if new_state['shooting']:
+        if self.shooting:
             self.shoot()
         same_state = new_state == self.last_state
         self.last_state = new_state
