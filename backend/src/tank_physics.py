@@ -11,7 +11,7 @@ class TankPhysics:
         self.h = h
         self.type = CollisionType.TANK
         self.body.userData = self
-        self.need_to_shoot = False
+        self.needs_to_shoot = False
 
     def move_to_target(self, target, is_shooting=False):
         dx = target[0] - self.body.position.x
@@ -40,7 +40,7 @@ class TankPhysics:
         is_shooting = input['shooting']
         target = utils.vec2_to_world((mouseX, mouseY))
         self.move_to_target(target, is_shooting)
-        self.need_to_shoot = is_shooting
+        self.needs_to_shoot = is_shooting
 
 
 
@@ -49,5 +49,5 @@ class TankPhysics:
             'tankx': self.body.position.x,
             'tanky': self.body.position.y,
             'angle': self.body.angle,
-            'need_to_shoot': self.need_to_shoot,
+            'needs_to_shoot': self.needs_to_shoot,
         }
