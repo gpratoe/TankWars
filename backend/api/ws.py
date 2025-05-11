@@ -1,5 +1,5 @@
 from fastapi.websockets import WebSocket, WebSocketState
-
+import asyncio
 
 class ConnectionManager:
     def __init__(self):
@@ -26,12 +26,16 @@ class ConnectionManager:
             print(f"Error during disconnection of player with id: {player_id}: {e}")
 
     async def broadcast(self, data: dict, lobby_id: int):
-        connections_copy = self.active_connections.copy()
-        for player_id, connection in connections_copy.items():
+        to_remove = []
+        for player_id, connection in self.active_connections.items():
             try:
                 await connection.send_json(data)
             except Exception as e:
-                print(f"Error broadcasting to player with id: {player_id} in lobby: {lobby_id}: {e}")
+                print(f"Error broadcasting to player {player_id}: {e}")
+                to_remove.append(player_id)
+
+        for player_id in to_remove:
+            await self.disconnect(lobby_id, player_id)
 
     async def send_message(self, data: dict, lobby_id: int, player_id: int):
         try:

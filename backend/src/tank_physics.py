@@ -1,7 +1,6 @@
 from Box2D import b2Body
 from src.utils import utils 
 import math
-from src.collision_handler import CollisionType
 
 class TankPhysics:
     def __init__(self, id, w, h, body: b2Body):
@@ -9,7 +8,6 @@ class TankPhysics:
         self.body = body
         self.w = w
         self.h = h
-        self.type = CollisionType.TANK
         self.body.userData = self
         self.needs_to_shoot = False
 

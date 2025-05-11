@@ -38,7 +38,7 @@ class Tank:
         
         bullet_pos = (self.pos[0] + self.w/2 * math.cos(self.angle), self.pos[1] + self.h/2 * math.sin(self.angle))
         if self.shoot_callback:
-            self.shoot_callback(self.id, bullet_pos, self.angle, self.damage, self.bullet_speed, self.groupIndex)
+            self.shoot_callback(self.id, bullet_pos, self.angle, self.damage, self.bullet_speed)
 
         self.shoot_time = time.time()
             
@@ -62,11 +62,9 @@ class Tank:
             'tanky': self.pos[1],
             'angle': self.angle,
             'shooting': self.shooting,
-            #'health': state.health,
-            #'is_dead': state.is_dead,
+            'health': self.health,
+            'is_dead': self.is_dead,
         }
-        if self.shooting:
-            self.shoot()
         same_state = new_state == self.last_state
         self.last_state = new_state
         return self.get_toclient(), same_state

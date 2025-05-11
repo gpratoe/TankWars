@@ -19,6 +19,8 @@ class Game:
         self.physics_manager = physics_manager
         self.entity_manager = entity_manager
         self.latest_inputs = {}
+        self.entities_to_destroy = {"tanks":[], "bullets":[]}
+        self.latest_collisions = None
 
     async def handle_disconnect(self, player_id):
         player = next(filter(lambda p : p.id == player_id, self.players))
@@ -80,16 +82,21 @@ class Game:
         self.running = True
         while self.running:
             self.apply_inputs()
-            world_state = self.physics_manager.update()
-            
+            world_state = self.physics_manager.update(self.entities_to_destroy)
+            self.entities_to_destroy = {"tanks":[], "bullets":[]}
+            if not self.latest_collisions:
+                self.latest_collisions = world_state.get('collisions')
+
             if self.physics_manager.tick % 3 == 0:
-                state = self.entity_manager.update(world_state)
+                world_state["collisions"] = self.latest_collisions
+                state, self.entities_to_destroy = self.entity_manager.update(world_state)
                 if state and state != self.prev_state:
                     await self.broadcast({
                         "event": "state",
                         "payload": state
                     })
                     self.prev_state = state
+                    self.latest_collisions = None
 
             await asyncio.sleep(self.physics_manager.time_step)
         print("Game loop stopped")

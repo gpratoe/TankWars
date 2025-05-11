@@ -1,12 +1,25 @@
 from enum import Enum
 
 class CollisionType(Enum):
-    BULLET = 1
-    TANK = 2
-    WALL = 3
+    BULLET_TANK = 0
+    TANK_TANK = 1
+    BULLET_BULLET = 2
+    BULLET_WALL = 3
+    
+
+class Collision:
+    def __init__(self, first, second, type):
+        self.first = first
+        self.second = second
+        self.type = type
 
 class CollisionHandler:
+    def __init__(self):
+        self.latest_collisions = []
     
+    def clear_collisions(self):
+        self.latest_collisions = []
+
     def begin_contact_callback(self, bodyA, bodyB):
         if bodyA.userData is None or bodyB.userData is None:
             return
@@ -23,25 +36,20 @@ class CollisionHandler:
             types = (b_type, a_type)
             first, second = second, first
             
-        
         match types:
-
-            case ("Tank", "Tank"):
+            case ("TankPhysics", "TankPhysics"):
                 pass
             
-            case ("Bullet", "Tank"):
-                second.health -= first.damage
-                first.collided_with = CollisionType.TANK
+            case ("BulletPhysics", "TankPhysics"):
+                self.latest_collisions.append(Collision(first, second, CollisionType.BULLET_TANK))
 
-            case ("Bullet", "Bullet"):
-                first.collided_with = CollisionType.BULLET
-                second.collided_with = CollisionType.BULLET
+            case ("BulletPhysics", "BulletPhysics"):
+                self.latest_collisions.append(Collision(first, second, CollisionType.BULLET_BULLET))
 
-            case ("Bullet", "Wall"):
-                first.collided_with = CollisionType.WALL
-
+            case ("BulletPhysics", "Wall"):
+                self.latest_collisions.append(Collision(first, second, CollisionType.BULLET_WALL))
             case _:
                 pass
-    
+       
     def end_contact_callback(self, bodyA, bodyB):
         pass

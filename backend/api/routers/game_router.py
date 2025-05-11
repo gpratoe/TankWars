@@ -79,6 +79,7 @@ async def start_game(game_id:int, owner_id:int):
         return resp
     except Exception as e:
         print(e)
+        raise e
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 @gr.websocket("/{game_id}/ws")

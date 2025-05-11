@@ -1,4 +1,5 @@
 from Box2D import b2Vec2
+import math
 
 class Utils:
     API_URL = "http://localhost:8000"
@@ -17,5 +18,12 @@ class Utils:
     
     def vec2_to_world(self, vec2):
         return b2Vec2(self.to_world(vec2[0]), self.to_world(vec2[1]))
+    
+
+    def get_linear_velocity(self, speed, angle):
+        vx = speed * math.cos(angle)
+        vy = speed * math.sin(angle)
+        return (vx, vy)
+
 
 utils = Utils()

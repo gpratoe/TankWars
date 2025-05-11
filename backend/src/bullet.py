@@ -1,111 +1,45 @@
-from Box2D import (b2FixtureDef, b2CircleShape)
 from src.utils import utils
 import math
 from src.settings import *
-from src.physics_manager import PhysicsManager, BodyType
-from src.collision_handler import CollisionType
 import time
 
 class Bullet:
-    def __init__(self, id, owner_id, pos, angle, damage, speed, groupIndex, physics_manager: PhysicsManager):
-       # self.shooter = shooter
+    def __init__(self, id, owner_id, pos, angle, damage, speed):
         self.id = id
         self.owner_id = owner_id
         self.x = pos[0]
         self.y = pos[1]
-        self.direction = (math.cos(angle), math.sin(angle))
+        self.angle = angle
         self.damage = damage
         self.speed = speed
-        self.physics_manager = physics_manager
-
-        self.bullet = physics_manager.create_bullet(
-                                                position=pos,
-                                                direction=self.direction,
-                                                speed=speed,
-                                                groupIndex=groupIndex,
-                                                userData=self)
-        
         self.is_dead = False
-        self.collided_with = None
         self.bounces_left = 1
 
+        self.last_state = {
+            "x": pos[0],
+            "y": pos[1],
+            "angle": angle,
+            "is_dead": False,
+        }
 
-    def _update_locals(self):
-        self.x, self.y = utils.vec2_to_pixel(self.bullet.position)
-
-        velocity = self.bullet.linearVelocity
-        self.speed = utils.to_pixel(velocity.length)
-
-        if velocity.lengthSquared > 0:
-            direction_norm = velocity / velocity.length
-            self.direction = (direction_norm.x, direction_norm.y)
     
-    def get_state(self):
-        prevx = self.x
-        prevy = self.y
-        prevdir = self.direction
-        prevspeed = self.speed
-        prevdamage = self.damage
-        previs_dead = self.is_dead
-
-        self._update_locals()
-        
-        same_state =(
-            prevx == self.x and
-            prevy == self.y and
-            prevdir == self.direction and
-            prevspeed == self.speed and
-            prevdamage == self.damage and
-            previs_dead == self.is_dead
-        )
-
+    def get_toclient(self):
         return {
-            "id": self.id,
-            "owner_id": self.owner_id,
-            "x": self.x,
-            "y": self.y,
-            "direction": self.direction,
-            "damage": self.damage,
-            "speed": self.speed,
-            "is_dead": self.is_dead,
-            "timestamp": time.time()*1000,
-        }, same_state
+            **self.last_state,
+            'timestamp': time.time()*1000,
+        }
     
-    def _act_on_collision(self):
-        '''
-        Checks if the bullet has collided with something and acts accordingly
+    def update_state_and_diff(self, world_state):
+        self.x = utils.to_pixel(world_state["bulletx"])
+        self.y = utils.to_pixel(world_state["bullety"])
+        self.angle = world_state["angle"]
 
-        '''
-        ##
-        # The main reason for this function is to avoid the ocasional double collision
-        # that box2d generates when the bullet hits a wall, generating a fake double bounce that 
-        # leads to the bullet being destroyed when it shouldnt.
-        # Something that will happen if i just act on the collision in the ContactListener / CollisionHandler.       
-
-        if self.collided_with is None:
-            return
-        
-        match self.collided_with:
-            case CollisionType.TANK:
-                self.is_dead = True
-            case CollisionType.BULLET:
-                self.is_dead = True
-            case CollisionType.WALL:
-                self.bounces_left -= 1
-                if self.bounces_left < 0:
-                    self.is_dead = True
-            case _:
-                pass
-        self.collided_with = None
-
-    def update(self):
-        '''
-        Checks if the bullet is out of bounds and destroys it if it is
-        returns 1 if the bullet is out of bounds
-        0 otherwise
-        '''
-        self._act_on_collision()
-
-        if self.x < 0 or self.x > GAME_WIDTH or self.y < 0 or self.y > GAME_HEIGHT:
-            self.is_dead = True
-        
+        new_state = {
+            'x': self.x,
+            'y': self.y,
+            'angle': self.angle,
+            'is_dead': self.is_dead,
+        }
+        same_state = new_state == self.last_state
+        self.last_state = new_state
+        return self.get_toclient(), same_state
