@@ -25,7 +25,7 @@ class PhysicsManager:
         world_state = {"tanks":{}, "bullets":{}, "collisions":[]}
         try:
             self.cleanup_world(entities_to_destroy)            
-            self.world.Step(self.time_step, 10, 3)
+            self.world.Step(self.time_step, 6, 2)
             for tank in list(self.tanks_bodies.values()):
                 world_state["tanks"][tank.id] = tank.to_dict()
             for bullet in list(self.bullets_bodies.values()):
