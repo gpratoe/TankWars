@@ -6,8 +6,7 @@ import asyncio
 from api.ws import ConnectionManager
 import time
 from src.settings import *
-from src.entity_manager import EntityManager
-from src.physics_manager import PhysicsManager
+from src.utils import utils
 
 class Lobby:
 
@@ -166,7 +165,7 @@ class Lobby:
 
         await self.broadcast({'event': 'game_settings',
                                'payload': game_settings})
-        print("llamando game run para el lobby: ", self.lobby_id)
+        utils.logger.info(f"llamando game run para el lobby: {self.lobby_id}")
         asyncio.create_task(self.game.run())
 
         await self.broadcast({'event': 'game_started'})

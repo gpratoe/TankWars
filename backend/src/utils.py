@@ -1,11 +1,21 @@
 from Box2D import b2Vec2
 import math
+import logging
 
 class Utils:
     API_URL = "http://localhost:8000"
     
     def __init__(self):
         self.PPM = 10
+        self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(logging.DEBUG)
+        self._setup_logger()
+
+    def _setup_logger(self):
+        handler = logging.StreamHandler()
+        formmater = logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s")
+        handler.setFormatter(formmater)
+        self.logger.addHandler(handler)
 
     def to_pixel(self, meter):
         return meter * self.PPM

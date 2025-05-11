@@ -33,7 +33,7 @@ class PhysicsManager:
                 
             return world_state
         except Exception as e:
-            print(f"PhysicsManager update error: {e}")
+            utils.logger.warning(f"PhysicsManager update error: {e}")
 
     def create_body(self, body_type, position, fixture_def, **kwargs):
         return self.world.CreateBody(
@@ -84,7 +84,7 @@ class PhysicsManager:
         if tank:
             tank.apply_input(input)      
             return      
-        print(f"Tank with id {tank_id} not found.")
+        utils.logger.warning(f"Tank with id {tank_id} not found.")
     
     def destroy_body(self, body):
         self.world.DestroyBody(body)

@@ -6,7 +6,7 @@ from src.entity_manager import EntityManager
 from api.ws import ConnectionManager
 from src.physics_manager import PhysicsManager
 from src.map import Map
-import threading
+from src.utils import utils
 
 class Game:
     def __init__(self, players, lobby_id, connection_manager: ConnectionManager):
@@ -27,13 +27,11 @@ class Game:
         player = next(filter(lambda p : p.id == player_id, self.players))
 
         if player in self.players:
-            print(self.players)
             self.players.remove(player)
             await self.connection_manager.disconnect(player_id)
-            print(self.players)
             if len(self.players) == 0:
                 self.running = False
-                print("stoping loop")
+                utils.logger.info(f"stoping loop for game: {self.id} as all players disconnected")
                 return
             else:
                 await self.broadcast({
@@ -41,7 +39,7 @@ class Game:
                     "payload": {"player_id": player_id}
                 })
         else:
-            print(f"Player {player_id} not found in players list")
+            utils.logger.info(f"Player {player_id} not found in players list")
     
     async def handle_data(self, data, player_id):
         if 'event' in data and 'payload' in data:
@@ -50,7 +48,7 @@ class Game:
             if event == 'input':
                 self.latest_inputs[player_id] = payload
         else:
-            print("Invalid data received")
+            utils.logger.info("Invalid data received")
 
 
     async def first_setup(self):
@@ -93,7 +91,7 @@ class Game:
                     timeout=0.1
                 )
             except asyncio.TimeoutError:
-                print("PhysicsManager update timed out")
+                utils.logger.info("PhysicsManager update timed out")
                 continue
 
             self.entities_to_destroy = {"tanks":[], "bullets":[]}
@@ -112,4 +110,4 @@ class Game:
                     self.latest_collisions = None
 
             await asyncio.sleep(self.physics_manager.time_step)
-        print("Game loop stopped")
+        utils.logger.info("Game loop stopped")

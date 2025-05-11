@@ -3,7 +3,8 @@ from pydantic import BaseModel
 from db.game_service import gs
 from src.lobby import Lobby
 from src.player import Player
-from src.game_state_machine import GameStateMachine, GameState
+from src.game_state_machine import GameStateMachine
+from src.utils import utils
 
 gr = APIRouter()
 
@@ -78,8 +79,7 @@ async def start_game(game_id:int, owner_id:int):
         resp = await gsm.start_game(owner_id)
         return resp
     except Exception as e:
-        print(e)
-        raise e
+        utils.logger.warning(e)
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 @gr.websocket("/{game_id}/ws")
@@ -101,5 +101,5 @@ async def game_lobby_ws(websocket: WebSocket, game_id: int, player_id: int):
             try:
                 await gsm.handle_disconnect(player_id)
             except Exception as e:
-                print(str(e))
+                utils.logger.waring(str(e))
             break
