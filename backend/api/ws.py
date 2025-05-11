@@ -13,7 +13,7 @@ class ConnectionManager:
             self.active_connections[player_id] = connection
         
         except Exception as e:
-            utils.logger.info(e, " conection failed")
+            utils.logger.warning(e, " conection failed")
             if player_id in self.active_connections:
                 self.active_connections.pop(player_id)
 
@@ -25,7 +25,7 @@ class ConnectionManager:
                 self.active_connections.pop(player_id)
 
         except Exception as e:
-            utils.logger.info(f"Error during disconnection of player with id: {player_id}: {e}")
+            utils.logger.warning(f"Error during disconnection of player with id: {player_id}: {e}")
 
     async def broadcast(self, data: dict):
         to_remove = []
@@ -33,7 +33,7 @@ class ConnectionManager:
             try:
                 await connection.send_json(data)
             except Exception as e:
-                utils.logger.info(f"Error broadcasting to player {player_id}: {e}")
+                utils.logger.warning(f"Error broadcasting to player {player_id}: {e}")
                 to_remove.append(player_id)
 
         for player_id in to_remove:
@@ -44,7 +44,7 @@ class ConnectionManager:
             if player_id in self.active_connections:
                 await self.active_connections[player_id].send_json(data)
         except Exception as e:
-            utils.logger.info(f"Error sending message to player with id: {player_id} in lobby: {self.id}: {e}")
+            utils.logger.warning(f"Error sending message to player with id: {player_id} in lobby: {self.id}: {e}")
 
 
 
