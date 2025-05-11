@@ -6,7 +6,7 @@ import App from './components/App.jsx';
 const root = createRoot(document.getElementById('root'));
 
 root.render(
-  <BrowserRouter basename='/TanWars/frontend'>
+  <BrowserRouter basename='/frontend'>
     <App />
   </BrowserRouter>
 );
