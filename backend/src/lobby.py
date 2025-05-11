@@ -153,9 +153,6 @@ class Lobby:
         
         resp = gs.start_game(self.lobby_id, owner_id)
         
-        #physics_manager = PhysicsManager()
-        #entity_manager = EntityManager(physics_manager=physics_manager)
-
         self.game = Game(players=self.players,
                          lobby_id=self.lobby_id,
                          connection_manager=self.manager,

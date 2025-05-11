@@ -1,5 +1,4 @@
 from fastapi.websockets import WebSocket, WebSocketState
-import asyncio
 from src.utils import utils
 
 class ConnectionManager:
