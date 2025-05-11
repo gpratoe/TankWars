@@ -2,10 +2,11 @@ from fastapi.websockets import WebSocket, WebSocketState
 import asyncio
 
 class ConnectionManager:
-    def __init__(self):
+    def __init__(self, id):
+        self.id = id
         self.active_connections: dict[int, WebSocket] = {}
 
-    async def connect(self, connection: WebSocket, lobby_id: int, player_id: int):
+    async def connect(self, connection: WebSocket, player_id: int):
         try:    
             await connection.accept()
             self.active_connections[player_id] = connection
@@ -15,7 +16,7 @@ class ConnectionManager:
             if player_id in self.active_connections:
                 self.active_connections.pop(player_id)
 
-    async def disconnect(self, lobby_id: int, player_id: int):
+    async def disconnect(self, player_id: int):
         try:
            if player_id in self.active_connections:
                 if self.active_connections[player_id].client_state == WebSocketState.CONNECTED:
@@ -25,7 +26,7 @@ class ConnectionManager:
         except Exception as e:
             print(f"Error during disconnection of player with id: {player_id}: {e}")
 
-    async def broadcast(self, data: dict, lobby_id: int):
+    async def broadcast(self, data: dict):
         to_remove = []
         for player_id, connection in self.active_connections.items():
             try:
@@ -35,14 +36,14 @@ class ConnectionManager:
                 to_remove.append(player_id)
 
         for player_id in to_remove:
-            await self.disconnect(lobby_id, player_id)
+            await self.disconnect(player_id)
 
-    async def send_message(self, data: dict, lobby_id: int, player_id: int):
+    async def send_message(self, data: dict, player_id: int):
         try:
             if player_id in self.active_connections:
                 await self.active_connections[player_id].send_json(data)
         except Exception as e:
-            print(f"Error sending message to player with id: {player_id} in lobby: {lobby_id}: {e}")
+            print(f"Error sending message to player with id: {player_id} in lobby: {self.id}: {e}")
 
 
 

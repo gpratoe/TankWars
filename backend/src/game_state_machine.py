@@ -136,7 +136,7 @@ class PrevGameConfigState(State):
                 player = self.lobby.get_player(player_id)
                 if player:
                     player.ready = True
-                    await self.game.connection_manager.send_message(self.first_state, self.game.id, player_id)
+                    await self.game.connection_manager.send_message(self.first_state, player_id)
 
                     all_ready = all(p.ready for p in self.lobby.players)
                     if all_ready:
@@ -192,7 +192,7 @@ class CountdownState(State):
             'payload': {'countdown_ms': countdown_ms,
                         'timestamp': now}
         }
-        await self.game.connection_manager.broadcast(countdown_event, self.game.id)
+        await self.game.connection_manager.broadcast(countdown_event)
 
         await asyncio.sleep(self.countdown_seconds)
         await self.game_state_machine.change_state(GameState.IN_GAME)

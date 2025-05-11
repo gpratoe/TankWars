@@ -26,7 +26,7 @@ class Lobby:
             self.players = [owner]
             owner.color = self.__find_color()
 
-        self.manager = ConnectionManager()
+        self.manager = None
         self.game = None
 
     def create_db_entry(self):
@@ -69,6 +69,7 @@ class Lobby:
     def new(cls, name: str, owner: Player, max_players: int):
         lobby = cls(name, owner, max_players)
         game_dict = lobby.create_db_entry()
+        lobby.manager = ConnectionManager(lobby.lobby_id)
         return lobby, game_dict
 
     
@@ -111,15 +112,15 @@ class Lobby:
             raise ValueError('Player not found in lobby')
 
         await self.broadcast({'event': 'player_joined', 'player': player.to_dict()})
-        await self.manager.connect(websocket, self.lobby_id, player_id)
+        await self.manager.connect(websocket, player_id)
 
     async def disconnect_player(self, player_id: int):
-        await self.manager.disconnect(self.lobby_id, player_id)
+        await self.manager.disconnect(player_id)
         await self.remove_player(player_id)
         await self.broadcast({'event': 'player_dcd', 'player_id': player_id})
 
     async def broadcast(self, data: dict):
-        await self.manager.broadcast(data, self.lobby_id)
+        await self.manager.broadcast(data)
 
     def get_players(self):
         players = [p.to_dict() for p in self.players]
@@ -153,14 +154,13 @@ class Lobby:
         
         resp = gs.start_game(self.lobby_id, owner_id)
         
-        physics_manager = PhysicsManager()
-        entity_manager = EntityManager(physics_manager=physics_manager)
+        #physics_manager = PhysicsManager()
+        #entity_manager = EntityManager(physics_manager=physics_manager)
 
         self.game = Game(players=self.players,
                          lobby_id=self.lobby_id,
                          connection_manager=self.manager,
-                         entity_manager=entity_manager,
-                         physics_manager=physics_manager)
+                    )   
 
         game_settings = SETTINGS_JSON
 

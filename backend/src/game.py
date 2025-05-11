@@ -1,3 +1,4 @@
+from concurrent.futures import ThreadPoolExecutor
 import math
 import asyncio
 from src.settings import *
@@ -8,19 +9,19 @@ from src.map import Map
 import threading
 
 class Game:
-    def __init__(self, players, lobby_id, connection_manager: ConnectionManager,
-                 entity_manager: EntityManager, physics_manager: PhysicsManager):
+    def __init__(self, players, lobby_id, connection_manager: ConnectionManager):
         self.w = GAME_WIDTH
         self.h = GAME_HEIGHT
         self.id = lobby_id
         self.players = players
         self.prev_state = None
         self.connection_manager = connection_manager
-        self.physics_manager = physics_manager
-        self.entity_manager = entity_manager
+        self.physics_manager = PhysicsManager()
+        self.entity_manager = EntityManager(self.physics_manager)
         self.latest_inputs = {}
         self.entities_to_destroy = {"tanks":[], "bullets":[]}
         self.latest_collisions = None
+        self.executor = ThreadPoolExecutor(max_workers=1)
 
     async def handle_disconnect(self, player_id):
         player = next(filter(lambda p : p.id == player_id, self.players))
@@ -28,7 +29,7 @@ class Game:
         if player in self.players:
             print(self.players)
             self.players.remove(player)
-            await self.connection_manager.disconnect(self.id, player_id)
+            await self.connection_manager.disconnect(player_id)
             print(self.players)
             if len(self.players) == 0:
                 self.running = False
@@ -71,7 +72,7 @@ class Game:
 
 
     async def broadcast(self, data):
-        await self.connection_manager.broadcast(data, self.id)
+        await self.connection_manager.broadcast(data)
 
     def apply_inputs(self):
         for player_id, input in self.latest_inputs.items():
@@ -82,7 +83,19 @@ class Game:
         self.running = True
         while self.running:
             self.apply_inputs()
-            world_state = self.physics_manager.update(self.entities_to_destroy)
+            try:
+                world_state = await asyncio.wait_for(
+                    asyncio.get_event_loop().run_in_executor(
+                        self.executor,
+                        self.physics_manager.update,
+                        self.entities_to_destroy
+                    ),
+                    timeout=0.1
+                )
+            except asyncio.TimeoutError:
+                print("PhysicsManager update timed out")
+                continue
+
             self.entities_to_destroy = {"tanks":[], "bullets":[]}
             if not self.latest_collisions:
                 self.latest_collisions = world_state.get('collisions')
