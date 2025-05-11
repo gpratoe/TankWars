@@ -17,9 +17,21 @@ class Collision:
         self.second = second
         self.type = type
 
+    def __eq__(self, other):
+        if not isinstance(other, Collision):
+            return False
+        return (
+            self.first == other.first and
+            self.second == other.second and
+            self.type == other.type
+        )
+    def __hash__(self):
+        return hash((frozenset({id(self.first), id(self.second)}), self.type))
+    
+
 class CollisionHandler:
     def __init__(self):
-        pass
+        self.latest_collisions = []
     
     def get_type(self, first, second):
         first_type = first.entity_type
@@ -47,7 +59,7 @@ class CollisionHandler:
         return Collision(second,first, ctype)
     
     def get_latest_collisions(self, contacts):
-        collisions = []
+        collisions = set()
         for contact in contacts:
             fixtureA = contact.fixtureA
             fixtureB = contact.fixtureB
@@ -55,5 +67,10 @@ class CollisionHandler:
                 collision_type = self.get_type(fixtureA.userData, fixtureB.userData)
                 if collision_type:
                     collision = self.get_collision(fixtureA.userData, fixtureB.userData, collision_type)
-                    collisions.append(collision)
-        return collisions
+                    collisions.add(collision)
+        
+        collisions = list(collisions)
+        if collisions != self.latest_collisions:
+            self.latest_collisions = collisions
+            return collisions
+        return []
