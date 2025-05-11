@@ -1,12 +1,13 @@
-from src.collision_handler import CollisionType
+from src.collision_handler import EntityType
 from Box2D import b2Body
 
 class BulletPhysics:
     def __init__(self,id , body: b2Body):
         self.id = id
         self.body = body
-        self.body.userData = self
+        self.entity_type = EntityType.BULLET
         self.to_be_destroyed = False
+        self.body.fixtures[0].userData = self
 
         
     def to_dict(self):

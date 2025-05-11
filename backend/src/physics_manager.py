@@ -1,5 +1,4 @@
 from Box2D import b2World, b2FixtureDef, b2PolygonShape, b2CircleShape, b2Vec2
-from src.contactlistener import ContactListener
 from enum import IntEnum
 from src.collision_handler import CollisionHandler
 from src.tank_physics import TankPhysics
@@ -15,7 +14,6 @@ class PhysicsManager:
     def __init__(self):
         self.world = b2World(gravity=(0, 0), doSleep=True)
         self.collision_handler = CollisionHandler()
-        self.world.contactListener = ContactListener(self.collision_handler)
         self.time_step = 1.0 / 60
         self.tick = 0
         self.tanks_bodies = {}
@@ -30,7 +28,7 @@ class PhysicsManager:
                 world_state["tanks"][tank.id] = tank.to_dict()
             for bullet in list(self.bullets_bodies.values()):
                 world_state["bullets"][bullet.id] = bullet.to_dict()
-            world_state["collisions"] = self.collision_handler.latest_collisions
+            world_state["collisions"] = self.get_latest_collisions()
             self.tick += 1
                 
             return world_state
@@ -92,7 +90,6 @@ class PhysicsManager:
         self.world.DestroyBody(body)
 
     def cleanup_world(self, entities_to_destroy):
-        self.collision_handler.clear_collisions()
         for tank in entities_to_destroy["tanks"]:
             tank_body = self.tanks_bodies.get(tank)
             if tank_body:
@@ -103,3 +100,8 @@ class PhysicsManager:
             if bullet_body:
                 self.destroy_body(bullet_body.body)
                 del self.bullets_bodies[bullet]
+
+    def get_latest_collisions(self):
+        contacts = self.world.contacts
+        collisions = self.collision_handler.get_latest_collisions(contacts)
+        return collisions
