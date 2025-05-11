@@ -6,7 +6,7 @@ import App from './components/App.jsx';
 const root = createRoot(document.getElementById('root'));
 
 root.render(
-  <BrowserRouter basename='/frontend'>
+  <BrowserRouter basename='/TankWars'>
     <App />
   </BrowserRouter>
 );
