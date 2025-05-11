@@ -1,4 +1,4 @@
-import {Application, Assets} from "pixi.js";
+import {Application, Assets, Text} from "pixi.js";
 import { Tank } from "./tank";
 import { Bullets } from "./bullets";
 import { GameMap} from "./gameMap";
@@ -98,8 +98,50 @@ class Game {
                     }
                 }
             }
+        } else if (event === 'countdown') {
+            const countdown_ms = payload.countdown_ms;
+            const timestamp = payload.timestamp;
+            const now = Date.now();
+            const time_left = countdown_ms - (now - timestamp);
+            if (time_left > 0) {
+                const seconds_left = Math.floor(time_left / 1000);
+                this.showCountdown(this.app, seconds_left, () => {
+                    this.sendMessage({event: 'countdown_complete', payload: {}});
+                });
+            }
         }
     }
+
+    showCountdown(app, secondsLeft = 3, onComplete) {
+        const countdownText = new Text('', {
+          fontFamily: 'Arial',
+          fontSize: 120,
+          fill: 0xffffff,
+          align: 'center',
+        });
+      
+        countdownText.anchor.set(0.5);
+        countdownText.x = app.renderer.width / 2;
+        countdownText.y = app.renderer.height / 2;
+      
+        app.stage.addChild(countdownText);
+      
+        let current = secondsLeft;
+      
+        const interval = setInterval(() => {
+          if (current > 0) {
+            countdownText.text = current.toString();
+            current--;
+          } else {
+            countdownText.text = 'GO!';
+            setTimeout(() => {
+              app.stage.removeChild(countdownText);
+              if (onComplete) onComplete();
+            }, 800);
+            clearInterval(interval);
+          }
+        }, 1000);
+      }
 
     handleWebSocketMessage(data) {
         const event = data?.event;
