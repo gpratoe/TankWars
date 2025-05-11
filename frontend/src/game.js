@@ -152,11 +152,13 @@ class Game {
     }
 
     async init() {
-        await Assets.load(["/assets/tank_sprite_green.png",
-                        "/assets/tank_sprite_yellow.png",
-                        "/assets/tank_sprite_blue.png",
-                        "/assets/tank_sprite_orange.png",
-                        "/assets/boundries_tile.png"]);
+        const base = import.meta.env.BASE_URL
+
+        await Assets.load([`${base}assets/tank_sprite_green.png`,
+                        `${base}assets/tank_sprite_yellow.png`,
+                        `${base}assets/tank_sprite_blue.png`,
+                        `${base}assets/tank_sprite_orange.png`,
+                        `${base}assets/boundries_tile.png`]);
         this.app = new Application();
         await this.app.init({
             width: this.width,
