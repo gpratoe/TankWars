@@ -2,11 +2,11 @@ import {Application, Assets, Text} from "pixi.js";
 import { Tank } from "./tank";
 import { Bullets } from "./bullets";
 import { GameMap} from "./gameMap";
-import blueTank from ".assets/tank_sprite_blue.png";
-import greenTank from ".assets/tank_sprite_green.png";
-import orangeTank from ".assets/tank_sprite_orange.png";
-import yellowTank from ".assets/tank_sprite_yellow.png";
-import boundriesTile from ".assets/boundries_tile.png";
+import blueTank from "../assets/tank_sprite_blue.png";
+import greenTank from "../assets/tank_sprite_green.png";
+import orangeTank from "../assets/tank_sprite_orange.png";
+import yellowTank from "../assets/tank_sprite_yellow.png";
+import boundriesTile from "../assets/boundries_tile.png";
 
 class Game {
     constructor(settings, game_id, player_id, sendMessage) {
