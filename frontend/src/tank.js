@@ -67,7 +67,7 @@ class Tank {
         this.#setup();
     }
     #setup() {
-        const texture = Assets.get(`/assets/tank_sprite_${this.color}.png`);
+        const texture = Assets.get(`/tank_sprite_${this.color}.png`);
 
         this.sprite = new Sprite(texture);
 
