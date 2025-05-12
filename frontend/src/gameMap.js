@@ -4,7 +4,7 @@ import { Assets, TilingSprite } from "pixi.js";
 class GameMap {
     constructor(app, settings) {
         this.app = app;
-        this.texture = Assets.get('/boundries_tile.png');
+        this.texture = Assets.get('boundries_tile.png');
         this.settings = settings;
         this.set_boundries();
     }
