@@ -3,3 +3,4 @@ __pycache__
 frontend/node_modules/*
 database_*.sqlite
 *.aseprite
+frontend/dist/*
