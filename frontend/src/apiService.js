@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-const HOST = '192.168.100.7';
-export const API_URL = `https://backend-muddy-sound-8554.fly.dev`;
-export const WS_URL = `wss://backend-muddy-sound-8554.fly.dev`;
+//const HOST = '192.168.100.7';
+export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+export const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:8000';
 
 export async function create_player(name) {
     try{
