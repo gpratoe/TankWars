@@ -152,11 +152,11 @@ class Game {
     }
 
     async init() {
-        await Assets.load(['tank_sprite_blue.png',
-                            'tank_sprite_green.png',
-                            'tank_sprite_orange.png',
-                            'tank_sprite_yellow',
-                            'boundries_tile.png',
+        await Assets.load([`${import.meta.env.VITE_BASE_URL}tank_sprite_blue.png`,
+                           `${import.meta.env.VITE_BASE_URL}tank_sprite_green.png`,
+                           `${import.meta.env.VITE_BASE_URL}tank_sprite_orange.png`,
+                           `${import.meta.env.VITE_BASE_URL}tank_sprite_yellow`,
+                           `${import.meta.env.VITE_BASE_URL}boundries_tile.png`,
                         ]);
             this.app = new Application();
         await this.app.init({

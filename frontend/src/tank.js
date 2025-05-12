@@ -67,7 +67,7 @@ class Tank {
         this.#setup();
     }
     #setup() {
-        const texture = Assets.get(`tank_sprite_${this.color}.png`);
+        const texture = Assets.get(`${import.meta.env.VITE_BASE_URL}tank_sprite_${this.color}.png`);
 
         this.sprite = new Sprite(texture);
 
