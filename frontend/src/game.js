@@ -2,11 +2,6 @@ import {Application, Assets, Text} from "pixi.js";
 import { Tank } from "./tank";
 import { Bullets } from "./bullets";
 import { GameMap} from "./gameMap";
-import blueTank from "tank_sprite_blue.png";
-import greenTank from "tank_sprite_green.png";
-import orangeTank from "tank_sprite_orange.png";
-import yellowTank from "tank_sprite_yellow.png";
-import boundriesTile from "boundries_tile.png";
 
 class Game {
     constructor(settings, game_id, player_id, sendMessage) {
@@ -157,11 +152,11 @@ class Game {
     }
 
     async init() {
-        await Assets.load([greenTank,
-                            blueTank,
-                            orangeTank,
-                            yellowTank,
-                            boundriesTile
+        await Assets.load(['tank_sprite_blue.png',
+                            'tank_sprite_green.png',
+                            'tank_sprite_orange.png',
+                            'tank_sprite_yellow',
+                            'boundries_tile.png',
                         ]);
             this.app = new Application();
         await this.app.init({
