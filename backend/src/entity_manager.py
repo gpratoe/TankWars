@@ -3,7 +3,6 @@ from src.bullet import Bullet
 from src.settings import *
 from src.physics_manager import PhysicsManager
 from enum import Enum
-from src.utils import utils
 from src.collision_handler import CollisionType
 
 class EntityType(Enum):
@@ -26,8 +25,8 @@ class EntityManager:
         if player.id in self.tanks:
             return
         self.physics_manager.create_tank(player.id,
-                                        utils.vec2_to_world(pos),
-                                        utils.vec2_to_world((TANK_WIDTH, TANK_HEIGHT)),
+                                        pos,
+                                        (TANK_WIDTH, TANK_HEIGHT),
                                         )
         def shoot_callback(owner_id, pos, angle, damage, speed):
             self.spawn_bullet(owner_id, pos, angle, damage, speed)
@@ -41,7 +40,7 @@ class EntityManager:
     def spawn_bullet(self, owner_id, pos, angle, damage, speed):
         self.physics_manager.create_bullet(
             self.bullet_id_counter,
-            utils.vec2_to_world(pos),
+            pos,
             angle,
             speed,
             groupIndex=-owner_id,

@@ -4,6 +4,7 @@ from src.collision_handler import CollisionHandler
 from src.tank_physics import TankPhysics
 from src.bullet_physics import BulletPhysics
 from src.utils import utils
+from src.wall import Wall
 
 class BodyType(IntEnum):
     static = 0
@@ -46,25 +47,27 @@ class PhysicsManager:
     def create_tank(self, id, position, dimentions, **kwargs):
         if id in self.tanks_bodies:
             raise ValueError(f"Tank with id {id} already exists.")
+        world_position = utils.vec2_to_world(position)
+        world_dimentions = utils.vec2_to_world(dimentions)
         body = self.create_body(
             body_type=BodyType.dynamic,
-            position=position,
+            position=world_position,
             fixture_def=b2FixtureDef(
-                shape=b2PolygonShape(box=b2Vec2(dimentions) * 0.5), # * 0.5 because box2d uses half width and half height (almost went insane over this)
+                shape=b2PolygonShape(box=world_dimentions * 0.5), # * 0.5 because box2d uses half width and half height (almost went insane over this)
                 density=2,
                 friction=0.5,
                 groupIndex=-id,
             ),
             **kwargs
         )
-        tank_physics = TankPhysics(id, dimentions[0], dimentions[1], body)
+        tank_physics = TankPhysics(id, world_dimentions[0], world_dimentions[1], body)
         self.tanks_bodies[id] = tank_physics
     
-    def create_bullet(self, id, position, angle, speed, radius=0.3, groupIndex=0, **kwargs):
+    def create_bullet(self, id, position, angle, speed, radius=3, groupIndex=0, **kwargs):
         body = self.create_body(body_type=BodyType.dynamic,
-                                                position=position,
+                                                position=utils.vec2_to_world(position),
                                                 fixture_def=b2FixtureDef(
-                                                    shape=b2CircleShape(radius=radius),
+                                                    shape=b2CircleShape(radius=utils.to_world(radius)),
                                                     density=0.5,
                                                     friction=0,
                                                     restitution=1,
@@ -73,19 +76,30 @@ class PhysicsManager:
                                                 bullet=True,
                                                 linearVelocity=utils.get_linear_velocity(speed,angle),
                                                 **kwargs
-                                                )
+        )
         bullet_physics = BulletPhysics(id, body)
         self.bullets_bodies[id] = bullet_physics
-    
+
+    def create_wall(self, id, x, y, width, height):
+        body = self.create_body(body_type=BodyType.static,
+                                position=utils.vec2_to_world(b2Vec2(x,y)),
+                                fixture_def=b2FixtureDef(
+                                    shape=b2PolygonShape(box=utils.vec2_to_world(b2Vec2((width,height)) * 0.5)),
+                                    density=2,
+                                    friction=0,
+                                    restitution=0
+                                )
+        )
+        Wall(id, width, height, body)
 
 
     def handle_input(self, tank_id, input):
         tank = self.tanks_bodies.get(tank_id)
         if tank:
-            tank.apply_input(input)      
-            return      
+            tank.apply_input(input)
+            return
         utils.logger.warning(f"Tank with id {tank_id} not found.")
-    
+ 
     def destroy_body(self, body):
         self.world.DestroyBody(body)
 
