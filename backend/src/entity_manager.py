@@ -3,7 +3,7 @@ from src.bullet import Bullet
 from src.settings import *
 from src.physics_manager import PhysicsManager
 from enum import Enum
-from src.collision_handler import CollisionType
+from src.common_types import CollisionType
 
 class EntityType(Enum):
     TANK = 0
@@ -69,8 +69,8 @@ class EntityManager:
         self.bullets_to_remove.clear()
 
     def update(self, world_state):
-        if world_state == self.last_world_state:
-            return (None, self.entities_to_destroy)
+        #if world_state == self.last_world_state:
+        #    return (None, self.entities_to_destroy)
         self.entities_to_destroy = {"tanks": [], "bullets": []}
         self.last_world_state = world_state
         collisions = world_state.get('collisions')
