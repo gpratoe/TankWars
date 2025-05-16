@@ -10,16 +10,17 @@ import numpy as np
 
 
 class Rect:
-    def __init__(self, x, y, w, h):
+    def __init__(self, x, y, w, h, groupIndex=0):
         self.x = x
         self.y = y
         self.w = w
         self.h = h
+        self.groupIndex = groupIndex
 
 
 class LP_Wall(Rect):
-    def __init__(self, x, y, w, h):
-        super().__init__(x, y, w, h)
+    def __init__(self, x, y, w, h, groupIndex=0):
+        super().__init__(x, y, w, h, groupIndex)
 
 
 class Circle:
@@ -31,15 +32,18 @@ class Circle:
         float (radius): radius of the circle.
     """
 
-    def __init__(self, x, y, angle, radius):
+    def __init__(self, x, y, angle, radius, groupIndex=0):
         self.x = x
         self.y = y
         self.radius = radius
         self.angle = angle
+        self.groupIndex = groupIndex
         self.velocity = np.array([0,0])
         self.last_correction = (0,0)
 
     def circle_circle_collide(self, circle: "Circle"):
+        if(self.groupIndex != 0 and self.groupIndex == circle.groupIndex):
+            return False
         x_dist = abs(self.x - circle.x)
         y_dist = abs(self.y - circle.y)
         center_dist = (x_dist**2 + y_dist**2)
@@ -48,6 +52,8 @@ class Circle:
         return center_dist <= radius_sum * radius_sum # lets just compare to its squared to avoid using sqrt
 
     def circle_rect_collide(self, rect: Rect):
+        if(self.groupIndex != 0 and self.groupIndex == rect.groupIndex):
+                    return False
         closest_x = utils.clamp(self.x, rect.x - rect.w / 2, rect.x + rect.w / 2)
         closest_y = utils.clamp(self.y, rect.y - rect.h / 2, rect.y + rect.h / 2)
         x_dist = self.x - closest_x
@@ -112,8 +118,8 @@ class Circle:
 
 
 class LP_Tank(Circle):
-    def __init__(self, id, x, y, wh, groupIndex):
-        super().__init__(x, y, 0, wh / 2)
+    def __init__(self, id, x, y, wh, groupIndex=0):
+        super().__init__(x, y, 0, wh / 2, groupIndex)
         self.id = id
         self.wh = wh  # tanks will be represented as circles of radius wh/2
         self.is_shooting = False
@@ -148,12 +154,11 @@ class LP_Tank(Circle):
 
 
 class LP_Bullet(Circle):
-    def __init__(self, id, x, y, radius, angle, speed, groupIndex):
-        super().__init__(x, y, angle, radius)
+    def __init__(self, id, x, y, radius, angle, speed, groupIndex=0):
+        super().__init__(x, y, angle, radius, groupIndex)
         self.id = id
         self.angle = angle
         self.speed = speed
-        self.groupIndex = groupIndex
         self.velocity = np.array([math.cos(angle) * speed, math.sin(angle) * speed])
 
     def get_state(self):
