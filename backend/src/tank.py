@@ -53,7 +53,7 @@ class Tank:
         }
     
     def update_state_and_diff(self, world_state):
-        self.pos = utils.vec2_to_pixel((world_state["tankx"], world_state["tanky"]))
+        self.pos = (world_state["x"], world_state["y"])
         self.angle = world_state["angle"]
         self.shooting = world_state["needs_to_shoot"]
 

@@ -46,8 +46,8 @@ class TankPhysics:
 
     def to_dict(self):
         return {
-            'tankx': self.body.position.x,
-            'tanky': self.body.position.y,
+            'x': utils.to_pixel(self.body.position.x),
+            'y': utils.to_pixel(self.body.position.y),
             'angle': self.body.angle,
             'needs_to_shoot': self.needs_to_shoot,
         }

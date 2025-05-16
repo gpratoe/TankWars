@@ -1,5 +1,6 @@
 from src.collision_handler import EntityType
 from Box2D import b2Body
+from src.utils import utils
 
 class BulletPhysics:
     def __init__(self,id , body: b2Body):
@@ -12,8 +13,8 @@ class BulletPhysics:
         
     def to_dict(self):
         return {
-            'bulletx': self.body.position.x,
-            'bullety': self.body.position.y,
+            'x': utils.to_pixel(self.body.position.x),
+            'y': utils.to_pixel(self.body.position.y),
             'angle': self.body.angle,
             'to_be_destroyed': self.to_be_destroyed,
         }        

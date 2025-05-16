@@ -29,8 +29,8 @@ class Bullet:
         }
     
     def update_state_and_diff(self, world_state):
-        self.x = utils.to_pixel(world_state["bulletx"])
-        self.y = utils.to_pixel(world_state["bullety"])
+        self.x = world_state["x"]
+        self.y = world_state["y"]
         self.angle = world_state["angle"]
 
         new_state = {
