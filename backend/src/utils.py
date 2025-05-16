@@ -35,5 +35,8 @@ class Utils:
         vy = speed * math.sin(angle)
         return (vx, vy)
 
+    def clamp(self, v, minv, maxv):
+        return max(min(v, maxv), minv)
+
 
 utils = Utils()
