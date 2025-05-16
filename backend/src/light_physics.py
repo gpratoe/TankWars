@@ -30,6 +30,7 @@ class Circle:
         float (y): y coordinate to the center of the circle.
         float (angle): angle where the object is pointing to, used to update object movement.
         float (radius): radius of the circle.
+        int (groupIndex): a basic filter for collisions, if two objects have the same groupIndex they won't collide.
     """
 
     def __init__(self, x, y, angle, radius, groupIndex=0):
