@@ -42,18 +42,18 @@ class Circle:
     def circle_circle_collide(self, circle: "Circle"):
         x_dist = abs(self.x - circle.x)
         y_dist = abs(self.y - circle.y)
-        center_dist = math.sqrt(x_dist**2 + y_dist**2)
+        center_dist = (x_dist**2 + y_dist**2)
         radius_sum = self.radius + circle.radius
 
-        return center_dist <= radius_sum
+        return center_dist <= radius_sum * radius_sum # lets just compare to its squared to avoid using sqrt
 
     def circle_rect_collide(self, rect: Rect):
         closest_x = utils.clamp(self.x, rect.x - rect.w / 2, rect.x + rect.w / 2)
         closest_y = utils.clamp(self.y, rect.y - rect.h / 2, rect.y + rect.h / 2)
         x_dist = self.x - closest_x
         y_dist = self.y - closest_y
-        center_dist = math.sqrt(x_dist**2 + y_dist**2)
-        return center_dist <= self.radius
+        center_dist = (x_dist**2 + y_dist**2)
+        return center_dist <= self.radius * self.radius
 
     def bounce_on_rect(self, rect: Rect):
         """Calculates the new velocity the circle would have if it was bouncing on a rect
