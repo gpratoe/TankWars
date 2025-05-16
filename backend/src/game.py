@@ -1,6 +1,7 @@
 from concurrent.futures import ThreadPoolExecutor
 import math
 import asyncio
+from src.light_physics_manager import LP_PhysicsManager
 from src.settings import *
 from src.entity_manager import EntityManager
 from api.ws import ConnectionManager
@@ -16,7 +17,7 @@ class Game:
         self.players = players
         self.prev_state = None
         self.connection_manager = connection_manager
-        self.physics_manager = PhysicsManager()
+        self.physics_manager = LP_PhysicsManager()#PhysicsManager()
         self.entity_manager = EntityManager(self.physics_manager)
         self.latest_inputs = {}
         self.entities_to_destroy = {"tanks":[], "bullets":[]}
