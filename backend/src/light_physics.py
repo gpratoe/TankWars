@@ -77,8 +77,7 @@ class Circle:
 
         normal_v = circle_pos - closest_point # normal pointing to the closest point in the rect
         norm = np.linalg.norm(normal_v)
-        print(norm,normal_v)
-        
+
         if norm == 0:
             dx = self.x - rect.x
             dy = self.y - rect.y
