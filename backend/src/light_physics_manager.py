@@ -3,7 +3,7 @@ from src.light_physics import LP_Bullet, LP_Tank, LP_Wall
 
 
 class LP_PhysicsManager:
-    def __init__(self, time_step=1 / 60):
+    def __init__(self, time_step=1 / 144):
         self.time_step = time_step
         self.collision_handler = LP_CollisionHandler()
         self.tanks: dict[int, LP_Tank] = {}

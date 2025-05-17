@@ -12,7 +12,6 @@ class LP_CollisionHandler:
             for wall in walls:
                 if tank.circle_rect_collide(wall):
                     tank.bounce_on_rect(wall)
-                    tank.reapply_correction()
 
         sublist = bullets.copy()
         for bullet in bullets:
@@ -21,7 +20,6 @@ class LP_CollisionHandler:
                     new_collision = Collision(bullet, wall, CollisionType.BULLET_WALL)
                     collisions.add(new_collision)
                     bullet.velocity = bullet.bounce_on_rect(wall)
-                    bullet.reapply_correction()
 
             for tank in tanks:
                 if bullet.circle_circle_collide(tank):
