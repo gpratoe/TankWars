@@ -45,22 +45,15 @@ class Circle:
     def circle_circle_collide(self, circle: "Circle"):
         if(self.groupIndex != 0 and self.groupIndex == circle.groupIndex):
             return False
-        x_dist = abs(self.x - circle.x)
-        y_dist = abs(self.y - circle.y)
-        center_dist = (x_dist**2 + y_dist**2)
-        radius_sum = self.radius + circle.radius
-
-        return center_dist <= radius_sum * radius_sum # lets just compare to its squared to avoid using sqrt
+        return circle_circle_collide_numba(float(self.x), float(self.y), float(circle.x),
+                                           float(circle.y), float(self.radius), float(circle.radius))
 
     def circle_rect_collide(self, rect: Rect):
         if(self.groupIndex != 0 and self.groupIndex == rect.groupIndex):
                     return False
-        closest_x = utils.clamp(self.x, rect.x - rect._hw, rect.x + rect._hw)
-        closest_y = utils.clamp(self.y, rect.y - rect._hh, rect.y + rect._hh)
-        x_dist = self.x - closest_x
-        y_dist = self.y - closest_y
-        center_dist = (x_dist**2 + y_dist**2)
-        return center_dist <= self.radius * self.radius
+        return circle_rect_collide_numba(float(self.x), float(self.y), float(rect.x),
+                                         float(rect.y), float(rect._hw), float(rect._hh),
+                                         float(self.radius))
 
     def bounce_on_rect(self, rect: Rect):
         """Calculates the new velocity the circle would have if it was bouncing on a rect.
@@ -72,10 +65,9 @@ class Circle:
         Returns:
             Tuple(float,float): The new velocity
         """
-        x, y, vx, vy = bounce_on_rect_numba(self.x, self.y, self.radius,
-                                            self.velocity[0],
-                                            self.velocity[1],
-                                            rect.x, rect.y, rect._hw, rect._hh)
+        x, y, vx, vy = bounce_on_rect_numba(float(self.x), float(self.y), float(self.radius),
+                                            float(self.velocity[0]), float(self.velocity[1]),
+                                            float(rect.x), float(rect.y), float(rect._hw), float(rect._hh))
         self.x = x
         self.y = y
         return (vx,vy)
@@ -98,22 +90,10 @@ class LP_Tank(Circle):
 
     def move_to_target(self, x, y, is_shooting=False):
         self._needs_to_shoot = is_shooting
-        dx = x - self.x
-        dy = y - self.y
-
-        self.angle = math.atan2(dy, dx)
-
-        mag_sq = dx**2 + dy**2
-        topSpeed = 1500
-        if mag_sq >= self.wh * self.wh and not is_shooting:
-            mag = math.sqrt(mag_sq) # lets use sqrt once we actually decided to move
-            normDx = dx / mag
-            normDy = dy / mag
-            ds = (mag * 50) / self.wh
-            speed = min(topSpeed, ds)
-            self.velocity = (speed * normDx, speed * normDy)
-        else:
-            self.velocity = (0, 0)
+        velocity, angle = move_to_target_numba(float(x), float(y), float(self.x),
+                                               float(self.y), float(self.wh), is_shooting)
+        self.velocity = velocity
+        self.angle = angle
 
     def get_state(self):
         return {
