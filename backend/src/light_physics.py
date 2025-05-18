@@ -5,9 +5,8 @@ Notes:
     All bodies coordinates need to be calculated based on the center of the body.
 """
 import math
+from src.light_numba_functions import *
 from src.utils import utils
-import numpy as np
-
 
 class Rect:
     def __init__(self, x, y, w, h, groupIndex=0):
@@ -15,6 +14,8 @@ class Rect:
         self.y = y
         self.w = w
         self.h = h
+        self._hw = w/2
+        self._hh = h/2
         self.groupIndex = groupIndex
 
 
@@ -39,7 +40,7 @@ class Circle:
         self.radius = radius
         self.angle = angle
         self.groupIndex = groupIndex
-        self.velocity = np.array([0,0])
+        self.velocity = (0,0)
         self.last_correction = (0,0)
 
     def circle_circle_collide(self, circle: "Circle"):
@@ -55,55 +56,30 @@ class Circle:
     def circle_rect_collide(self, rect: Rect):
         if(self.groupIndex != 0 and self.groupIndex == rect.groupIndex):
                     return False
-        closest_x = utils.clamp(self.x, rect.x - rect.w / 2, rect.x + rect.w / 2)
-        closest_y = utils.clamp(self.y, rect.y - rect.h / 2, rect.y + rect.h / 2)
+        closest_x = utils.clamp(self.x, rect.x - rect._hw, rect.x + rect._hw)
+        closest_y = utils.clamp(self.y, rect.y - rect._hh, rect.y + rect._hh)
         x_dist = self.x - closest_x
         y_dist = self.y - closest_y
         center_dist = (x_dist**2 + y_dist**2)
         return center_dist <= self.radius * self.radius
 
     def bounce_on_rect(self, rect: Rect):
-        """Calculates the new velocity the circle would have if it was bouncing on a rect
+        """Calculates the new velocity the circle would have if it was bouncing on a rect.
+        It also corrects the position of the circle and places it outside the rect, so if you just want to
+        use it as a way to enforce collision but not bounce off, then just call this function but don't set
+        the returned velocity.
         Args:
             Rect (rect): The rect to bounce on
         Returns:
             Tuple(float,float): The new velocity
         """
-        closest_x = utils.clamp(self.x, rect.x - rect.w/2, rect.x + rect.w/2)
-        closest_y = utils.clamp(self.y, rect.y - rect.h/2, rect.y + rect.h/2)
-
-        circle_pos = np.array([self.x, self.y])
-        closest_point = np.array([closest_x, closest_y])
-
-        normal_v = circle_pos - closest_point # normal pointing to the closest point in the rect
-        norm = np.linalg.norm(normal_v)
-
-        if norm == 0:
-            dx = self.x - rect.x
-            dy = self.y - rect.y
-
-            overlap_x = (rect.w/2 + self.radius) - abs(dx)
-            overlap_y = (rect.h/2 + self.radius) - abs(dy)
-
-            if overlap_x < overlap_y:
-                normal_v = np.array([np.sign(dx),0])
-            else:
-                normal_v = np.array([0, np.sign(dy)])
-            prct_in = self.radius # percentage of the ball that got "inside" the wall
-        else:
-            normal_v = normal_v / norm
-            prct_in = self.radius - norm
-
-        if prct_in > 0:
-            correction = normal_v * prct_in # lets push the ball outside the wall to avoid glitches
-            self.x += correction[0]
-            self.y += correction[1]
-
-            self.last_correction = correction
-
-        new_vel = self.velocity - 2 * np.dot(self.velocity, normal_v) * normal_v
-
-        return new_vel
+        x, y, vx, vy = bounce_on_rect_numba(self.x, self.y, self.radius,
+                                            self.velocity[0],
+                                            self.velocity[1],
+                                            rect.x, rect.y, rect._hw, rect._hh)
+        self.x = x
+        self.y = y
+        return (vx,vy)
 
     def reapply_correction(self):
         self.x += self.last_correction[0]
@@ -133,16 +109,17 @@ class LP_Tank(Circle):
 
         self.angle = math.atan2(dy, dx)
 
-        mag = math.sqrt(dx**2 + dy**2)
+        mag_sq = dx**2 + dy**2
         topSpeed = 1500
-        if mag >= self.wh and not is_shooting:
+        if mag_sq >= self.wh * self.wh and not is_shooting:
+            mag = math.sqrt(mag_sq) # lets use sqrt once we actually decided to move
             normDx = dx / mag
             normDy = dy / mag
             ds = (mag * 50) / self.wh
             speed = min(topSpeed, ds)
-            self.velocity = np.array([speed * normDx, speed * normDy])
+            self.velocity = (speed * normDx, speed * normDy)
         else:
-            self.velocity = np.array([0, 0])
+            self.velocity = (0, 0)
 
     def get_state(self):
         return {
@@ -159,7 +136,7 @@ class LP_Bullet(Circle):
         self.id = id
         self.angle = angle
         self.speed = speed
-        self.velocity = np.array([math.cos(angle) * speed, math.sin(angle) * speed])
+        self.velocity = (math.cos(angle) * speed, math.sin(angle) * speed)
 
     def get_state(self):
         return {
