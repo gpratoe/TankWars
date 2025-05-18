@@ -2,9 +2,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api.routers.player_router import pr
 from api.routers.game_router import gr, game_lobby_ws
+from src.light_numba_functions import warmup_numba_functions
 
+warmup_numba_functions()
 app = FastAPI()
-
 # Configurar CORS para permitir todas las solicitudes (en desarrollo)
 app.add_middleware(
     CORSMiddleware,
