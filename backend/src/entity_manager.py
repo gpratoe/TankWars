@@ -57,17 +57,6 @@ class EntityManager:
        
         self.bullet_id_counter += 1
 
-    def cleanup_entities(self):
-        for tank_id in self.tanks_to_remove:
-            if tank_id in self.tanks:
-                del self.tanks[tank_id]
-        self.tanks_to_remove.clear()
-
-        for bullet_id in self.bullets_to_remove:
-            if bullet_id in self.bullets:
-                del self.bullets[bullet_id]
-        self.bullets_to_remove.clear()
-
     def update(self, world_state):
         #if world_state == self.last_world_state:
         #    return (None, self.entities_to_destroy)
@@ -85,6 +74,8 @@ class EntityManager:
             bullet_state, same_state = bullet.update_state_and_diff(physics_bullets[bullet_id])
             if not same_state and bullet_state:
                 state['bullets'][bullet_id] = bullet_state
+            if bullet_state["is_dead"]:
+                del self.bullets[bullet_id]
 
         for tank_id, tank in list(self.tanks.items()):
             tank_state, same_state = tank.update_state_and_diff(physics_tanks[tank_id])
@@ -92,9 +83,9 @@ class EntityManager:
                 state['tanks'][tank_id] = tank_state
             if tank.shooting:
                 tank.shoot()
+            if tank_state["is_dead"]:
+                del self.tanks[tank_id]
 
-        self.cleanup_entities()
-        
         if state['tanks'] == {} and state['bullets'] == {}:
             return (None, self.entities_to_destroy)
         return (state, self.entities_to_destroy)
@@ -111,10 +102,8 @@ class EntityManager:
                     render_bullet.is_dead = True
                     if render_tank.health <= 0:
                         render_tank.is_dead = True
-                        self.tanks_to_remove.append(render_tank.id)
                         self.entities_to_destroy["tanks"].append(render_tank.id)
                     self.entities_to_destroy["bullets"].append(world_bullet.id)
-                    self.bullets_to_remove.append(render_bullet.id)
                 case CollisionType.BULLET_BULLET:
                     world_b1 = collision.first
                     world_b2 = collision.second
@@ -124,8 +113,6 @@ class EntityManager:
                     render_b2.is_dead = True
                     self.entities_to_destroy["bullets"].append(world_b1.id)
                     self.entities_to_destroy["bullets"].append(world_b2.id)
-                    self.bullets_to_remove.append(render_b1.id)
-                    self.bullets_to_remove.append(render_b2.id)
 
                 case CollisionType.BULLET_WALL:
                     world_bullet = collision.first
@@ -134,6 +121,5 @@ class EntityManager:
                     if render_bullet.bounces_left < 0:
                         render_bullet.is_dead = True
                         self.entities_to_destroy["bullets"].append(render_bullet.id) 
-                        self.bullets_to_remove.append(render_bullet.id)
                 case _:
                     continue
