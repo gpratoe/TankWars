@@ -41,7 +41,6 @@ class Circle:
         self.angle = angle
         self.groupIndex = groupIndex
         self.velocity = (0,0)
-        self.last_correction = (0,0)
 
     def circle_circle_collide(self, circle: "Circle"):
         if(self.groupIndex != 0 and self.groupIndex == circle.groupIndex):
@@ -80,11 +79,6 @@ class Circle:
         self.x = x
         self.y = y
         return (vx,vy)
-
-    def reapply_correction(self):
-        self.x += self.last_correction[0]
-        self.y += self.last_correction[1]
-
 
     def update(self, dt):
         self.x += self.velocity[0] * dt
