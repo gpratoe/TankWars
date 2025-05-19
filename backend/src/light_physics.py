@@ -7,6 +7,7 @@ Notes:
 import math
 from src.light_numba_functions import *
 from src.utils import utils
+from src.common_types import EntityType
 
 class Rect:
     def __init__(self, x, y, w, h, groupIndex=0):
@@ -22,6 +23,7 @@ class Rect:
 class LP_Wall(Rect):
     def __init__(self, x, y, w, h, groupIndex=0):
         super().__init__(x, y, w, h, groupIndex)
+        self.entity_type = EntityType.WALL
 
 
 class Circle:
@@ -86,6 +88,7 @@ class LP_Tank(Circle):
         self.wh = wh  # tanks will be represented as circles of radius wh/2
         self.groupIndex = groupIndex
         self._needs_to_shoot = False
+        self.entity_type = EntityType.TANK
 
     def move_to_target(self, x, y, is_shooting=False):
         self._needs_to_shoot = is_shooting
@@ -110,6 +113,7 @@ class LP_Bullet(Circle):
         self.angle = angle
         self.speed = speed
         self.velocity = (math.cos(angle) * speed, math.sin(angle) * speed)
+        self.entity_type = EntityType.BULLET
 
     def get_state(self):
         return {

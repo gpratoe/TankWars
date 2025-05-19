@@ -1,4 +1,5 @@
 from numpy import nan_to_num
+from src.common_types import EntityType
 from src.light_collision_handler import LP_CollisionHandler
 from src.light_physics import LP_Bullet, LP_Tank, LP_Wall
 
@@ -13,25 +14,21 @@ class LP_PhysicsManager:
         self.tick = 0
         self.world_state = {"tanks": {}, "bullets": {}, "collisions": []}
 
-    def update(self, entities_to_destroy):
-        self.cleanup_world(entities_to_destroy)
-
+    def update(self):
         tanks = list(self.tanks.values())
         bullets = list(self.bullets.values())
         walls = list(self.walls.values())
 
         for bullet in self.bullets.values():
             bullet.update(self.time_step)
-            self.world_state["bullets"][bullet.id] = bullet.get_state()
 
         for tank in self.tanks.values():
             tank.update(self.time_step)
-            self.world_state["tanks"][tank.id] = tank.get_state()
 
-        self.world_state["collisions"] = self.collision_handler.get_latest_collisions(tanks, bullets, walls)
+        collisions = self.collision_handler.get_latest_collisions(tanks, bullets, walls)
         self.tick += 1
 
-        return self.world_state
+        return collisions
 
     def handle_input(self, tank_id, input):
         tank = self.tanks.get(tank_id)
@@ -68,5 +65,18 @@ class LP_PhysicsManager:
             if bullet_id in self.bullets:
                 del self.bullets[bullet_id]
 
-    def destroy_body(sekf, body):
-        pass
+    def destroy_body(self, body):
+        type = body.entity_type
+        if type == EntityType.TANK:
+            if body.id in self.tanks:
+                del self.tanks[body.id]
+                return
+        if type == EntityType.BULLET:
+            if body.id in self.bullets:
+                del self.bullets[body.id]
+                return
+        if type == EntityType.WALL:
+            if body.id in self.walls:
+                del self.walls[body.id]
+                return
+

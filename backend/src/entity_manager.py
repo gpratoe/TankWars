@@ -4,10 +4,7 @@ from src.settings import *
 from src.physics_manager import PhysicsManager
 from enum import Enum
 from src.common_types import CollisionType
-
-class EntityType(Enum):
-    TANK = 0
-    BULLET = 1
+from src.utils import utils
 
 
 class EntityManager:
@@ -52,11 +49,21 @@ class EntityManager:
        
         self.bullet_id_counter += 1
 
-    def update(self, collisions):
-        #if world_state == self.last_world_state:
-        #    return (None, self.entities_to_destroy)
-        self.entities_to_destroy = {"tanks": [], "bullets": []}
+    def remove_tank(self, tank):
+        try:
+            self.physics_manager.destroy_body(tank.physics_body)
+            del self.tanks[tank.id]
+        except Exception as e:
+            utils.logger.warning(f"EntityManager: Couldn't remove tank, got: {e}")
 
+    def remove_bullet(self, bullet):
+        try:
+            self.physics_manager.destroy_body(bullet.physics_body)
+            del self.bullets[bullet.id]
+        except Exception as e:
+            utils.logger.warning(f"EntityManager: Couldn't remove bullet, got: {e}")
+
+    def update(self, collisions):
         self.apply_collisions(collisions)
 
         state = {'tanks': {}, 'bullets': {}}
@@ -66,7 +73,7 @@ class EntityManager:
             if not same_state and bullet_state:
                 state['bullets'][bullet_id] = bullet_state
             if bullet_state["is_dead"]:
-                del self.bullets[bullet_id]
+                self.remove_bullet(bullet)
 
         for tank_id, tank in list(self.tanks.items()):
             tank_state, same_state = tank.get_state_and_diff()
@@ -75,11 +82,11 @@ class EntityManager:
             if tank.shooting:
                 tank.shoot()
             if tank_state["is_dead"]:
-                del self.tanks[tank_id]
+                self.remove_tank(tank)
 
         if state['tanks'] == {} and state['bullets'] == {}:
-            return (None, self.entities_to_destroy)
-        return (state, self.entities_to_destroy)
+            return None
+        return state
 
     def apply_collisions(self,collisions):
         for collision in collisions:
@@ -93,8 +100,6 @@ class EntityManager:
                     render_bullet.is_dead = True
                     if render_tank.health <= 0:
                         render_tank.is_dead = True
-                        self.entities_to_destroy["tanks"].append(render_tank.id)
-                    self.entities_to_destroy["bullets"].append(world_bullet.id)
                 case CollisionType.BULLET_BULLET:
                     world_b1 = collision.first
                     world_b2 = collision.second
@@ -102,15 +107,11 @@ class EntityManager:
                     render_b2 = self.bullets[world_b2.id]
                     render_b1.is_dead = True
                     render_b2.is_dead = True
-                    self.entities_to_destroy["bullets"].append(world_b1.id)
-                    self.entities_to_destroy["bullets"].append(world_b2.id)
-
                 case CollisionType.BULLET_WALL:
                     world_bullet = collision.first
                     render_bullet = self.bullets[world_bullet.id]
                     render_bullet.bounces_left -= 1
                     if render_bullet.bounces_left < 0:
                         render_bullet.is_dead = True
-                        self.entities_to_destroy["bullets"].append(render_bullet.id) 
                 case _:
                     continue

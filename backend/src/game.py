@@ -8,6 +8,7 @@ from api.ws import ConnectionManager
 from src.physics_manager import PhysicsManager
 from src.map import Map
 from src.utils import utils
+import time
 
 class Game:
     def __init__(self, players, lobby_id, connection_manager: ConnectionManager):
@@ -81,27 +82,29 @@ class Game:
         
         self.running = True
         while self.running:
+            start = time.perf_counter()
+            
             self.apply_inputs()
+            t0 = time.perf_counter()
+
             try:
-                world_state = await asyncio.wait_for(
+                collisions = await asyncio.wait_for(
                     asyncio.get_event_loop().run_in_executor(
                         self.executor,
-                        self.physics_manager.update,
-                        self.entities_to_destroy
+                        self.physics_manager.update
                     ),
                     timeout=0.1
                 )
             except asyncio.TimeoutError:
                 utils.logger.info("PhysicsManager update timed out")
                 continue
+            t1 = time.perf_counter()
 
-            self.entities_to_destroy = {"tanks":[], "bullets":[]}
             if not self.latest_collisions:
-                self.latest_collisions = world_state.get('collisions')
+                self.latest_collisions = collisions
 
             if self.physics_manager.tick % 3 == 0:
-                world_state["collisions"] = self.latest_collisions
-                state, self.entities_to_destroy = self.entity_manager.update(world_state)
+                state = self.entity_manager.update(self.latest_collisions)
                 if state and state != self.prev_state:
                     await self.broadcast({
                         "event": "state",
@@ -110,5 +113,9 @@ class Game:
                     self.prev_state = state
                     self.latest_collisions = None
 
+            end = time.perf_counter()
+            print(f"Physics: {(t1 - t0)*1000:.3f} ms, Total: {(end - start)*1000:.3f} ms")
+
             await asyncio.sleep(self.physics_manager.time_step)
+
         utils.logger.info("Game loop stopped")
