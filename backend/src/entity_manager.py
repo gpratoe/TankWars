@@ -2,7 +2,6 @@ from src.tank import Tank
 from src.bullet import Bullet
 from src.settings import *
 from src.physics_manager import PhysicsManager
-from enum import Enum
 from src.common_types import CollisionType
 from src.utils import utils
 

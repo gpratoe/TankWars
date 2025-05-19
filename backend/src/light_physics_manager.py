@@ -1,4 +1,3 @@
-from numpy import nan_to_num
 from src.common_types import EntityType
 from src.light_collision_handler import LP_CollisionHandler
 from src.light_physics import LP_Bullet, LP_Tank, LP_Wall
