@@ -4,27 +4,24 @@ from src.settings import *
 import time
 
 class Tank:
-    def __init__(self, id, name, color, pos, w, h, angle, shoot_callback):
+    def __init__(self, id, name, color, shoot_callback, physics_body):
         self.id = id
+        self.physics_body = physics_body
         self.name = name
         self.color = color
         self.health = 100
-        self.pos = pos
-        self.w = w
-        self.h = h
-        self.is_shooting = False
-        self.angle = angle
         self.damage = TANK_INITIAL_DAMAGE
         self.bullet_speed = TANK_INITIAL_BULLETSPEED
         self.cooldown = 0.5
         self.shoot_time = 0
         self.is_dead = False
         self.shoot_callback = shoot_callback
+        self.shooting = False
 
         self.last_state = {
-            'tankx': pos[0],
-            'tanky': pos[1],
-            'angle': angle,
+            'tankx': physics_body.x,
+            'tanky': physics_body.y,
+            'angle': physics_body.angle,
             'shooting': False,
             'health': self.health,
             'is_dead': self.is_dead,
@@ -36,12 +33,12 @@ class Tank:
         if time.time() - self.shoot_time <= self.cooldown:
             return
         
-        bullet_pos = (self.pos[0] + self.w/2 * math.cos(self.angle), self.pos[1] + self.h/2 * math.sin(self.angle))
+        bullet_pos = (self.physics_body.x + self.physics_body.wh/2 * math.cos(self.physics_body.angle), self.physics_body.y + self.physics_body.wh/2 * math.sin(self.physics_body.angle))
         if self.shoot_callback:
-            self.shoot_callback(self.id, bullet_pos, self.angle, self.damage, self.bullet_speed)
+            self.shoot_callback(self.id, bullet_pos, self.physics_body.angle, self.damage, self.bullet_speed)
 
         self.shoot_time = time.time()
-            
+
 
         
     def get_toclient(self):
@@ -52,16 +49,13 @@ class Tank:
             'timestamp': time.time()*1000,
         }
     
-    def update_state_and_diff(self, world_state):
-        self.pos = (world_state["x"], world_state["y"])
-        self.angle = world_state["angle"]
-        self.shooting = world_state["needs_to_shoot"]
-
+    def get_state_and_diff(self):
+        self.shooting = self.physics_body._needs_to_shoot
         new_state = {
-            'tankx': self.pos[0],
-            'tanky': self.pos[1],
-            'angle': self.angle,
-            'shooting': self.shooting,
+            'tankx': self.physics_body.x,
+            'tanky': self.physics_body.y,
+            'angle': self.physics_body.angle,
+            'shooting': self.physics_body._needs_to_shoot,
             'health': self.health,
             'is_dead': self.is_dead,
         }

@@ -1,9 +1,10 @@
+from numpy import nan_to_num
 from src.light_collision_handler import LP_CollisionHandler
 from src.light_physics import LP_Bullet, LP_Tank, LP_Wall
 
 
 class LP_PhysicsManager:
-    def __init__(self, time_step=1 / 144):
+    def __init__(self, time_step=1 / 60):
         self.time_step = time_step
         self.collision_handler = LP_CollisionHandler()
         self.tanks: dict[int, LP_Tank] = {}
@@ -40,12 +41,16 @@ class LP_PhysicsManager:
     def create_tank(self, tank_id, pos, dim):
         if tank_id in self.tanks:
             raise ValueError(f"Tank with id {tank_id} already exists.")
-        self.tanks[tank_id] = LP_Tank(tank_id, pos[0], pos[1], dim[0], -tank_id)
+        ntank = LP_Tank(tank_id, pos[0], pos[1], dim[0], -tank_id)
+        self.tanks[tank_id] = ntank
+        return ntank
 
     def create_bullet(self, bullet_id, pos, angle, speed, radius=3, groupIndex=0, **kwargs):
         if bullet_id in self.bullets:
             raise ValueError(f"Bullet with id {bullet_id} already exists")
-        self.bullets[bullet_id] = LP_Bullet(bullet_id, pos[0], pos[1], radius, angle, speed*10, groupIndex)
+        nbullet = LP_Bullet(bullet_id, pos[0], pos[1], radius, angle, speed*10, groupIndex)
+        self.bullets[bullet_id] = nbullet
+        return nbullet
 
     def create_wall(self, id, x, y, width, height):
         if id in self.walls:
@@ -62,3 +67,6 @@ class LP_PhysicsManager:
         for bullet_id in bullets_to_destroy:
             if bullet_id in self.bullets:
                 del self.bullets[bullet_id]
+
+    def destroy_body(sekf, body):
+        pass

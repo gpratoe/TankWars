@@ -3,21 +3,18 @@ from src.settings import *
 import time
 
 class Bullet:
-    def __init__(self, id, owner_id, pos, angle, damage, speed):
+    def __init__(self, id, owner_id, damage, physics_body):
         self.id = id
         self.owner_id = owner_id
-        self.x = pos[0]
-        self.y = pos[1]
-        self.angle = angle
+        self.physics_body = physics_body
         self.damage = damage
-        self.speed = speed
         self.is_dead = False
         self.bounces_left = 1
 
         self.last_state = {
-            "x": pos[0],
-            "y": pos[1],
-            "angle": angle,
+            "x": self.physics_body.x,
+            "y": self.physics_body.y,
+            "angle": self.physics_body.angle,
             "is_dead": False,
         }
 
@@ -28,15 +25,11 @@ class Bullet:
             'timestamp': time.time()*1000,
         }
     
-    def update_state_and_diff(self, world_state):
-        self.x = world_state["x"]
-        self.y = world_state["y"]
-        self.angle = world_state["angle"]
-
+    def get_state_and_diff(self):
         new_state = {
-            'x': self.x,
-            'y': self.y,
-            'angle': self.angle,
+            'x': self.physics_body.x,
+            'y': self.physics_body.y,
+            'angle': self.physics_body.angle,
             'is_dead': self.is_dead,
         }
         same_state = new_state == self.last_state

@@ -84,7 +84,6 @@ class LP_Tank(Circle):
         super().__init__(x, y, 0, wh / 2, groupIndex)
         self.id = id
         self.wh = wh  # tanks will be represented as circles of radius wh/2
-        self.is_shooting = False
         self.groupIndex = groupIndex
         self._needs_to_shoot = False
 

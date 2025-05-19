@@ -24,36 +24,31 @@ class EntityManager:
     def add_tank(self, player, pos, angle):
         if player.id in self.tanks:
             return
-        self.physics_manager.create_tank(player.id,
-                                        pos,
-                                        (TANK_WIDTH, TANK_HEIGHT),
-                                        )
+        body = self.physics_manager.create_tank(player.id,
+                                                pos,
+                                                (TANK_WIDTH, TANK_HEIGHT),
+                                                )
         def shoot_callback(owner_id, pos, angle, damage, speed):
             self.spawn_bullet(owner_id, pos, angle, damage, speed)
 
         self.tanks[player.id] = Tank(id=player.id, name=player.name,
-                                     color=player.color, pos=pos,
-                                     w=TANK_WIDTH, h=TANK_HEIGHT,
-                                     angle=angle,
-                                     shoot_callback=shoot_callback)
+                                     color=player.color,
+                                     shoot_callback=shoot_callback,
+                                     physics_body=body)
 
     def spawn_bullet(self, owner_id, pos, angle, damage, speed):
-        self.physics_manager.create_bullet(
-            self.bullet_id_counter,
-            pos,
-            angle,
-            speed,
-            groupIndex=-owner_id,
-        )
+        body = self.physics_manager.create_bullet(self.bullet_id_counter,
+                                                  pos,
+                                                  angle,
+                                                  speed,
+                                                  groupIndex=-owner_id,
+                                                  )
         
-        self.bullets[self.bullet_id_counter] = Bullet(
-            self.bullet_id_counter,
-            owner_id, 
-            pos, 
-            angle, 
-            damage, 
-            speed,
-            )
+        self.bullets[self.bullet_id_counter] = Bullet(self.bullet_id_counter,
+                                                      owner_id,
+                                                      damage,
+                                                      physics_body=body
+                                                      )
        
         self.bullet_id_counter += 1
 
@@ -71,14 +66,14 @@ class EntityManager:
         state = {'tanks': {}, 'bullets': {}}
 
         for bullet_id, bullet in list(self.bullets.items()):
-            bullet_state, same_state = bullet.update_state_and_diff(physics_bullets[bullet_id])
+            bullet_state, same_state = bullet.get_state_and_diff()
             if not same_state and bullet_state:
                 state['bullets'][bullet_id] = bullet_state
             if bullet_state["is_dead"]:
                 del self.bullets[bullet_id]
 
         for tank_id, tank in list(self.tanks.items()):
-            tank_state, same_state = tank.update_state_and_diff(physics_tanks[tank_id])
+            tank_state, same_state = tank.get_state_and_diff()
             if not same_state and tank_state:
                 state['tanks'][tank_id] = tank_state
             if tank.shooting:
