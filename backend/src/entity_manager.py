@@ -52,14 +52,10 @@ class EntityManager:
        
         self.bullet_id_counter += 1
 
-    def update(self, world_state):
+    def update(self, collisions):
         #if world_state == self.last_world_state:
         #    return (None, self.entities_to_destroy)
         self.entities_to_destroy = {"tanks": [], "bullets": []}
-        self.last_world_state = world_state
-        collisions = world_state.get('collisions')
-        physics_tanks = world_state.get('tanks')
-        physics_bullets = world_state.get('bullets')
 
         self.apply_collisions(collisions)
 
