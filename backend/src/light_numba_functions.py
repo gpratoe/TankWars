@@ -78,7 +78,7 @@ def move_to_target_numba(target_x, target_y, x, y, wh, is_shooting=False):
     angle = np.arctan2(dy, dx)
 
     mag_sq = dx**2 + dy**2
-    topSpeed = 1500
+    topSpeed = 700
     if mag_sq >= wh * wh and not is_shooting:
         mag = np.sqrt(mag_sq) # lets use sqrt once we actually decided to move
         normDx = dx / mag
