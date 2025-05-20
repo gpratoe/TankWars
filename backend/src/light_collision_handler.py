@@ -17,25 +17,25 @@ class LP_CollisionHandler(BaseMediator):
             for wall in walls:
                 if bullet.circle_rect_collide(wall):
                     col = Collision(bullet.id, None, CollisionType.BULLET_WALL)
+                    new_active_collisions.add(col)
                     if col not in self.active_collisions:
                         self._mediator.notify("Collision", collision=col)
-                        new_active_collisions.add(col)
                     bullet.velocity = bullet.bounce_on_rect(wall)
 
             for tank in tanks:
                 if bullet.circle_circle_collide(tank):
                     col = Collision(bullet.id, tank.id, CollisionType.BULLET_TANK)
+                    new_active_collisions.add(col)
                     if col not in self.active_collisions:
                         self._mediator.notify("Collision", collision=col)
-                        new_active_collisions.add(col)
 
             for j in range(i + 1, len(bullets)):
                 other = bullets[j]
                 if bullet.circle_circle_collide(other):
                     col = Collision(bullet.id, other.id, CollisionType.BULLET_BULLET)
+                    new_active_collisions.add(col)
                     if col not in self.active_collisions:
                         self._mediator.notify("Collision", collision=col)
-                        new_active_collisions.add(col)
 
         self.active_collisions = new_active_collisions
 
