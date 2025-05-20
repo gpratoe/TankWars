@@ -9,6 +9,7 @@ from src.physics_manager import PhysicsManager
 from src.map import Map
 from src.utils import utils
 import time
+from src.mediator import CollisionMediator
 
 class Game:
     def __init__(self, players, lobby_id, connection_manager: ConnectionManager):
@@ -20,6 +21,8 @@ class Game:
         self.connection_manager = connection_manager
         self.physics_manager = LP_PhysicsManager()#PhysicsManager()
         self.entity_manager = EntityManager(self.physics_manager)
+        self.collision_mediator = CollisionMediator(self.physics_manager, self.entity_manager)
+        self.physics_manager.collision_handler.set_mediator(self.collision_mediator)
         self.latest_inputs = {}
         self.entities_to_destroy = {"tanks":[], "bullets":[]}
         self.latest_collisions = None
@@ -88,7 +91,7 @@ class Game:
             t0 = time.perf_counter()
 
             try:
-                collisions = await asyncio.wait_for(
+                await asyncio.wait_for(
                     asyncio.get_event_loop().run_in_executor(
                         self.executor,
                         self.physics_manager.update
@@ -100,21 +103,17 @@ class Game:
                 continue
             t1 = time.perf_counter()
 
-            if not self.latest_collisions:
-                self.latest_collisions = collisions
-
             if self.physics_manager.tick % 3 == 0:
-                state = self.entity_manager.update(self.latest_collisions)
+                state = self.entity_manager.get_last_state()
                 if state and state != self.prev_state:
                     await self.broadcast({
                         "event": "state",
                         "payload": state
                     })
                     self.prev_state = state
-                    self.latest_collisions = None
 
             end = time.perf_counter()
-            print(f"Physics: {(t1 - t0)*1000:.3f} ms, Total: {(end - start)*1000:.3f} ms")
+            #print(f"Physics: {(t1 - t0)*1000:.3f} ms, Total: {(end - start)*1000:.3f} ms")
 
             await asyncio.sleep(self.physics_manager.time_step)
 
