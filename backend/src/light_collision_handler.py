@@ -1,13 +1,13 @@
 from src.light_physics import LP_Bullet, LP_Tank, LP_Wall
 from src.common_types import CollisionType, Collision
+from src.mediator import BaseMediator
 
-class LP_CollisionHandler:
+class LP_CollisionHandler(BaseMediator):
     def __init__(self):
-        self.latest_collisions = []
+        self.active_collisions = set()
 
     def get_latest_collisions(self, tanks: list[LP_Tank], bullets: list[LP_Bullet], walls: list[LP_Wall]):
-        collisions = set()
-
+        new_active_collisions = set()
         for tank in tanks:
             for wall in walls:
                 if tank.circle_rect_collide(wall):
@@ -16,20 +16,26 @@ class LP_CollisionHandler:
         for i, bullet in enumerate(bullets):
             for wall in walls:
                 if bullet.circle_rect_collide(wall):
-                    collisions.add(Collision(bullet, wall, CollisionType.BULLET_WALL))
+                    col = Collision(bullet.id, None, CollisionType.BULLET_WALL)
+                    if col not in self.active_collisions:
+                        self._mediator.notify("Collision", collision=col)
+                        new_active_collisions.add(col)
                     bullet.velocity = bullet.bounce_on_rect(wall)
 
             for tank in tanks:
                 if bullet.circle_circle_collide(tank):
-                    collisions.add(Collision(bullet, tank, CollisionType.BULLET_TANK))
+                    col = Collision(bullet.id, tank.id, CollisionType.BULLET_TANK)
+                    if col not in self.active_collisions:
+                        self._mediator.notify("Collision", collision=col)
+                        new_active_collisions.add(col)
 
             for j in range(i + 1, len(bullets)):
                 other = bullets[j]
                 if bullet.circle_circle_collide(other):
-                    collisions.add(Collision(bullet, other, CollisionType.BULLET_BULLET))
+                    col = Collision(bullet.id, other.id, CollisionType.BULLET_BULLET)
+                    if col not in self.active_collisions:
+                        self._mediator.notify("Collision", collision=col)
+                        new_active_collisions.add(col)
 
-        if self.latest_collisions != collisions:
-            self.latest_collisions = collisions
-            return collisions
-        return []
+        self.active_collisions = new_active_collisions
 

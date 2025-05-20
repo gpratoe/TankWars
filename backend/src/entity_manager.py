@@ -4,9 +4,10 @@ from src.settings import *
 from src.physics_manager import PhysicsManager
 from src.common_types import CollisionType
 from src.utils import utils
+from src.mediator import BaseMediator
 
 
-class EntityManager:
+class EntityManager(BaseMediator):
     def __init__(self, physics_manager: PhysicsManager):
         self.tanks: dict[int, Tank] = {}
         self.bullets: dict[int, Bullet] = {}
@@ -50,21 +51,19 @@ class EntityManager:
 
     def remove_tank(self, tank):
         try:
-            self.physics_manager.destroy_body(tank.physics_body)
+            self._mediator.notify("DestroyBody", body=tank.physics_body)
             del self.tanks[tank.id]
         except Exception as e:
             utils.logger.warning(f"EntityManager: Couldn't remove tank, got: {e}")
 
     def remove_bullet(self, bullet):
         try:
-            self.physics_manager.destroy_body(bullet.physics_body)
+            self._mediator.notify("DestroyBody", body=bullet.physics_body)
             del self.bullets[bullet.id]
         except Exception as e:
             utils.logger.warning(f"EntityManager: Couldn't remove bullet, got: {e}")
 
-    def update(self, collisions):
-        self.apply_collisions(collisions)
-
+    def get_last_state(self):
         state = {'tanks': {}, 'bullets': {}}
 
         for bullet_id, bullet in list(self.bullets.items()):
@@ -87,30 +86,27 @@ class EntityManager:
             return None
         return state
 
-    def apply_collisions(self,collisions):
-        for collision in collisions:
+    def handle_collision(self,collision):
+            first_id = collision.first
+            second_id = collision.second
             match collision.type:
                 case CollisionType.BULLET_TANK:
-                    world_bullet = collision.first
-                    world_tank = collision.second
-                    render_bullet = self.bullets[world_bullet.id]
-                    render_tank = self.tanks[world_tank.id]
-                    render_tank.health -= render_bullet.damage
-                    render_bullet.is_dead = True
-                    if render_tank.health <= 0:
-                        render_tank.is_dead = True
+                    bullet = self.bullets[first_id]
+                    tank = self.tanks[second_id]
+                    print(tank.health, bullet.damage)
+                    tank.health -= bullet.damage
+                    bullet.is_dead = True
+                    if tank.health <= 0:
+                        tank.is_dead = True
                 case CollisionType.BULLET_BULLET:
-                    world_b1 = collision.first
-                    world_b2 = collision.second
-                    render_b1 = self.bullets[world_b1.id]
-                    render_b2 = self.bullets[world_b2.id]
-                    render_b1.is_dead = True
-                    render_b2.is_dead = True
+                    b1 = self.bullets[first_id]
+                    b2 = self.bullets[second_id]
+                    b1.is_dead = True
+                    b2.is_dead = True
                 case CollisionType.BULLET_WALL:
-                    world_bullet = collision.first
-                    render_bullet = self.bullets[world_bullet.id]
-                    render_bullet.bounces_left -= 1
-                    if render_bullet.bounces_left < 0:
-                        render_bullet.is_dead = True
+                    bullet = self.bullets[first_id]
+                    bullet.bounces_left -= 1
+                    if bullet.bounces_left < 0:
+                        bullet.is_dead = True
                 case _:
-                    continue
+                    pass

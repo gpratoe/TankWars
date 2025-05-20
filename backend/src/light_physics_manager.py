@@ -1,9 +1,10 @@
 from src.common_types import EntityType
 from src.light_collision_handler import LP_CollisionHandler
 from src.light_physics import LP_Bullet, LP_Tank, LP_Wall
+from src.mediator import BaseMediator
 
 
-class LP_PhysicsManager:
+class LP_PhysicsManager(BaseMediator):
     def __init__(self, time_step=1 / 60):
         self.time_step = time_step
         self.collision_handler = LP_CollisionHandler()
