@@ -4,9 +4,9 @@ import numpy as np
 def warmup_numba_functions():
     print("warming up")
     bounce_on_rect_numba(1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0)
-    move_to_target_numba(1.0,1.0,1.0,1.0,1.0,False)
     circle_circle_collide_numba(1.0,1.0,1.0,1.0,1.0,1.0)
-    move_to_target_numba(1.0,1.0,1.0,1.0,1.0,True)
+    move_to_target_numba(1.0,1.0,1.0)
+    rotate_towards_target_numba(1.0,1.0,1.0,1.0)
     circle_rect_collide_numba(1.0,1.0,1.0,1.0,1.0,1.0,1.0)
 
 
@@ -71,22 +71,23 @@ def bounce_on_rect_numba(
     return x, y, new_vx, new_vy
 
 @jit(nopython=True)
-def move_to_target_numba(target_x, target_y, x, y, wh, is_shooting=False):
+def rotate_towards_target_numba(target_x, target_y, x, y):
     dx = target_x - x
     dy = target_y - y
-
     angle = np.arctan2(dy, dx)
 
+    return angle, dx, dy
+
+@jit(nopython=True)
+def move_to_target_numba(dx, dy, wh):
     mag_sq = dx**2 + dy**2
     topSpeed = 700
-    if mag_sq >= wh * wh and not is_shooting:
+    if mag_sq >= wh * wh:
         mag = np.sqrt(mag_sq) # lets use sqrt once we actually decided to move
         normDx = dx / mag
         normDy = dy / mag
         ds = (mag * 50) / wh
         speed = min(topSpeed, ds)
         velocity = (speed * normDx, speed * normDy)
-    else:
-        velocity = (0, 0)
 
-    return velocity, angle
+    return velocity

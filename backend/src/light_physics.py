@@ -5,6 +5,8 @@ Notes:
     All bodies coordinates need to be calculated based on the center of the body.
 """
 import math
+
+from numba.cuda import target
 from src.light_numba_functions import *
 from src.utils import utils
 from src.common_types import EntityType
@@ -90,10 +92,16 @@ class LP_Tank(Circle):
         self._needs_to_shoot = False
         self.entity_type = EntityType.TANK
 
-    def move_to_target(self, x, y, is_shooting=False):
-        self._needs_to_shoot = is_shooting
-        velocity, angle = move_to_target_numba(float(x), float(y), float(self.x),
-                                               float(self.y), float(self.wh), is_shooting)
+    def rotate_towards_target(self, target_x, target_y):
+        angle, _, _ = rotate_towards_target_numba(float(target_x), float(target_y), float(self.x), float(self.y))
+        self.angle = angle
+
+    def stop_tank(self):
+        self.velocity = (0,0)
+
+    def move_to_target(self, x, y):
+        angle, dx, dy = rotate_towards_target_numba(float(x), float(y), float(self.x), float(self.y))
+        velocity = move_to_target_numba(float(dx), float(dy), float(self.wh))
         self.velocity = velocity
         self.angle = angle
 

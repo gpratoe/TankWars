@@ -25,4 +25,6 @@ class CollisionMediator(Mediator):
             self._logic_component.handle_collision(**kwargs)
         elif event == 'DestroyBody':
             self._physics_component.destroy_body(**kwargs)
+        elif event == 'Shooting':
+            self._logic_component.handle_shooting(**kwargs)
 
