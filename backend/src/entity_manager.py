@@ -104,5 +104,3 @@ class EntityManager(BaseMediator):
                         bullet.is_dead = True
                 case _:
                     pass
-    def handle_shooting(self,tank_id, shooting):
-        self.tanks[tank_id].shoot()
