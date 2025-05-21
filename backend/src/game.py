@@ -28,6 +28,7 @@ class Game:
         self.entities_to_destroy = {"tanks":[], "bullets":[]}
         self.latest_collisions = None
         self.executor = ThreadPoolExecutor(max_workers=1)
+        self.update_rate_ticks = ((UPDATE_RATE/1000)* (1/self.physics_manager.time_step))
 
     async def handle_disconnect(self, player_id):
         player = next(filter(lambda p : p.id == player_id, self.players))
@@ -104,7 +105,7 @@ class Game:
                 continue
             t1 = time.perf_counter()
 
-            if self.physics_manager.tick % 3 == 0:
+            if self.physics_manager.tick % self.update_rate_ticks == 0:
                 state = self.entity_manager.get_last_state()
                 if state and state != self.prev_state:
                     await self.broadcast({

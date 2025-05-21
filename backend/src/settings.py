@@ -1,6 +1,7 @@
 # Global game settings
 GAME_WIDTH = 800
 GAME_HEIGHT = 450
+UPDATE_RATE = 50 # ms
 
 # Tank settings
 TANK_WIDTH = 30
@@ -32,6 +33,7 @@ SETTINGS_JSON = {
             'world': {
                 'width': GAME_WIDTH,
                 'height': GAME_HEIGHT,
+                'update_rate': UPDATE_RATE
             },
             'tank': {
                 'width': TANK_WIDTH,
