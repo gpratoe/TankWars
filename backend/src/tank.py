@@ -2,11 +2,11 @@ from src.utils import utils
 import math
 from src.settings import *
 import time
+from src.mediator import BaseMediator
 
-class Tank:
-    def __init__(self, id, name, color, shoot_callback, physics_body):
+class Tank(BaseMediator):
+    def __init__(self, id, name, color, shoot_callback):
         self.id = id
-        self.physics_body = physics_body
         self.name = name
         self.color = color
         self.health = 100
@@ -17,25 +17,15 @@ class Tank:
         self.is_dead = False
         self.shoot_callback = shoot_callback
         self.shooting = False
-
-        self.last_state = {
-            'tankx': physics_body.x,
-            'tanky': physics_body.y,
-            'angle': physics_body.angle,
-            'shooting': False,
-            'health': self.health,
-            'is_dead': self.is_dead,
-        }
+        self.last_state = None
 
 
-
-    def shoot(self):
+    def shoot(self, bullet_pos, angle):
+        self._mediator.notify("StopTank")
         if time.time() - self.shoot_time <= self.cooldown:
             return
-        
-        bullet_pos = (self.physics_body.x + self.physics_body.wh/2 * math.cos(self.physics_body.angle), self.physics_body.y + self.physics_body.wh/2 * math.sin(self.physics_body.angle))
         if self.shoot_callback:
-            self.shoot_callback(self.id, bullet_pos, self.physics_body.angle, self.damage, self.bullet_speed)
+            self.shoot_callback(self.id, bullet_pos, angle, self.damage, self.bullet_speed)
 
         self.shoot_time = time.time()
 
@@ -50,15 +40,17 @@ class Tank:
         }
     
     def get_state_and_diff(self):
-        self.shooting = self.physics_body._needs_to_shoot
-        new_state = {
-            'tankx': self.physics_body.x,
-            'tanky': self.physics_body.y,
-            'angle': self.physics_body.angle,
-            'shooting': self.physics_body._needs_to_shoot,
-            'health': self.health,
-            'is_dead': self.is_dead,
-        }
+        new_state =  self.get_state()
         same_state = new_state == self.last_state
         self.last_state = new_state
         return self.get_toclient(), same_state
+
+    def get_state(self):
+        physics_state = self._mediator.notify("GetPhysicsState")
+        return {
+            'tankx': physics_state["x"],
+            'tanky': physics_state["y"],
+            'angle': physics_state["angle"],
+            'health': self.health,
+            'is_dead': self.is_dead
+        }

@@ -9,7 +9,7 @@ from src.physics_manager import PhysicsManager
 from src.map import Map
 from src.utils import utils
 import time
-from src.mediator import CollisionMediator
+from src.mediator import LogicPhysicsMediator
 
 class Game:
     def __init__(self, players, lobby_id, connection_manager: ConnectionManager):
@@ -21,7 +21,7 @@ class Game:
         self.connection_manager = connection_manager
         self.physics_manager = LP_PhysicsManager()#PhysicsManager()
         self.entity_manager = EntityManager(self.physics_manager)
-        self.collision_mediator = CollisionMediator(self.physics_manager, self.entity_manager)
+        self.collision_mediator = LogicPhysicsMediator(self.physics_manager, self.entity_manager)
         self.physics_manager.collision_handler.set_mediator(self.collision_mediator)
         self.latest_inputs = {}
         self.entities_to_destroy = {"tanks":[], "bullets":[]}

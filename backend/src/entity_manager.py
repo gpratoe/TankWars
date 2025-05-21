@@ -1,8 +1,9 @@
+from os import POSIX_FADV_NORMAL
 from src.tank import Tank
 from src.bullet import Bullet
 from src.settings import *
 from src.physics_manager import PhysicsManager
-from src.common_types import CollisionType
+from src.common_types import CollisionType, EntityType
 from src.utils import utils
 from src.mediator import BaseMediator
 
@@ -21,44 +22,40 @@ class EntityManager(BaseMediator):
     def add_tank(self, player, pos, angle):
         if player.id in self.tanks:
             return
-        body = self.physics_manager.create_tank(player.id,
-                                                pos,
-                                                (TANK_WIDTH, TANK_HEIGHT),
-                                                )
         def shoot_callback(owner_id, pos, angle, damage, speed):
             self.spawn_bullet(owner_id, pos, angle, damage, speed)
 
-        self.tanks[player.id] = Tank(id=player.id, name=player.name,
+        logic_tank = Tank(id=player.id, name=player.name,
                                      color=player.color,
                                      shoot_callback=shoot_callback,
-                                     physics_body=body)
+                                     )
+
+        self._mediator.notify("CreateTank",logic_tank=logic_tank, pos=pos, dim=(TANK_WIDTH, TANK_HEIGHT))
+        self.tanks[player.id] = logic_tank
 
     def spawn_bullet(self, owner_id, pos, angle, damage, speed):
-        body = self.physics_manager.create_bullet(self.bullet_id_counter,
-                                                  pos,
-                                                  angle,
-                                                  speed,
-                                                  groupIndex=-owner_id,
-                                                  )
-        
-        self.bullets[self.bullet_id_counter] = Bullet(self.bullet_id_counter,
-                                                      owner_id,
-                                                      damage,
-                                                      physics_body=body
-                                                      )
-       
+        logic_bullet = Bullet(self.bullet_id_counter,
+                              owner_id,
+                              damage,
+                              )
+        self._mediator.notify("CreateBullet", logic_bullet=logic_bullet,
+                              pos=pos,
+                              angle=angle,
+                              speed=speed,
+                              groupIndex=-owner_id)
+        self.bullets[logic_bullet.id] = logic_bullet
         self.bullet_id_counter += 1
 
     def remove_tank(self, tank):
         try:
-            self._mediator.notify("DestroyBody", body=tank.physics_body)
+            self._mediator.notify("DestroyBody", id=tank.id, type=EntityType.TANK)
             del self.tanks[tank.id]
         except Exception as e:
             utils.logger.warning(f"EntityManager: Couldn't remove tank, got: {e}")
 
     def remove_bullet(self, bullet):
         try:
-            self._mediator.notify("DestroyBody", body=bullet.physics_body)
+            self._mediator.notify("DestroyBody", id=bullet.id, type=EntityType.BULLET)
             del self.bullets[bullet.id]
         except Exception as e:
             utils.logger.warning(f"EntityManager: Couldn't remove bullet, got: {e}")

@@ -10,6 +10,7 @@ from numba.cuda import target
 from src.light_numba_functions import *
 from src.utils import utils
 from src.common_types import EntityType
+from src.mediator import BaseMediator
 
 class Rect:
     def __init__(self, x, y, w, h, groupIndex=0):
@@ -83,13 +84,12 @@ class Circle:
 
 
 
-class LP_Tank(Circle):
+class LP_Tank(Circle, BaseMediator):
     def __init__(self, id, x, y, wh, groupIndex=0):
-        super().__init__(x, y, 0, wh / 2, groupIndex)
+        Circle.__init__(self, x, y, 0, wh / 2, groupIndex)
         self.id = id
         self.wh = wh  # tanks will be represented as circles of radius wh/2
         self.groupIndex = groupIndex
-        self._needs_to_shoot = False
         self.entity_type = EntityType.TANK
 
     def rotate_towards_target(self, target_x, target_y):
@@ -110,13 +110,12 @@ class LP_Tank(Circle):
             "x": self.x,
             "y": self.y,
             "angle": self.angle,
-            "needs_to_shoot": self._needs_to_shoot
         }
 
 
-class LP_Bullet(Circle):
+class LP_Bullet(Circle, BaseMediator):
     def __init__(self, id, x, y, radius, angle, speed, groupIndex=0):
-        super().__init__(x, y, angle, radius, groupIndex)
+        Circle.__init__(self, x, y, angle, radius, groupIndex)
         self.id = id
         self.angle = angle
         self.speed = speed

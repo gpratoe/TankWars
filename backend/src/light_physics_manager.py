@@ -34,11 +34,10 @@ class LP_PhysicsManager(BaseMediator):
         tank = self.tanks.get(tank_id)
         if tank:
             if input["shooting"]:
-                tank.stop_tank()
                 tank.rotate_towards_target(input["mouseX"], input["mouseY"])
-                self._mediator.notify("Shooting", tank_id=tank_id, shooting=input["shooting"])
+                tank._mediator.notify("Shooting")
             else:
-                tank.move_to_target(input["mouseX"], input["mouseY"])
+                tank._mediator.notify("MoveTank", x=input["mouseX"], y=input["mouseY"])
 
     def create_tank(self, tank_id, pos, dim):
         if tank_id in self.tanks:
@@ -70,18 +69,17 @@ class LP_PhysicsManager(BaseMediator):
             if bullet_id in self.bullets:
                 del self.bullets[bullet_id]
 
-    def destroy_body(self, body):
-        type = body.entity_type
+    def destroy_body(self, id, type):
         if type == EntityType.TANK:
-            if body.id in self.tanks:
-                del self.tanks[body.id]
+            if id in self.tanks:
+                del self.tanks[id]
                 return
         if type == EntityType.BULLET:
-            if body.id in self.bullets:
-                del self.bullets[body.id]
+            if id in self.bullets:
+                del self.bullets[id]
                 return
         if type == EntityType.WALL:
-            if body.id in self.walls:
-                del self.walls[body.id]
+            if id in self.walls:
+                del self.walls[id]
                 return
 
