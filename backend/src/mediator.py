@@ -65,8 +65,9 @@ class TankMediator(Mediator):
             self._physics_tank.stop_tank()
             self._physics_tank.rotate_towards_target(**kwargs)
             angle = self._physics_tank.angle
-            dx = self._physics_tank.wh/2 * math.cos(angle)
-            dy = self._physics_tank.wh/2 * math.sin(angle)
+            hwh = self._physics_tank.wh/2
+            dx = hwh * math.cos(angle)
+            dy = hwh * math.sin(angle)
 
             bullet_pos = (self._physics_tank.x + dx,
                           self._physics_tank.y + dy)
