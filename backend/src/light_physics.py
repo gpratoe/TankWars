@@ -117,7 +117,6 @@ class LP_Bullet(Circle, BaseMediator):
     def __init__(self, id, x, y, radius, angle, speed, groupIndex=0):
         Circle.__init__(self, x, y, angle, radius, groupIndex)
         self.id = id
-        self.angle = angle
         self.speed = speed
         self.velocity = (math.cos(angle) * speed, math.sin(angle) * speed)
         self.entity_type = EntityType.BULLET
