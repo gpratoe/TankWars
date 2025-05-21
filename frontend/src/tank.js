@@ -3,7 +3,7 @@ import { HealthBar } from "./healthbar";
 import { InterpolationBuffer } from "./InterpolationBuffer";
 
 class Tank {
-    constructor(player_id, name, color, x, y, w , h, angle, app, is_local = false)
+    constructor(player_id, name, color, x, y, w , h, angle, app, is_local = false, update_rate = 50)
     {
         this.player_id = player_id
         this.app = app;
@@ -26,7 +26,7 @@ class Tank {
             angle: angle,
 
         }
-        this.interpolation_buffer = new InterpolationBuffer(initial_state, 50, this.interp_states);
+        this.interpolation_buffer = new InterpolationBuffer(initial_state, update_rate, this.interp_states);
     }
 
     interp_states(older_state, newer_state, t){

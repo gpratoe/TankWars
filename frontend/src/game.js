@@ -49,7 +49,8 @@ class Game {
 
                 this.tanks[player_id] = new Tank(player_id, name, color, x, y,
                                                  this.tank_width, this.tank_height,
-                                                  angle, this.app, (player_id == this.player_id));
+                                                 angle, this.app, (player_id == this.player_id),
+                                                 this.settings.update_rate);
                 this.update();
             }
             this.initialized = true;
@@ -94,7 +95,8 @@ class Game {
                                                             bullet_state.damage,
                                                             bullet_state.speed,
                                                             this.app,
-                                                            bullet_state.owner_id == this.player_id);
+                                                            bullet_state.owner_id == this.player_id,
+                                                            this.settings.update_rate);
                     }
                 }
             }

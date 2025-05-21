@@ -2,7 +2,7 @@ import { Graphics } from "pixi.js";
 import { InterpolationBuffer } from "./InterpolationBuffer";
 
 class Bullets {
-    constructor(id, x,y,dir_norm,damage,speed, app, is_local = false) {
+    constructor(id, x,y,dir_norm,damage,speed, app, is_local = false, update_rate = 50) {
         this.is_local = is_local;
         this.id = id;
         this.x = x;
@@ -24,7 +24,7 @@ class Bullets {
             damage: damage,
             speed: speed,
         }
-        this.interpolation_buffer = new InterpolationBuffer(this.initial_state, 50, this.interp_states);
+        this.interpolation_buffer = new InterpolationBuffer(this.initial_state, update_rate, this.interp_states);
         app.stage.addChild(this.bullet);
     }
 
