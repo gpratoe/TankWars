@@ -39,8 +39,8 @@ class Game {
             for (const player_id in tanks) {
                 const name = tanks[player_id].name;
                 const color = tanks[player_id].color;
-                const x = tanks[player_id].tankx;
-                const y = tanks[player_id].tanky;
+                const x = tanks[player_id].x;
+                const y = tanks[player_id].y;
                 // const mouseX = tanks[player_id].mouseX; // Might not need this at first
                 // const mouseY = tanks[player_id].mouseY; // Might not need this at first
                 const angle = tanks[player_id].angle;

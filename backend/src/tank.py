@@ -46,8 +46,8 @@ class Tank(BaseMediator):
     def get_state(self):
         physics_state = self._mediator.notify("GetPhysicsState")
         return {
-            'tankx': physics_state["x"],
-            'tanky': physics_state["y"],
+            'x': physics_state["x"],
+            'y': physics_state["y"],
             'angle': physics_state["angle"],
             'health': self.health,
             'is_dead': self.is_dead

@@ -85,8 +85,8 @@ class Tank {
     
     set_state(state){
         const new_state = {
-            x: state.tankx,
-            y: state.tanky,
+            x: state.x,
+            y: state.y,
             angle: state.angle,
             timestamp: Date.now()
         }
