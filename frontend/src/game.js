@@ -157,7 +157,7 @@ class Game {
         await Assets.load([`${import.meta.env.VITE_BASE_URL}tank_sprite_blue.png`,
                            `${import.meta.env.VITE_BASE_URL}tank_sprite_green.png`,
                            `${import.meta.env.VITE_BASE_URL}tank_sprite_orange.png`,
-                           `${import.meta.env.VITE_BASE_URL}tank_sprite_yellow`,
+                           `${import.meta.env.VITE_BASE_URL}tank_sprite_yellow.png`,
                            `${import.meta.env.VITE_BASE_URL}boundries_tile.png`,
                         ]);
             this.app = new Application();
