@@ -61,7 +61,7 @@ class TankMediator(Mediator):
         self._logic_tank.set_mediator(self)
 
     def notify(self, event:str, **kwargs):
-        if event == "Shooting":
+        if event == "Shooting" and not self._logic_tank.is_dead:
             self._physics_tank.stop_tank()
             self._physics_tank.rotate_towards_target(**kwargs)
             angle = self._physics_tank.angle
