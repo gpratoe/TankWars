@@ -5,7 +5,6 @@ from src.light_physics_manager import LP_PhysicsManager
 from src.settings import *
 from src.entity_manager import EntityManager
 from api.ws import ConnectionManager
-from src.physics_manager import PhysicsManager
 from src.map import Map
 from src.utils import utils
 import time
@@ -21,7 +20,7 @@ class Game:
         self.prev_state = None
         self.connection_manager = connection_manager
         self.input_router = InputRouter()
-        self.physics_manager = LP_PhysicsManager()#PhysicsManager()
+        self.physics_manager = LP_PhysicsManager()
         self.entity_manager = EntityManager()
         self.logic_physics_mediator = LogicPhysicsMediator(self.physics_manager, self.entity_manager, self.input_router)
         self.physics_manager.collision_handler.set_mediator(self.logic_physics_mediator)

@@ -1,8 +1,7 @@
-from src.physics_manager import PhysicsManager
 from src.settings import *
 
 class Map:
-    def __init__(self, physics_manager: PhysicsManager, w=100, h=100):
+    def __init__(self, physics_manager, w=100, h=100):
         self.physics_manager = physics_manager
         self.w = w
         self.h = h

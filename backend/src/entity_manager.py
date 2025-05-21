@@ -1,4 +1,3 @@
-from os import POSIX_FADV_NORMAL
 from src.tank import Tank
 from src.bullet import Bullet
 from src.settings import *
