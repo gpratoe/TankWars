@@ -10,6 +10,7 @@ from src.map import Map
 from src.utils import utils
 import time
 from src.mediator import LogicPhysicsMediator
+from src.input_router import InputRouter
 
 class Game:
     def __init__(self, players, lobby_id, connection_manager: ConnectionManager):
@@ -19,10 +20,11 @@ class Game:
         self.players = players
         self.prev_state = None
         self.connection_manager = connection_manager
+        self.input_router = InputRouter()
         self.physics_manager = LP_PhysicsManager()#PhysicsManager()
-        self.entity_manager = EntityManager(self.physics_manager)
-        self.collision_mediator = LogicPhysicsMediator(self.physics_manager, self.entity_manager)
-        self.physics_manager.collision_handler.set_mediator(self.collision_mediator)
+        self.entity_manager = EntityManager()
+        self.logic_physics_mediator = LogicPhysicsMediator(self.physics_manager, self.entity_manager, self.input_router)
+        self.physics_manager.collision_handler.set_mediator(self.logic_physics_mediator)
         self.latest_inputs = {}
         self.entities_to_destroy = {"tanks":[], "bullets":[]}
         self.latest_collisions = None
@@ -79,7 +81,7 @@ class Game:
 
     def apply_inputs(self):
         for player_id, input in self.latest_inputs.items():
-            self.physics_manager.handle_input(player_id, input)
+            self.input_router.handle_input(input, player_id)
     
     async def run(self):
         

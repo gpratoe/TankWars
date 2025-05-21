@@ -21,12 +21,10 @@ class Tank(BaseMediator):
 
 
     def shoot(self, bullet_pos, angle):
-        self._mediator.notify("StopTank")
         if time.time() - self.shoot_time <= self.cooldown:
             return
         if self.shoot_callback:
             self.shoot_callback(self.id, bullet_pos, angle, self.damage, self.bullet_speed)
-
         self.shoot_time = time.time()
 
 

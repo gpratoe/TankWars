@@ -30,14 +30,6 @@ class LP_PhysicsManager(BaseMediator):
 
         return collisions
 
-    def handle_input(self, tank_id, input):
-        tank = self.tanks.get(tank_id)
-        if tank:
-            if input["shooting"]:
-                tank.rotate_towards_target(input["mouseX"], input["mouseY"])
-                tank._mediator.notify("Shooting")
-            else:
-                tank._mediator.notify("MoveTank", x=input["mouseX"], y=input["mouseY"])
 
     def create_tank(self, tank_id, pos, dim):
         if tank_id in self.tanks:

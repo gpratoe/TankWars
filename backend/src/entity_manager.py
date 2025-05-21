@@ -2,17 +2,15 @@ from os import POSIX_FADV_NORMAL
 from src.tank import Tank
 from src.bullet import Bullet
 from src.settings import *
-from src.physics_manager import PhysicsManager
 from src.common_types import CollisionType, EntityType
 from src.utils import utils
 from src.mediator import BaseMediator
 
 
 class EntityManager(BaseMediator):
-    def __init__(self, physics_manager: PhysicsManager):
+    def __init__(self):
         self.tanks: dict[int, Tank] = {}
         self.bullets: dict[int, Bullet] = {}
-        self.physics_manager = physics_manager
         self.bullet_id_counter = 0
         self.tanks_to_remove = []
         self.bullets_to_remove = []
