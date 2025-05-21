@@ -88,7 +88,6 @@ class EntityManager(BaseMediator):
                 case CollisionType.BULLET_TANK:
                     bullet = self.bullets[first_id]
                     tank = self.tanks[second_id]
-                    print(tank.health, bullet.damage)
                     tank.health -= bullet.damage
                     bullet.is_dead = True
                     if tank.health <= 0:
