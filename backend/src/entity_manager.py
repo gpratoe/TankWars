@@ -15,6 +15,7 @@ class EntityManager(BaseMediator):
         self.bullets_to_remove = []
         self.last_world_state = {"tanks": {}, "bullets": {}, "collisions": []}
         self.entities_to_destroy = {"tanks": [], "bullets": []}
+        self.dead_players_count = 0
 
     def add_tank(self, player, pos, angle):
         if player.id in self.tanks:
@@ -58,7 +59,7 @@ class EntityManager(BaseMediator):
             utils.logger.warning(f"EntityManager: Couldn't remove bullet, got: {e}")
 
     def get_last_state(self):
-        state = {'tanks': {}, 'bullets': {}}
+        state = {'tanks': {}, 'bullets': {}, 'game_over': False}
 
         for bullet_id, bullet in list(self.bullets.items()):
             bullet_state, same_state = bullet.get_state_and_diff()
@@ -76,7 +77,11 @@ class EntityManager(BaseMediator):
             if tank_state["is_dead"]:
                 self.remove_tank(tank)
 
-        if state['tanks'] == {} and state['bullets'] == {}:
+
+        if len(self.tanks) == 1:
+            state['game_over'] = True
+
+        if state['tanks'] == {} and state['bullets'] == {} and not state['game_over']:
             return None
         return state
 
