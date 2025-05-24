@@ -10,9 +10,10 @@ from src.utils import utils
 import time
 from src.mediator import LogicPhysicsMediator
 from src.input_router import InputRouter
+from src.game_state_machine import GameState
 
 class Game:
-    def __init__(self, players, lobby_id, connection_manager: ConnectionManager):
+    def __init__(self, players, lobby_id, connection_manager: ConnectionManager, gsm):
         self.w = GAME_WIDTH
         self.h = GAME_HEIGHT
         self.id = lobby_id
@@ -29,6 +30,7 @@ class Game:
         self.latest_collisions = None
         self.executor = ThreadPoolExecutor(max_workers=1)
         self.update_rate_ticks = ((UPDATE_RATE/1000)* (1/self.physics_manager.time_step))
+        self.gsm = gsm
 
     async def handle_disconnect(self, player_id):
         player = next(filter(lambda p : p.id == player_id, self.players))
@@ -114,6 +116,7 @@ class Game:
                     })
                     if state['game_over']:
                         self.running = False
+                        await self.gsm.change_state(GameState.GAME_OVER)
                     self.prev_state = state
 
             end = time.perf_counter()

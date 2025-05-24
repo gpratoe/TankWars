@@ -148,5 +148,13 @@ class GameService:
         return {'state': 'success',
                 'message': f'Player with id {player_id} has left game with id {game_id}'}
     
+    @db_session
+    def game_over(self, game_id):
+        game = Game.get(id=game_id)
+        if game is None:
+            raise ValueError(f'Game with id {game_id} not found')
+        game.in_lobby = True
+        print(game)
+        
 
 gs = GameService()

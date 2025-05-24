@@ -11,8 +11,7 @@ from enum import Enum
 from abc import ABC, abstractmethod
 import time
 import asyncio
-from src.lobby import Lobby
-from db import game_service
+from db.game_service import GameService
 
 class GameState(Enum):
     LOBBY = "lobby"
@@ -42,14 +41,14 @@ class State(ABC):
 class GameStateMachine:
     ACTIVE_GSM = {}
 
-    def __init__(self, lobby: (Lobby | None)):
+    def __init__(self, lobby):
         self.lobby = lobby
         self.states = {
             GameState.LOBBY: LobbyState(self),
             GameState.PREV_GAME_CONFIG: PrevGameConfigState(self),
             GameState.COUNTDOWN: CountdownState(self),
             GameState.IN_GAME: InGameState(self),
-            GameState.GAME_OVER: None,
+            GameState.GAME_OVER: GameOverState(self),
         }
         self.current_state = self.states[GameState.LOBBY]
 
@@ -254,7 +253,12 @@ class GameOverState(State):
         await self.lobby.handle_data(data, player_id)
 
     async def enter(self):
-        pass
+        gs = GameService()
+        gs.game_over(self.lobby.lobby_id)
+        for player in self.lobby.players:
+            player.ready = False
+        self.lobby.game = None
+        self.game_state_machine.change_state(GameState.LOBBY)
 
     async def exit(self):
         pass

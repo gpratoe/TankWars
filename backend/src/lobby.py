@@ -7,6 +7,7 @@ from api.ws import ConnectionManager
 import time
 from src.settings import *
 from src.utils import utils
+from src.game_state_machine import GameStateMachine
 
 class Lobby:
 
@@ -152,10 +153,12 @@ class Lobby:
             raise ValueError('Only the owner can start the game')
         
         resp = gs.start_game(self.lobby_id, owner_id)
+        gsm = GameStateMachine.get_gsm(self.lobby_id)
         
         self.game = Game(players=self.players,
                          lobby_id=self.lobby_id,
                          connection_manager=self.manager,
+                         gsm=gsm,
                     )   
 
         game_settings = SETTINGS_JSON
