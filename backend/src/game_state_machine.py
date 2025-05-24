@@ -12,6 +12,7 @@ from abc import ABC, abstractmethod
 import time
 import asyncio
 from src.lobby import Lobby
+from db import game_service
 
 class GameState(Enum):
     LOBBY = "lobby"
@@ -242,3 +243,25 @@ class InGameState(State):
             await self.game.handle_disconnect(player_id)
         else:
             raise ValueError('Game not set in InGameState')
+
+class GameOverState(State):
+    def __init__(self, game_state_machine):
+        self.game_state_machine = game_state_machine
+        self.lobby = game_state_machine.lobby
+        self.game = self.lobby.game
+
+    async def handle_data(self, data:dict, player_id: int):
+        await self.lobby.handle_data(data, player_id)
+
+    async def enter(self):
+        pass
+
+    async def exit(self):
+        pass
+
+    async def handle_disconnect(self, player_id: int):
+        if self.lobby:
+            await self.lobby.disconnect_player(player_id)
+        else:
+            raise ValueError('Lobby not set in GameStateMachine')
+
