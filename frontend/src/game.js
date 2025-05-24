@@ -1,6 +1,6 @@
 import {Application, Assets, Text} from "pixi.js";
 import { Tank } from "./tank";
-import { Bullets } from "./bullets";
+import { Bullet } from "./bullet";
 import { GameMap} from "./gameMap";
 
 class Game {
@@ -85,7 +85,7 @@ class Game {
                         }
 
                     } else {
-                        this.bullets[bullet_id] = new Bullets(
+                        this.bullets[bullet_id] = new Bullet(
                                                             bullet_id,
                                                             bullet_state.x,
                                                             bullet_state.y,

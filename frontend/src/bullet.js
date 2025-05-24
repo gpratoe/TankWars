@@ -1,7 +1,7 @@
 import { Graphics } from "pixi.js";
 import { InterpolationBuffer } from "./InterpolationBuffer";
 
-class Bullets {
+class Bullet {
     constructor(id, x,y,dir_norm,damage,speed, app, is_local = false, update_rate = 50) {
         this.is_local = is_local;
         this.id = id;
@@ -79,4 +79,4 @@ class Bullets {
     }
 }
 
-export { Bullets };
+export { Bullet };
