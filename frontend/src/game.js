@@ -5,7 +5,7 @@ import { GameMap} from "./gameMap";
 import { EntityManager } from "./entityManager.js"
 
 class Game {
-    constructor(settings, game_id, player_id, sendMessage) {
+    constructor(settings, game_id, player_id, sendMessage, navigate) {
         this.initialized = false;
         this.game_id = game_id;
         this.player_id = player_id;
@@ -17,6 +17,7 @@ class Game {
         this.sendMessage = sendMessage;
         this.settings = settings;
         this.last_mousePos = null;
+        this.navigate = navigate
     }
 
     #handleEvent(event, payload) {
@@ -32,6 +33,9 @@ class Game {
            this.initialized = true;
         }
         else if (event === 'state') {
+            if(payload['game_over']) {
+                this.navigate(`/lobby/${this.game_id}`);
+            }
             if (this.initialized){
                this.entityManager.setStates(payload);
             }

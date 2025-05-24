@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Game } from '../../game'; // Importa la instancia game
 import { usePlayer } from '../contexts/playerContext';
 import { useWebSocket } from '../contexts/webSocketContext';
@@ -12,6 +12,7 @@ function GameScreen({ }) {
   const settings = JSON.parse(sessionStorage.getItem('game_settings'));
   const gameRef = useRef(null);
   const ws_url = `${WS_URL}/game/${lobbyId}/ws?player_id=${player.id}`;
+  const navigate = useNavigate();
 
   const onMessage = useCallback((data) => {
     if (gameRef.current){
@@ -26,7 +27,7 @@ function GameScreen({ }) {
 
     const asyncInit = async () => {
       if(!gameRef.current){
-        gameRef.current = new Game(settings, lobbyId, player.id, (data) => {sendMessage(data)});
+        gameRef.current = new Game(settings, lobbyId, player.id, (data) => {sendMessage(data)}, navigate);
         await gameRef.current.init();
       
         if (ws.readyState === WebSocket.OPEN){

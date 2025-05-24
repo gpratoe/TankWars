@@ -112,6 +112,8 @@ class Game:
                         "event": "state",
                         "payload": state
                     })
+                    if state['game_over']:
+                        self.running = False
                     self.prev_state = state
 
             end = time.perf_counter()
