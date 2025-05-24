@@ -10,6 +10,7 @@ class TankRepository extends BaseRepository {
     }
 
     create(id, tankData) {
+        id = Number(id);
         const isLocal = this.player_id == id;
         const tank = new Tank(
             id,
@@ -28,13 +29,14 @@ class TankRepository extends BaseRepository {
     }
 
     setStates(tanksState) {
-        for (const id in tanksState) {
+        for (let id in tanksState) {
             const state = tanksState[id];
+            id = Number(id);
             if (state.is_dead) {
-                this.remove(Number(id));
+                this.remove(id);
             }
-            else if (this.entities.has(Number(id))){
-                this.entities.get(Number(id)).set_state(state);
+            else if (this.entities.has(id)){
+                this.entities.get(id).set_state(state);
             }
         }
     }

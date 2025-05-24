@@ -11,6 +11,7 @@ class BulletRepository extends BaseRepository {
 
     create(id, bulletData) {
         const is_local = this.player_id == bulletData.owner_id;
+        id = Number(id);
         const bullet = new Bullet(
             id,
             bulletData.x,
@@ -26,8 +27,9 @@ class BulletRepository extends BaseRepository {
     }
 
     setStates(bulletsState){
-        for (const id in bulletsState) {
+        for (let id in bulletsState) {
             const state = bulletsState[id];
+            id = Number(id);
             if (state.is_dead) {
                 this.remove(id);
             }

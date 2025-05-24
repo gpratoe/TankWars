@@ -9,7 +9,7 @@ class EntityManager {
     }
 
     add(type, id, data) {
-        this.repos.get(type)?.create(Number(id), data);
+        this.repos.get(type)?.create(id, data);
     }
 
     remove(type, id) {
@@ -32,7 +32,7 @@ class EntityManager {
     }
 
     get(type, id) {
-        return this.repos.get(type).get(Number(id));
+        return this.repos.get(type).get(id);
     }
 }
 
