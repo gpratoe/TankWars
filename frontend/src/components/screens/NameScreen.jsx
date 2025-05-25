@@ -23,7 +23,7 @@ function NameScreen() {
         const data = await create_player(inputName);
         if (data && data.id) {
           updatePlayer({ id: data.id, name: inputName, is_owner: false });
-          navigate('/lobby');
+          navigate('/rooms');
         }
         else{
           setLoading(false);

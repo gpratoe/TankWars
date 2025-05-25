@@ -66,7 +66,7 @@ function LobbyScreen({}){
         try {
             const resp = await leave_lobby(lobbyId, player.id);
             updatePlayer({ id: player.id, name: player.name, is_owner: false }); // this re-renders the lobby and calls for useWebSocket generating a rejected conection due to player not in game anymore (not problematic but annoying)
-            navigate('/lobby');
+            navigate('/rooms');
         }   
         catch(err) {
             console.error(err);

@@ -20,7 +20,7 @@ function App() {
             element={<NameScreen />}
           />
           <Route
-            path="/lobby"
+            path="/rooms"
             element={
               <JoinCreateScreen/>
             }
