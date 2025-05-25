@@ -258,7 +258,7 @@ class GameOverState(State):
         for player in self.lobby.players:
             player.ready = False
         self.lobby.game = None
-        self.game_state_machine.change_state(GameState.LOBBY)
+        await self.game_state_machine.change_state(GameState.LOBBY)
 
     async def exit(self):
         pass
