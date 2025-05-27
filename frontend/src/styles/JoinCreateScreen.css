@@ -6,23 +6,14 @@
     align-content: center;
     ul{
         display: grid;
-        list-style-type: none;
-        padding: 16px;
-        margin: 0;
         width: 100%;
         align-items: start;
         align-content: start;
         max-height: 80vh;
         overflow-y: auto;
         li{
-            max-width: 800px;
-            margin: 8px;
-            padding: 16px;
-            background-color: rgb(48, 48, 48);
-            border-radius: 8px;
-            border: white 2px solid;
-            display: flex;
-            justify-content: space-between;
+            max-width: 100vh;
+            margin-top: 8px;
             p {
               align-content: center;
               padding-right: 200px;
@@ -32,7 +23,8 @@
 }
 
 .buttons-container{
-    display:flex;
+    display:grid;
+    grid-template-columns: 1fr 1fr;
     justify-content: center;
     align-items: center; 
     gap: 16px;  
