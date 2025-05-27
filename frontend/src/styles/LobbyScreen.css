@@ -4,30 +4,31 @@
     justify-content: center;
     align-items: center;
     color: white;
+    gap: 20px;
 }
 .lobbyInfo {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items:center;
-    margin: 50px;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 25px;
+    width: 100%;
+    padding-inline: 20px;
 }
 .lobbyPlayers {
     padding: 16px;
     border-radius: 8px;
     border: white 2px solid;
     background-color: rgb(48, 48, 48);
-    width: 650px;
-    height: 600px;
-
+    height: clamp(60vh, 70vh, 600px);
+    width: clamp(340px, 40vw, 600px); 
 }
-.chat-container {
+.chat-wrapper {
+    height: clamp(400px, 70vh, 600px);
+    width: clamp(340px, 40vw, 550px);
+}
+.buttons-container {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin-left: 20px;
-    background-color: rgb(48, 48, 48);
+    flex-wrap: wrap;
 }
 ul {
     list-style-type: none;
@@ -38,6 +39,7 @@ ul li {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    flex-wrap: wrap;
     width: 100%;
     padding: 8px;
     margin-bottom: 8px;
@@ -45,9 +47,11 @@ ul li {
     background-color: rgb(48, 48, 48);
     border: white 2px solid;
     transition: background-color 0.5s;
+    overflow-x: hidden;
 }
 ul li p {
     padding-left: 10px;
+    align-content: center;
 }
 #kick-button {
     padding: 3px;
@@ -75,8 +79,8 @@ ul li p {
     background-color: rgb(0, 124, 196);
 }
 .color-show {
-    height: 60px;
-    width: 70px;
+    min-height: 60px;
+    min-width: 70px;
     border-radius: 8px;
     margin-right: 16px;
     margin-bottom: 8px;

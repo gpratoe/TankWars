@@ -101,12 +101,14 @@ function LobbyScreen({}){
                         )}
                     </ul>
                 </div>
-                <Chat/>
-            </div>
+                <div className='chat-wrapper'>
+                    <Chat/>
+                </div>
+           </div>
             <div className='buttons-container'>
                 <Button text='Abandonar' variant='red' onClick={() => {onLeaving()}}/>
                 {player.is_owner ? <Button text='Empezar' onClick={() => {onStart()}}/>: null}
-            </div>            
+            </div>
         </div>
     );
 }

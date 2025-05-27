@@ -8,13 +8,12 @@ ol{
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin-left: 20px;
     background-color: rgb(48, 48, 48);
     padding: 16px;
     border-radius: 8px;
     border: 2px white solid;
-    width: 650px;
-    height: 600px;
+    height: inherit;
+    width: inherit;
 }
 #chat-list{
     display: flex;
@@ -42,9 +41,11 @@ ol{
 #chat-sendbar{
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     justify-content: space-between;
     margin: 16px;
     width:100%;
+    gap: 16px;
 }
 #chat-input{
     padding: 8px;
@@ -52,8 +53,8 @@ ol{
     border: white 2px solid;
     background-color: rgb(48, 48, 48);
     color: whitesmoke;
-    margin-right: 16px;
     flex-grow: 2;
+    width: 100%;
 }
 #sender{
     margin:0;
