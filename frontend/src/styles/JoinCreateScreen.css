@@ -4,6 +4,7 @@
     justify-content: center;
     align-items: center;
     align-content: center;
+    padding: 16px;
     ul{
         display: grid;
         width: 100%;
@@ -12,11 +13,10 @@
         max-height: 80vh;
         overflow-y: auto;
         li{
-            max-width: 100vh;
             margin-top: 8px;
             p {
               align-content: center;
-              padding-right: 200px;
+              margin-right: 10vw;
             }
         }
     }
@@ -26,7 +26,6 @@
     display:grid;
     grid-template-columns: 1fr 1fr;
     justify-content: center;
-    align-items: center; 
-    gap: 16px;  
-    width: 100%;
+    align-items: center;
+    gap: 16px;
 }
