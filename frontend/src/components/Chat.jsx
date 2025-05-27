@@ -12,6 +12,7 @@ function Chat ({}) {
     const { player, updatePlayer } = usePlayer();
     const lobbyId = useParams().lobbyId;
     const ws_url = `${WS_URL}/game/${lobbyId}/ws?player_id=${player.id}`;
+    const chatListRef = useRef(null);
 
     const onMessage = useCallback((data) => {
         if (data.event === 'chat_msg') {
@@ -42,11 +43,16 @@ function Chat ({}) {
             setMessage('');
         }
     }
+    useEffect(() => {
+        if (chatListRef.current) {
+            chatListRef.current.scrollTop = chatListRef.current.scrollHeight;
+        }
+    }, [messages])
 
     return (
         <div className="chat-container">
             <h2>Chat</h2>
-            <ol id="chat-list">
+            <ol id="chat-list" ref={chatListRef}>
                 {messages.map((m, i) =>
                     <li key={i}>
                         <div className='chat-entry'>
