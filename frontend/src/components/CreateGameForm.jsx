@@ -38,25 +38,25 @@ function CreateGameForm({goBackFunc}) {
             <div className="createGameForm">
                 <form onSubmit={handleSubmit}>
                     <div className="cgform-entry">
-                        <label> Nombre de la sala:
-                            <input type='text' 
-                            placeholder="Ingrese nombre"
-                            maxLength={16}  
-                            onChange={(e) => setInputName(e.target.value)}></input>
-                        </label>
+                        <label> Nombre de la sala:</label>
+                        <input type='text' 
+                        placeholder="Ingrese nombre"
+                        maxLength={16}  
+                        onChange={(e) => setInputName(e.target.value)}>
+                        </input>
                     </div>
                     <div className="cgform-entry">
                         <label>
                             Jugadores:
-                            <select onChange={(e) => setInputPlayers(e.target.value)} defaultValue="4">
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                            </select>
                         </label>
+                        <select onChange={(e) => setInputPlayers(e.target.value)} defaultValue="4">
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                        </select>
                     </div>
                 </form>
-                <div>
+                <div className='button-container'>
                     <Button text='Volver' variant='red' onClick={() => goBackFunc(false)} type='button'/>
                     <Button text='Crear' onClick={handleCreateGame} type='submit'/>
                 </div>

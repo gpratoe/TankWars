@@ -3,7 +3,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 100%;
+    max-width: 90vw;
     height: 100%;
     padding: 16px;
     margin: 0;
@@ -14,24 +14,28 @@
 
 .cgform-entry{
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    padding: 2px;
+    flex-wrap: wrap;
     border-radius: 8px;
-    margin: 8px;
+    margin: 40px;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: 12px;
 
     input{
-        padding-left: 16px;
-        margin-left: 16px;
+        padding-left: 8px;
         color: rgba(6, 199, 6, 0.89);
         background-color: rgb(48, 48, 48);
     }
     select{
-        margin-left: 16px;
         color: rgba(6, 199, 6, 0.89);
         background-color: rgb(48, 48, 48);
         option{
             color: rgba(6, 199, 6, 0.89);
         }
     }
+}
+
+.button-container {
+  display:flex;
+  gap: 8px;
 }
