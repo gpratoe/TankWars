@@ -4,6 +4,11 @@
         color: black;
         margin-right: 8px;
     }
-
-
+    form{
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 16px;
+    }
 }
