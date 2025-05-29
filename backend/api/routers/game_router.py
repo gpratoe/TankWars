@@ -101,5 +101,5 @@ async def game_lobby_ws(websocket: WebSocket, game_id: int, player_id: int):
             try:
                 await gsm.handle_disconnect(player_id)
             except Exception as e:
-                utils.logger.waring(str(e))
+                utils.logger.warning(str(e))
             break
