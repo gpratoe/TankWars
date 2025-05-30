@@ -1,10 +1,11 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Game } from '../../game'; // Importa la instancia game
 import { usePlayer } from '../contexts/playerContext';
 import { useWebSocket } from '../contexts/webSocketContext';
 import '../../styles/GameScreen.css';
 import { WS_URL } from '../../apiService';
+import GameOverModal from '../GameOverModal.jsx'
 
 function GameScreen({ }) {
   const { player } = usePlayer();
@@ -13,6 +14,7 @@ function GameScreen({ }) {
   const gameRef = useRef(null);
   const ws_url = `${WS_URL}/game/${lobbyId}/ws?player_id=${player.id}`;
   const navigate = useNavigate();
+  const [winner, setWinner] = useState(null);
 
   const onMessage = useCallback((data) => {
     if (gameRef.current){
@@ -21,13 +23,14 @@ function GameScreen({ }) {
   }, []);
   const {ws, sendMessage} = useWebSocket(ws_url, onMessage);
 
+  const onGameOver = (winner) => { setWinner(winner) };
 
   useEffect(() => {
     const gameContainer = document.getElementById('game-container');
 
     const asyncInit = async () => {
       if(!gameRef.current){
-        gameRef.current = new Game(settings, lobbyId, player.id, (data) => {sendMessage(data)}, navigate);
+        gameRef.current = new Game(settings, lobbyId, player.id, (data) => {sendMessage(data)}, onGameOver);
         await gameRef.current.init();
       
         if (ws.readyState === WebSocket.OPEN){
@@ -50,10 +53,11 @@ function GameScreen({ }) {
   }, [lobbyId, player.id, settings, sendMessage]);
 
   return (
-    <div className='gameScreen-container'>
-      <h1>Game</h1>
-      <div id='game-container'></div>
-    </div>
+      <div className='gameScreen-container'>
+        { winner && <GameOverModal winner={winner} onGoBack={() => navigate(`/lobby/${lobbyId}`)}/> }
+        <h1>Game</h1>
+        <div id='game-container'></div>
+      </div>
   );
 }
 
