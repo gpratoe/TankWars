@@ -29,7 +29,7 @@ class Game:
         self.entities_to_destroy = {"tanks":[], "bullets":[]}
         self.latest_collisions = None
         self.executor = ThreadPoolExecutor(max_workers=1)
-        self.update_rate_ticks = ((UPDATE_RATE/1000)* (1/self.physics_manager.time_step))
+        self.update_rate_ticks = math.ceil(((UPDATE_RATE/1000)* (1/self.physics_manager.time_step)))
         self.gsm = gsm
 
     async def handle_disconnect(self, player_id):
