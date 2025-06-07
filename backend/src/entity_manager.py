@@ -80,7 +80,8 @@ class EntityManager(BaseMediator):
 
         if len(self.tanks) == 1:
             state['game_over'] = True
-            state['winner'] = next(iter(self.tanks.keys()))
+            state['winner_id'] = next(iter(self.tanks.keys()))
+            state['winner_name'] = self.tanks[state['winner_id']].name
 
         if state['tanks'] == {} and state['bullets'] == {} and not state['game_over']:
             return None

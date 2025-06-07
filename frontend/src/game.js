@@ -34,7 +34,7 @@ class Game {
         }
         else if (event === 'state') {
             if(payload['game_over']) {
-                this.onGameOver(payload['winner'])
+                this.onGameOver(payload['winner_name'])
             }
             if (this.initialized){
                this.entityManager.setStates(payload);
