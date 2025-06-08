@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from src.common_types import EntityType
 import math
 
 
@@ -23,37 +24,25 @@ class LogicPhysicsMediator(Mediator):
         self._input_router = input_router
 
     def notify(self, event:str, **kwargs):
-        if event == "CreateBullet":
-            logic_bullet = kwargs["logic_bullet"]
-            pos = kwargs["pos"]
-            angle = kwargs["angle"]
-            speed = kwargs["speed"]
-            groupIndex = kwargs["groupIndex"]
-            physics_bullet = self._physics_component.create_bullet(bullet_id=logic_bullet.id,
-                                                                 pos=pos,
-                                                                 angle=angle,
-                                                                 speed=speed,
-                                                                 groupIndex=groupIndex)
-            mediator = BulletMediator(physics_bullet, logic_bullet)
-            logic_bullet.last_state = physics_bullet.get_state()
-
-        elif event == 'CreateTank':
-            logic_tank = kwargs["logic_tank"]
-            pos = kwargs["pos"]
-            dim = kwargs["dim"]
-            physics_tank = self._physics_component.create_tank(tank_id=logic_tank.id,
-                                                               pos=pos,
-                                                               dim=dim)
-            mediator = TankMediator(physics_tank, logic_tank)
-            logic_tank.last_state = logic_tank.get_state()
-            self._input_router.register_mediator(mediator, logic_tank.id)
-
-        elif event == 'CreateBuff':
-            logic_buff = kwargs["logic_buff"]
-            pos = kwargs["pos"]
-            self._physics_component.create_buff(id=logic_buff.id,
-                                                pos=pos)
-
+        if event == "CreateBody":
+            btype = kwargs.pop("type")
+            logic_entity = kwargs.pop("logic_entity")
+            kwargs["id"] = logic_entity.id
+            physics_body = self._physics_component.create_body(btype,
+                                                               **kwargs)
+            match btype:
+                case EntityType.TANK:
+                    mediator = TankMediator(physics_body,
+                                            logic_entity)
+                    logic_entity.last_state = logic_entity.get_state()
+                    self._input_router.register_mediator(mediator,
+                                                         logic_entity.id)
+                case EntityType.BULLET:
+                    mediator = BulletMediator(physics_body,
+                                              logic_entity)
+                    logic_entity.last_state = physics_body.get_state()
+                case _:
+                    pass
         elif event == 'Collision':
             self._logic_component.handle_collision(**kwargs)
         elif event == 'DestroyBody':

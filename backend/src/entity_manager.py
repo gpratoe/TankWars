@@ -31,7 +31,11 @@ class EntityManager(BaseMediator):
                                      shoot_callback=shoot_callback,
                                      )
 
-        self._mediator.notify("CreateTank",logic_tank=logic_tank, pos=pos, dim=(TANK_WIDTH, TANK_HEIGHT))
+        self._mediator.notify("CreateBody",
+                              type=EntityType.TANK,
+                              logic_entity=logic_tank,
+                              pos=pos,
+                              dim=(TANK_WIDTH, TANK_HEIGHT))
         self.tanks[player.id] = logic_tank
 
     def spawn_bullet(self, owner_id, pos, angle, damage, speed):
@@ -39,7 +43,9 @@ class EntityManager(BaseMediator):
                               owner_id,
                               damage,
                               )
-        self._mediator.notify("CreateBullet", logic_bullet=logic_bullet,
+        self._mediator.notify("CreateBody",
+                              type=EntityType.BULLET,
+                              logic_entity=logic_bullet,
                               pos=pos,
                               angle=angle,
                               speed=speed,
@@ -49,8 +55,9 @@ class EntityManager(BaseMediator):
 
     def spawn_buff(self, pos):
         logic_buff = CoolDownBuff(self.buff_id_counter)
-        self._mediator.notify("CreateBuff",
-                              logic_buff=logic_buff,
+        self._mediator.notify("CreateBody",
+                              type=EntityType.BUFF,
+                              logic_entity=logic_buff,
                               pos=pos)
         self.buffs[logic_buff.id] = logic_buff
         self.buff_id_counter += 1
@@ -108,6 +115,7 @@ class EntityManager(BaseMediator):
     def handle_collision(self,collision):
             first_id = collision.first
             second_id = collision.second
+            print(first_id, self.bullets)
             match collision.type:
                 case CollisionType.BULLET_TANK:
                     bullet = self.bullets[first_id]
