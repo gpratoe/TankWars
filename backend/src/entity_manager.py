@@ -13,11 +13,7 @@ class EntityManager(BaseMediator):
         self.bullets: dict[int, Bullet] = {}
         self.buffs: dict[int, Buff] = {}
         self.bullet_id_counter = 0
-        self.tanks_to_remove = []
-        self.bullets_to_remove = []
         self.last_world_state = {"tanks": {}, "bullets": {}, "collisions": []}
-        self.entities_to_destroy = {"tanks": [], "bullets": []}
-        self.dead_players_count = 0
         self.buff_id_counter = 0
 
     def add_tank(self, player, pos, angle):
