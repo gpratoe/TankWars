@@ -24,8 +24,9 @@ class Rect:
 
 
 class LP_Wall(Rect):
-    def __init__(self, x, y, w, h, groupIndex=0):
+    def __init__(self, id, x, y, w, h, groupIndex=0):
         super().__init__(x, y, w, h, groupIndex)
+        self.id = id
         self.entity_type = EntityType.WALL
 
 

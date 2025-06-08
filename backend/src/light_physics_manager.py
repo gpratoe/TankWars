@@ -9,17 +9,13 @@ class LP_PhysicsManager(BaseMediator):
         self.time_step = time_step
         self.collision_handler = LP_CollisionHandler()
         self.bodies: dict[EntityType, dict] = {e:{} for e in EntityType}
-        self.tanks: dict[int, LP_Tank] = {}
-        self.bullets: dict[int, LP_Bullet] = {}
-        self.walls: dict[int, LP_Wall] = {}
-        self.buffs: dict[int, LP_Buff] = {}
         self.tick = 0
         self.world_state = {"tanks": {}, "bullets": {}, "collisions": []}
 
     def update(self):
         tanks = list(self.bodies[EntityType.TANK].values())
         bullets = list(self.bodies[EntityType.BULLET].values())
-        walls = list(self.walls.values())
+        walls = list(self.bodies[EntityType.WALL].values())
         buffs = list(self.bodies[EntityType.BUFF].values())
 
         for bullet in bullets:
@@ -32,11 +28,6 @@ class LP_PhysicsManager(BaseMediator):
         self.tick += 1
 
         return collisions
-
-    def create_wall(self, id, x, y, width, height):
-        if id in self.walls:
-            raise ValueError(f"Wall with id {id} already exists")
-        self.walls[id] = LP_Wall(x, y, width, height)
 
     def create_body(self, type, **kwargs):
         body = None
@@ -80,7 +71,8 @@ class LP_PhysicsManager(BaseMediator):
     def _create_wall(self, id, x, y, width, height):
         if id in self.bodies[EntityType.WALL]:
             raise ValueError(f"Wall with id {id} already exists")
-        nwall = LP_Wall(x,
+        nwall = LP_Wall(id,
+                        x,
                         y,
                         width,
                         height)
@@ -107,10 +99,6 @@ class LP_PhysicsManager(BaseMediator):
                 del self.bullets[bullet_id]
 
     def destroy_body(self, id, type):
-        if type == EntityType.BULLET:
-            if id in self.bullets:
-                del self.bullets[id]
-                return
         if id in self.bodies[type]:
             del self.bodies[type][id]
 
