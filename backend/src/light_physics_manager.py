@@ -1,6 +1,6 @@
 from src.common_types import EntityType
 from src.light_collision_handler import LP_CollisionHandler
-from src.light_physics import LP_Bullet, LP_Tank, LP_Wall
+from src.light_physics import LP_Bullet, LP_Tank, LP_Wall, LP_Buff
 from src.mediator import BaseMediator
 
 
@@ -11,6 +11,7 @@ class LP_PhysicsManager(BaseMediator):
         self.tanks: dict[int, LP_Tank] = {}
         self.bullets: dict[int, LP_Bullet] = {}
         self.walls: dict[int, LP_Wall] = {}
+        self.buffs: dict[int, LP_Buff] = {}
         self.tick = 0
         self.world_state = {"tanks": {}, "bullets": {}, "collisions": []}
 
@@ -18,6 +19,7 @@ class LP_PhysicsManager(BaseMediator):
         tanks = list(self.tanks.values())
         bullets = list(self.bullets.values())
         walls = list(self.walls.values())
+        buffs = list(self.buffs.values())
 
         for bullet in self.bullets.values():
             bullet.update(self.time_step)
@@ -25,7 +27,7 @@ class LP_PhysicsManager(BaseMediator):
         for tank in self.tanks.values():
             tank.update(self.time_step)
 
-        collisions = self.collision_handler.get_latest_collisions(tanks, bullets, walls)
+        collisions = self.collision_handler.get_latest_collisions(tanks, bullets, walls, buffs)
         self.tick += 1
 
         return collisions
@@ -50,6 +52,12 @@ class LP_PhysicsManager(BaseMediator):
             raise ValueError(f"Wall with id {id} already exists")
         self.walls[id] = LP_Wall(x, y, width, height)
 
+    def create_buff(self, id, pos):
+        if id in self.buffs:
+            raise ValueError(f"Buff with id {id} already exists")
+        self.buffs[id] = LP_Buff(id, pos[0], pos[1], 6)
+
+
     def cleanup_world(self, entities_to_destroy):
         tanks_to_destroy = entities_to_destroy["tanks"]
         bullets_to_destroy = entities_to_destroy["bullets"]
@@ -73,5 +81,9 @@ class LP_PhysicsManager(BaseMediator):
         if type == EntityType.WALL:
             if id in self.walls:
                 del self.walls[id]
+                return
+        if type == EntityType.BUFF:
+            if id in self.buffs:
+                del self.buffs[id]
                 return
 

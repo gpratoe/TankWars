@@ -1,4 +1,4 @@
-from src.light_physics import LP_Bullet, LP_Tank, LP_Wall
+from src.light_physics import LP_Bullet, LP_Tank, LP_Wall, LP_Buff
 from src.common_types import CollisionType, Collision
 from src.mediator import BaseMediator
 
@@ -6,12 +6,19 @@ class LP_CollisionHandler(BaseMediator):
     def __init__(self):
         self.active_collisions = set()
 
-    def get_latest_collisions(self, tanks: list[LP_Tank], bullets: list[LP_Bullet], walls: list[LP_Wall]):
+    def get_latest_collisions(self, tanks: list[LP_Tank], bullets: list[LP_Bullet], walls: list[LP_Wall], buffs: list[LP_Buff]):
         new_active_collisions = set()
         for tank in tanks:
             for wall in walls:
                 if tank.circle_rect_collide(wall):
                     tank.bounce_on_rect(wall)
+
+            for buff in buffs:
+                if tank.circle_circle_collide(buff):
+                    col = Collision(buff.id, tank.id, CollisionType.BUFF_TANK)
+                    new_active_collisions.add(col)
+                    if col not in self.active_collisions:
+                        self._mediator.notify("Collision", collision=col)
 
         for i, bullet in enumerate(bullets):
             for wall in walls:

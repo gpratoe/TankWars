@@ -6,6 +6,9 @@ class Buff(ABC):
         pass
 
 class CoolDownBuff(Buff):
+    def __init__(self, id):
+        self.id = id
+
     def apply(self, tank):
         tank.cooldown /= 2
 

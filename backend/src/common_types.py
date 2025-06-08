@@ -5,11 +5,13 @@ class CollisionType(Enum):
     TANK_TANK = 1
     BULLET_BULLET = 2
     BULLET_WALL = 3
+    BUFF_TANK = 4
 
 class EntityType(Enum):
     BULLET = 0
     TANK = 1
     WALL = 2
+    BUFF = 3
 
 class Collision:
     def __init__(self, first, second, type):

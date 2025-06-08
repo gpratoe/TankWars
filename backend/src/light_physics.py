@@ -127,3 +127,15 @@ class LP_Bullet(Circle, BaseMediator):
             "y": self.y,
             "angle": self.angle
         }
+
+class LP_Buff(Circle, BaseMediator):
+    def __init__(self, id, x, y, radius):
+        Circle.__init__(self, x, y, 0, radius)
+        self.id = id
+        self.entity_type = EntityType.BUFF
+
+    def get_state(self):
+        return {
+            "x": self.x,
+            "y": self.y,
+        }

@@ -4,18 +4,21 @@ from src.settings import *
 from src.common_types import CollisionType, EntityType
 from src.utils import utils
 from src.mediator import BaseMediator
+from src.buff import Buff, CoolDownBuff
 
 
 class EntityManager(BaseMediator):
     def __init__(self):
         self.tanks: dict[int, Tank] = {}
         self.bullets: dict[int, Bullet] = {}
+        self.buffs: dict[int, Buff] = {}
         self.bullet_id_counter = 0
         self.tanks_to_remove = []
         self.bullets_to_remove = []
         self.last_world_state = {"tanks": {}, "bullets": {}, "collisions": []}
         self.entities_to_destroy = {"tanks": [], "bullets": []}
         self.dead_players_count = 0
+        self.buff_id_counter = 0
 
     def add_tank(self, player, pos, angle):
         if player.id in self.tanks:
@@ -44,6 +47,14 @@ class EntityManager(BaseMediator):
         self.bullets[logic_bullet.id] = logic_bullet
         self.bullet_id_counter += 1
 
+    def spawn_buff(self, pos):
+        logic_buff = CoolDownBuff(self.buff_id_counter)
+        self._mediator.notify("CreateBuff",
+                              logic_buff=logic_buff,
+                              pos=pos)
+        self.buffs[logic_buff.id] = logic_buff
+        self.buff_id_counter += 1
+
     def remove_tank(self, tank):
         try:
             self._mediator.notify("DestroyBody", id=tank.id, type=EntityType.TANK)
@@ -57,6 +68,13 @@ class EntityManager(BaseMediator):
             del self.bullets[bullet.id]
         except Exception as e:
             utils.logger.warning(f"EntityManager: Couldn't remove bullet, got: {e}")
+
+    def remove_buff(self, buff):
+        try:
+            self._mediator.notify("DestroyBody", id=buff.id, type=EntityType.BUFF)
+            del self.buffs[buff.id]
+        except Exception as e:
+            utils.logger.warning(f"EntityManager: Couldn't remove buff, got: {e}")
 
     def get_last_state(self):
         state = {'tanks': {}, 'bullets': {}, 'game_over': False}
@@ -108,5 +126,9 @@ class EntityManager(BaseMediator):
                     bullet.bounces_left -= 1
                     if bullet.bounces_left < 0:
                         bullet.is_dead = True
+                case CollisionType.BUFF_TANK:
+                    buff = self.buffs[first_id]
+                    tank = self.tanks[second_id]
+                    buff.apply(tank)
                 case _:
                     pass

@@ -48,6 +48,12 @@ class LogicPhysicsMediator(Mediator):
             logic_tank.last_state = logic_tank.get_state()
             self._input_router.register_mediator(mediator, logic_tank.id)
 
+        elif event == 'CreateBuff':
+            logic_buff = kwargs["logic_buff"]
+            pos = kwargs["pos"]
+            self._physics_component.create_buff(id=logic_buff.id,
+                                                pos=pos)
+
         elif event == 'Collision':
             self._logic_component.handle_collision(**kwargs)
         elif event == 'DestroyBody':
