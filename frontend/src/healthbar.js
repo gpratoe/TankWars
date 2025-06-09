@@ -1,14 +1,12 @@
 import { Graphics } from "pixi.js";
 
 class HealthBar {
-    constructor(x, y, w, h, health, container) {
+    constructor(x, y, w, h, maxHealth, container) {
         this.x = x;
         this.y = y;
         this.w = w;
         this.h = h;
-        this.health = health;
-        this.healthFactor = (this.h / this.health) * 10;
-        this.acum = 0;
+        this.maxHealth = 100;
         this.container = container;
         this.#setup();
     }
@@ -36,16 +34,14 @@ class HealthBar {
         });
         // Create the green health bar that will decrease
         this.greenBar = this.#setupBar(0x00FF00);
-       
     }
 
-    decreaseHealth() {
-        // Reduce the width of the green bar
-        this.acum += this.healthFactor;
-        const newHeight = Math.max(this.h - this.acum, 0); // Prevent negative height
+    setHealth(health) {
+        const newh = this.h * (health / this.maxHealth)
         this.greenBar.clear()
-            .rect(this.x, this.y, this.w, newHeight)
+            .rect(this.x, this.y, this.w, newh)
             .fill(0x00FF00);
+
     }
 }
 

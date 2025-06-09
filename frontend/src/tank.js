@@ -96,10 +96,8 @@ class Tank {
         this.y = state.tanky;
         this.angle = state.angle;
 
-        if(this.health > state.health){
-            this.healthBar.decreaseHealth();
-        }
         this.health = state.health;
+        this.healthBar.setHealth(this.health);
     }
 
     interpolate_from_buffer() {
