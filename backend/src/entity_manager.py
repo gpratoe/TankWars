@@ -5,6 +5,7 @@ from src.common_types import CollisionType, EntityType
 from src.utils import utils
 from src.mediator import BaseMediator
 from src.buff import Buff, CoolDownBuff
+from src.repository import BuffRepo
 
 
 class EntityManager(BaseMediator):
@@ -14,7 +15,7 @@ class EntityManager(BaseMediator):
         self.buffs: dict[int, Buff] = {}
         self.bullet_id_counter = 0
         self.last_world_state = {"tanks": {}, "bullets": {}, "collisions": []}
-        self.buff_id_counter = 0
+        self.buff_repo = BuffRepo()
 
     def add_tank(self, player, pos, angle):
         if player.id in self.tanks:
@@ -50,13 +51,12 @@ class EntityManager(BaseMediator):
         self.bullet_id_counter += 1
 
     def spawn_buff(self, pos):
-        logic_buff = CoolDownBuff(self.buff_id_counter)
+        logic_buff = self.buff_repo.get_random()
         self._mediator.notify("CreateBody",
                               type=EntityType.BUFF,
                               logic_entity=logic_buff,
                               pos=pos)
         self.buffs[logic_buff.id] = logic_buff
-        self.buff_id_counter += 1
 
     def remove_tank(self, tank):
         try:
@@ -111,7 +111,6 @@ class EntityManager(BaseMediator):
     def handle_collision(self,collision):
             first_id = collision.first
             second_id = collision.second
-            print(first_id, self.bullets)
             match collision.type:
                 case CollisionType.BULLET_TANK:
                     bullet = self.bullets[first_id]
