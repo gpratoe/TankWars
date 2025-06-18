@@ -84,7 +84,7 @@ class LP_PhysicsManager(BaseMediator):
         nbuff = LP_Buff(id,
                         pos[0],
                         pos[1],
-                        6)
+                        9)
         return nbuff
 
     def cleanup_world(self, entities_to_destroy):

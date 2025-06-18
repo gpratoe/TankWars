@@ -16,6 +16,7 @@ class EntityManager(BaseMediator):
         self.bullet_id_counter = 0
         self.last_world_state = {"tanks": {}, "bullets": {}, "collisions": []}
         self.buff_repo = BuffRepo()
+        self.buffs_to_destroy = []
 
     def add_tank(self, player, pos, angle):
         if player.id in self.tanks:
@@ -75,12 +76,15 @@ class EntityManager(BaseMediator):
     def remove_buff(self, buff):
         try:
             self._mediator.notify("DestroyBody", id=buff.id, type=EntityType.BUFF)
+            self.buffs_to_destroy.append(buff.id)
             del self.buffs[buff.id]
         except Exception as e:
             utils.logger.warning(f"EntityManager: Couldn't remove buff, got: {e}")
 
     def get_last_state(self):
         state = {'tanks': {}, 'bullets': {}, 'game_over': False}
+        state['buffs_to_destroy'] = self.buffs_to_destroy
+        self.buffs_to_destroy = []
 
         for bullet_id, bullet in list(self.bullets.items()):
             bullet_state, same_state = bullet.get_state_and_diff()
@@ -133,5 +137,6 @@ class EntityManager(BaseMediator):
                     buff = self.buffs[first_id]
                     tank = self.tanks[second_id]
                     buff.apply(tank)
+                    self.remove_buff(buff)
                 case _:
                     pass

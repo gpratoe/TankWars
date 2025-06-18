@@ -3,6 +3,7 @@ import { Tank } from "./tank";
 import { Bullet } from "./bullet";
 import { GameMap} from "./gameMap";
 import { EntityManager } from "./entityManager.js"
+import { Buff } from "./buff.js"
 
 class Game {
     constructor(settings, game_id, player_id, sendMessage, onGameOver) {
@@ -98,6 +99,9 @@ class Game {
                            `${import.meta.env.VITE_BASE_URL}tank_sprite_orange.png`,
                            `${import.meta.env.VITE_BASE_URL}tank_sprite_yellow.png`,
                            `${import.meta.env.VITE_BASE_URL}boundries_tile.png`,
+                           `${import.meta.env.VITE_BASE_URL}/greenBuff/greenBuff1.png`,
+                           `${import.meta.env.VITE_BASE_URL}/greenBuff/greenBuff2.png`,
+                           `${import.meta.env.VITE_BASE_URL}/greenBuff/greenBuff3.png`,
                         ]);
         this.app = new Application();
         await this.app.init({
@@ -112,6 +116,8 @@ class Game {
         this.container.appendChild(this.canvas)
         this.gameMap = new GameMap(this.app, this.settings.map);
         this.entityManager = new EntityManager(this.app, this.settings, this.player_id);
+        new Buff(0, 40, 40, this.app);
+
     }
 
     send_state(){
