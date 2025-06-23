@@ -11,6 +11,7 @@ import time
 from src.mediator import LogicPhysicsMediator
 from src.input_router import InputRouter
 from src.game_state_machine import GameState
+import random
 
 class Game:
     def __init__(self, players, lobby_id, connection_manager: ConnectionManager, gsm):
@@ -85,6 +86,12 @@ class Game:
     def apply_inputs(self):
         for player_id, input in self.latest_inputs.items():
             self.input_router.handle_input(input, player_id)
+
+    def spawn_buff(self):
+        x = random.randint(BOUNDARIES_THICKNESS, GAME_WIDTH - BOUNDARIES_THICKNESS)
+        y = random.randint(BOUNDARIES_THICKNESS, GAME_HEIGHT - BOUNDARIES_THICKNESS)
+
+        self.entity_manager.spawn_buff((x,y))
     
     async def run(self):
         
@@ -122,6 +129,8 @@ class Game:
 
             end = time.perf_counter()
             #print(f"Physics: {(t1 - t0)*1000:.3f} ms, Total: {(end - start)*1000:.3f} ms")
+            if self.physics_manager.tick % 600 == 0:
+                self.spawn_buff()
 
             await asyncio.sleep(self.physics_manager.time_step)
 

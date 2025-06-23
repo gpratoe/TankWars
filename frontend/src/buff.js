@@ -17,8 +17,8 @@ class Buff {
             textureArray.push(texture);
         }
         this.animatedSprite = new AnimatedSprite(textureArray);
-        this.animatedSprite.x = 400;
-        this.animatedSprite.y = 225;
+        this.animatedSprite.x = this.x;
+        this.animatedSprite.y = this.y;
         this.animatedSprite.width = 30;
         this.animatedSprite.height = 30;
         this.animatedSprite.animationSpeed = 0.2;
