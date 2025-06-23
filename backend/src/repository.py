@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from src.buff import CoolDownBuff, HealthBuff
+from src.buff import Buff, BuffType
+from src.common_types import EntityType
 import random
 
 class BaseRepository(ABC):
@@ -20,14 +21,34 @@ class BaseRepository(ABC):
 class BuffRepo(BaseRepository):
     def __init__(self):
         super().__init__()
-        self.add("CoolDown", CoolDownBuff(0))
-        self.add("Health", HealthBuff(1))
+        self.id_counter = 0
 
-    def add(self, id, buff):
-        self.entities[id] = buff
+    def add(self, effect):
+        buff = Buff(self.id_counter, effect)
+        self.entities[self.id_counter] = buff
+        self.id_counter += 1
+        return buff
 
-    def get_random(self):
-        return random.choice(list(self.entities.values()))
+    def add_random(self):
+        effect = random.choice(list(BuffType)).value
+        return self.add(effect)
+
+    def get_states(self):
+        return { id: buff.get_state() for id, buff in self.entities.items() }
+
+    def cleanup(self, cleanup_func):
+        # You need to pass a function(id) to handle each individual buff.
+        # Maybe it's not the most clean way of doing this but i didn't want
+        # to loop through the dict in entity_manager.
+
+        for id, buff in list(self.entities.items()):
+            if buff.taken:
+                cleanup_func(id)
+
+
+
+
+
 
 
 

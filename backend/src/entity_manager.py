@@ -12,11 +12,9 @@ class EntityManager(BaseMediator):
     def __init__(self):
         self.tanks: dict[int, Tank] = {}
         self.bullets: dict[int, Bullet] = {}
-        self.buffs: dict[int, Buff] = {}
         self.bullet_id_counter = 0
-        self.last_world_state = {"tanks": {}, "bullets": {}, "collisions": []}
+        self.last_world_state = {"tanks": {}, "bullets": {}, "buffs": {}, "collisions": []}
         self.buff_repo = BuffRepo()
-        self.buffs_to_destroy = []
 
     def add_tank(self, player, pos, angle):
         if player.id in self.tanks:
@@ -52,12 +50,11 @@ class EntityManager(BaseMediator):
         self.bullet_id_counter += 1
 
     def spawn_buff(self, pos):
-        logic_buff = self.buff_repo.get_random()
+        logic_buff = self.buff_repo.add_random()
         self._mediator.notify("CreateBody",
                               type=EntityType.BUFF,
                               logic_entity=logic_buff,
                               pos=pos)
-        self.buffs[logic_buff.id] = logic_buff
 
     def remove_tank(self, tank):
         try:
@@ -73,18 +70,17 @@ class EntityManager(BaseMediator):
         except Exception as e:
             utils.logger.warning(f"EntityManager: Couldn't remove bullet, got: {e}")
 
-    def remove_buff(self, buff):
+    def remove_buff(self, id):
         try:
-            self._mediator.notify("DestroyBody", id=buff.id, type=EntityType.BUFF)
-            self.buffs_to_destroy.append(buff.id)
-            del self.buffs[buff.id]
+            self._mediator.notify("DestroyBody", id=id, type=EntityType.BUFF)
+            self.buff_repo.remove(id)
         except Exception as e:
             utils.logger.warning(f"EntityManager: Couldn't remove buff, got: {e}")
 
     def get_last_state(self):
-        state = {'tanks': {}, 'bullets': {}, 'game_over': False}
-        state['buffs_to_destroy'] = self.buffs_to_destroy
-        self.buffs_to_destroy = []
+        state = {'tanks': {}, 'bullets': {}, 'buffs': {}, 'game_over': False}
+        state['buffs'] = self.buff_repo.get_states()
+        self.buff_repo.cleanup(self.remove_buff)
 
         for bullet_id, bullet in list(self.bullets.items()):
             bullet_state, same_state = bullet.get_state_and_diff()
@@ -101,7 +97,6 @@ class EntityManager(BaseMediator):
                 tank.shoot()
             if tank_state["is_dead"]:
                 self.remove_tank(tank)
-
 
         if len(self.tanks) == 1:
             state['game_over'] = True
@@ -134,9 +129,9 @@ class EntityManager(BaseMediator):
                     if bullet.bounces_left < 0:
                         bullet.is_dead = True
                 case CollisionType.BUFF_TANK:
-                    buff = self.buffs[first_id]
+                    buff = self.buff_repo.get(first_id)
                     tank = self.tanks[second_id]
-                    buff.apply(tank)
-                    self.remove_buff(buff)
+                    buff.effect.apply(tank)
+                    buff.taken = True
                 case _:
                     pass

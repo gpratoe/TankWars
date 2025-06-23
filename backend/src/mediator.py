@@ -41,6 +41,11 @@ class LogicPhysicsMediator(Mediator):
                     mediator = BulletMediator(physics_body,
                                               logic_entity)
                     logic_entity.last_state = physics_body.get_state()
+
+                case EntityType.BUFF:
+                    mediator = BuffMediator(physics_body,
+                                            logic_entity)
+
                 case _:
                     pass
         elif event == 'Collision':
@@ -88,3 +93,14 @@ class BulletMediator(Mediator):
     def notify(self, event:str, **kwargs):
         if event == "GetPhysicsState":
             return self._physics_bullet.get_state()
+
+class BuffMediator(Mediator):
+    def __init__(self, physics_buff, logic_buff):
+        self._physics_buff = physics_buff
+        self._logic_buff = logic_buff
+        self._physics_buff.set_mediator(self)
+        self._logic_buff.set_mediator(self)
+
+    def notify(self, event:str, **kwargs):
+        if event == "GetPhysicsState":
+            return self._physics_buff.get_state()
