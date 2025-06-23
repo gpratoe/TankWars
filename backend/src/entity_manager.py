@@ -79,7 +79,7 @@ class EntityManager(BaseMediator):
 
     def get_last_state(self):
         state = {'tanks': {}, 'bullets': {}, 'buffs': {}, 'game_over': False}
-        state['buffs'] = self.buff_repo.get_states()
+        state['buffs'] = self.buff_repo.get_diff_states()
         self.buff_repo.cleanup(self.remove_buff)
 
         for bullet_id, bullet in list(self.bullets.items()):
@@ -103,7 +103,7 @@ class EntityManager(BaseMediator):
             state['winner_id'] = next(iter(self.tanks.keys()))
             state['winner_name'] = self.tanks[state['winner_id']].name
 
-        if state['tanks'] == {} and state['bullets'] == {} and not state['game_over']:
+        if state['tanks'] == {} and state['bullets'] == {} and state['buffs'] == {} and not state['game_over']:
             return None
         return state
 

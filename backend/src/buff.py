@@ -28,6 +28,7 @@ class Buff(BaseMediator):
         self.effect = effect
         self.taken = False
         self.type = type
+        self.last_state = None
 
     def get_state(self):
         physics_state = self._mediator.notify("GetPhysicsState")
@@ -36,4 +37,10 @@ class Buff(BaseMediator):
             'taken': self.taken,
             **physics_state
         }
+
+    def get_state_and_diff(self):
+        new_state = self.get_state()
+        same_state = new_state == self.last_state
+        self.last_state = new_state
+        return new_state, same_state
 

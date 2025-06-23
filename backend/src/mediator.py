@@ -45,6 +45,7 @@ class LogicPhysicsMediator(Mediator):
                 case EntityType.BUFF:
                     mediator = BuffMediator(physics_body,
                                             logic_entity)
+                    logic_entity.last_state = logic_entity.get_state()
 
                 case _:
                     pass

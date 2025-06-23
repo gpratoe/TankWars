@@ -36,6 +36,16 @@ class BuffRepo(BaseRepository):
     def get_states(self):
         return { id: buff.get_state() for id, buff in self.entities.items() }
 
+    def get_diff_states(self):
+        ret = {}
+        for id, buff in self.entities.items():
+            state, diff = buff.get_state_and_diff()
+            if diff:
+                ret[id] = state
+        return ret
+
+
+
     def cleanup(self, cleanup_func):
         # You need to pass a function(id) to handle each individual buff.
         # Maybe it's not the most clean way of doing this but i didn't want
