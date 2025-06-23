@@ -25,6 +25,10 @@ class Buff {
         this.animatedSprite.play();
         this.app.stage.addChild(this.animatedSprite);
     }
+
+    destroy() {
+        this.animatedSprite.destroy({ children: true })
+    }
 }
 
 export { Buff };

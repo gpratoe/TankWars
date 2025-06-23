@@ -1,11 +1,13 @@
 import { BulletRepository } from './bulletRepository.js'
 import { TankRepository } from './tankRepository.js'
+import { BuffRepository } from './buffRepository.js'
 
 class EntityManager {
     constructor(app, settings, player_id) {
         this.repos = new Map();
         this.repos.set('tank', new TankRepository(app, settings, player_id));
         this.repos.set('bullet', new BulletRepository(app, settings, player_id));
+        this.repos.set('buff', new BuffRepository(app));
     }
 
     add(type, id, data) {

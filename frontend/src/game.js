@@ -116,8 +116,6 @@ class Game {
         this.container.appendChild(this.canvas)
         this.gameMap = new GameMap(this.app, this.settings.map);
         this.entityManager = new EntityManager(this.app, this.settings, this.player_id);
-        new Buff(0, 40, 40, this.app);
-
     }
 
     send_state(){
