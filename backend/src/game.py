@@ -88,8 +88,8 @@ class Game:
             self.input_router.handle_input(input, player_id)
 
     def spawn_buff(self):
-        x = random.randint(BOUNDARIES_THICKNESS, GAME_WIDTH - BOUNDARIES_THICKNESS)
-        y = random.randint(BOUNDARIES_THICKNESS, GAME_HEIGHT - BOUNDARIES_THICKNESS)
+        x = random.randint(BOUNDARIES_THICKNESS, GAME_WIDTH - 2 * BOUNDARIES_THICKNESS)
+        y = random.randint(BOUNDARIES_THICKNESS, GAME_HEIGHT - 2 * BOUNDARIES_THICKNESS)
 
         self.entity_manager.spawn_buff((x,y))
     
