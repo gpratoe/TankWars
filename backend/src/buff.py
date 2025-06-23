@@ -23,14 +23,16 @@ class BuffType(Enum):
     HEALTH = HealthBuff()
 
 class Buff(BaseMediator):
-    def __init__(self, id, effect: BuffEffect):
+    def __init__(self, id, type, effect: BuffEffect):
         self.id = id
         self.effect = effect
         self.taken = False
+        self.type = type
 
     def get_state(self):
         physics_state = self._mediator.notify("GetPhysicsState")
         return {
+            'type' : self.type,
             'taken': self.taken,
             **physics_state
         }

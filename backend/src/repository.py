@@ -23,15 +23,15 @@ class BuffRepo(BaseRepository):
         super().__init__()
         self.id_counter = 0
 
-    def add(self, effect):
-        buff = Buff(self.id_counter, effect)
+    def add(self, type: BuffType):
+        buff = Buff(self.id_counter, type.name, type.value)
         self.entities[self.id_counter] = buff
         self.id_counter += 1
         return buff
 
     def add_random(self):
-        effect = random.choice(list(BuffType)).value
-        return self.add(effect)
+        type = random.choice(list(BuffType))
+        return self.add(type)
 
     def get_states(self):
         return { id: buff.get_state() for id, buff in self.entities.items() }
