@@ -39,8 +39,8 @@ class BuffRepo(BaseRepository):
     def get_diff_states(self):
         ret = {}
         for id, buff in self.entities.items():
-            state, diff = buff.get_state_and_diff()
-            if diff:
+            state, same = buff.get_state_and_diff()
+            if not same:
                 ret[id] = state
         return ret
 
