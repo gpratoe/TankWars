@@ -76,9 +76,6 @@ class Game:
             pos = corners.pop(0)
             angle = angles.pop(0)
             self.entity_manager.add_tank(player, pos, angle)
-        self.entity_manager.spawn_buff((self.w/2, self.h/2))
-
-
 
     async def broadcast(self, data):
         await self.connection_manager.broadcast(data)
