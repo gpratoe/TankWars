@@ -10,6 +10,7 @@ class BuffRepository extends BaseRepository {
     create(id, buffData) {
         const buff = new Buff(
             id,
+            buffData.type,
             buffData.x,
             buffData.y,
             this.app,

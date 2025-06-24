@@ -99,9 +99,12 @@ class Game {
                            `${import.meta.env.VITE_BASE_URL}tank_sprite_orange.png`,
                            `${import.meta.env.VITE_BASE_URL}tank_sprite_yellow.png`,
                            `${import.meta.env.VITE_BASE_URL}boundries_tile.png`,
-                           `${import.meta.env.VITE_BASE_URL}/greenBuff/greenBuff1.png`,
-                           `${import.meta.env.VITE_BASE_URL}/greenBuff/greenBuff2.png`,
-                           `${import.meta.env.VITE_BASE_URL}/greenBuff/greenBuff3.png`,
+                           `${import.meta.env.VITE_BASE_URL}/buff/HEALTHBuff1.png`,
+                           `${import.meta.env.VITE_BASE_URL}/buff/HEALTHBuff2.png`,
+                           `${import.meta.env.VITE_BASE_URL}/buff/HEALTHBuff3.png`,
+                           `${import.meta.env.VITE_BASE_URL}/buff/COOLDOWNBuff1.png`,
+                           `${import.meta.env.VITE_BASE_URL}/buff/COOLDOWNBuff2.png`,
+                           `${import.meta.env.VITE_BASE_URL}/buff/COOLDOWNBuff3.png`,
                         ]);
         this.app = new Application();
         await this.app.init({

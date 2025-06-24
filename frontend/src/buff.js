@@ -1,8 +1,9 @@
 import { Container, Assets, AnimatedSprite } from "pixi.js";
 
 class Buff {
-    constructor(id, x, y, app) {
+    constructor(id, type, x, y, app) {
         this.id = id;
+        this.type = type;
         this.x = x;
         this.y = y;
         this.app = app;
@@ -13,7 +14,7 @@ class Buff {
     #setup() {
         let textureArray = []
         for (let i = 0; i< 3; i++) {
-            const texture = Assets.get(`${import.meta.env.VITE_BASE_URL}/greenBuff/greenBuff${i+1}.png`);
+            const texture = Assets.get(`${import.meta.env.VITE_BASE_URL}/buff/${this.type}Buff${i+1}.png`);
             textureArray.push(texture);
         }
         this.animatedSprite = new AnimatedSprite(textureArray);
