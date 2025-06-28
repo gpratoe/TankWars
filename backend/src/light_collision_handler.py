@@ -19,6 +19,8 @@ class LP_CollisionHandler(BaseMediator):
                     new_active_collisions.add(col)
                     if col not in self.active_collisions:
                         buff._mediator.notify("Taken")
+                        effect = buff._mediator.notify("GetEffect")
+                        tank._mediator.notify("Buff", effect=effect)
 
         for i, bullet in enumerate(bullets):
             for wall in walls:

@@ -87,6 +87,11 @@ class TankMediator(Mediator):
             if self._logic_tank.health <= 0:
                 self._logic_tank.is_dead = True
 
+        elif event == "Buff":
+            effect = kwargs["effect"]
+            effect.apply(self._logic_tank)
+
+
 class BulletMediator(Mediator):
     def __init__(self, physics_bullet, logic_bullet):
         self._physics_bullet = physics_bullet
@@ -116,5 +121,7 @@ class BuffMediator(Mediator):
     def notify(self, event:str, **kwargs):
         if event == "GetPhysicsState":
             return self._physics_buff.get_state()
+        elif event == "GetEffect":
+            return self._logic_buff.get_effect()
         elif event == "Taken":
             self._logic_buff.taken = True

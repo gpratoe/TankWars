@@ -30,6 +30,9 @@ class Buff(BaseMediator):
         self.type = type
         self.last_state = None
 
+    def get_effect(self):
+        return self.effect
+
     def get_state(self):
         physics_state = self._mediator.notify("GetPhysicsState")
         return {
