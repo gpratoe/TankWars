@@ -14,7 +14,7 @@ class EntityManager(BaseMediator):
         self.bullets: dict[int, Bullet] = {}
         self.bullet_id_counter = 0
         self.last_world_state = {"tanks": {}, "bullets": {}, "buffs": {}, "collisions": []}
-        self.buff_repo = BuffRepo(lambda: self._mediator)
+        self.buff_repo = BuffRepo()
 
     def add_tank(self, player, pos, angle):
         if player.id in self.tanks:
