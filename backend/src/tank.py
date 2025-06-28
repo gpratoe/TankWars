@@ -36,7 +36,15 @@ class Tank(BaseMediator):
             **self.last_state,
             'timestamp': time.time()*1000,
         }
-    
+
+    def get_logic(self):
+        return {
+            'health': self.health,
+            'damage': self.damage,
+            'cooldown': self.cooldown,
+            'bullet_speed': self.bullet_speed
+        }
+
     def get_state_and_diff(self):
         new_state =  self.get_state()
         same_state = new_state == self.last_state

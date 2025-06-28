@@ -14,7 +14,7 @@ class EntityManager(BaseMediator):
         self.bullets: dict[int, Bullet] = {}
         self.bullet_id_counter = 0
         self.last_world_state = {"tanks": {}, "bullets": {}, "buffs": {}, "collisions": []}
-        self.buff_repo = BuffRepo()
+        self.buff_repo = BuffRepo(lambda: self._mediator)
 
     def add_tank(self, player, pos, angle):
         if player.id in self.tanks:
@@ -106,32 +106,3 @@ class EntityManager(BaseMediator):
         if state['tanks'] == {} and state['bullets'] == {} and state['buffs'] == {} and not state['game_over']:
             return None
         return state
-
-    def handle_collision(self,collision):
-            first_id = collision.first
-            second_id = collision.second
-            match collision.type:
-                case CollisionType.BULLET_TANK:
-                    bullet = self.bullets[first_id]
-                    tank = self.tanks[second_id]
-                    tank.health -= bullet.damage
-                    bullet.is_dead = True
-                    if tank.health <= 0:
-                        tank.is_dead = True
-                case CollisionType.BULLET_BULLET:
-                    b1 = self.bullets[first_id]
-                    b2 = self.bullets[second_id]
-                    b1.is_dead = True
-                    b2.is_dead = True
-                case CollisionType.BULLET_WALL:
-                    bullet = self.bullets[first_id]
-                    bullet.bounces_left -= 1
-                    if bullet.bounces_left < 0:
-                        bullet.is_dead = True
-                case CollisionType.BUFF_TANK:
-                    buff = self.buff_repo.get(first_id)
-                    tank = self.tanks[second_id]
-                    buff.effect.apply(tank)
-                    buff.taken = True
-                case _:
-                    pass

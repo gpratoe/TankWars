@@ -48,8 +48,6 @@ class LogicPhysicsMediator(Mediator):
 
                 case _:
                     pass
-        elif event == 'Collision':
-            self._logic_component.handle_collision(**kwargs)
         elif event == 'DestroyBody':
             self._physics_component.destroy_body(**kwargs)
 
@@ -83,6 +81,12 @@ class TankMediator(Mediator):
         elif event == "MoveTank":
             self._physics_tank.move_to_target(**kwargs)
 
+        elif event == "Hit":
+            damage = kwargs["damage"]
+            self._logic_tank.health -= damage
+            if self._logic_tank.health <= 0:
+                self._logic_tank.is_dead = True
+
 class BulletMediator(Mediator):
     def __init__(self, physics_bullet, logic_bullet):
         self._physics_bullet = physics_bullet
@@ -93,6 +97,14 @@ class BulletMediator(Mediator):
     def notify(self, event:str, **kwargs):
         if event == "GetPhysicsState":
             return self._physics_bullet.get_state()
+        elif event == "GetLogic":
+            return self._logic_bullet.get_logic()
+        elif event == "Bounce":
+            self._logic_bullet.bounces_left -= 1
+            if self._logic_bullet.bounces_left < 0:
+                self._logic_bullet.is_dead = True
+        elif event == "Dead":
+            self._logic_bullet.is_dead = True
 
 class BuffMediator(Mediator):
     def __init__(self, physics_buff, logic_buff):
@@ -104,3 +116,5 @@ class BuffMediator(Mediator):
     def notify(self, event:str, **kwargs):
         if event == "GetPhysicsState":
             return self._physics_buff.get_state()
+        elif event == "Taken":
+            self._logic_buff.taken = True

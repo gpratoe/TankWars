@@ -19,7 +19,13 @@ class Bullet(BaseMediator):
             **self.last_state,
             'timestamp': time.time()*1000,
         }
-    
+
+    def get_logic(self):
+        return {
+            'damage': self.damage,
+            'bounces_left': self.bounces_left
+        }
+
     def get_state_and_diff(self):
         new_state = self.get_state()
         same_state = new_state == self.last_state

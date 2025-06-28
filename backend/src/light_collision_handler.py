@@ -18,7 +18,7 @@ class LP_CollisionHandler(BaseMediator):
                     col = Collision(buff.id, tank.id, CollisionType.BUFF_TANK)
                     new_active_collisions.add(col)
                     if col not in self.active_collisions:
-                        self._mediator.notify("Collision", collision=col)
+                        buff._mediator.notify("Taken")
 
         for i, bullet in enumerate(bullets):
             for wall in walls:
@@ -26,7 +26,7 @@ class LP_CollisionHandler(BaseMediator):
                     col = Collision(bullet.id, None, CollisionType.BULLET_WALL)
                     new_active_collisions.add(col)
                     if col not in self.active_collisions:
-                        self._mediator.notify("Collision", collision=col)
+                        bullet._mediator.notify("Bounce")
                     bullet.velocity = bullet.bounce_on_rect(wall)
 
             for tank in tanks:
@@ -34,7 +34,10 @@ class LP_CollisionHandler(BaseMediator):
                     col = Collision(bullet.id, tank.id, CollisionType.BULLET_TANK)
                     new_active_collisions.add(col)
                     if col not in self.active_collisions:
-                        self._mediator.notify("Collision", collision=col)
+                        damage = bullet._mediator.notify("GetLogic")["damage"]
+                        bullet._mediator.notify("Dead")
+                        tank._mediator.notify("Hit", damage=damage)
+
 
             for j in range(i + 1, len(bullets)):
                 other = bullets[j]
@@ -42,7 +45,8 @@ class LP_CollisionHandler(BaseMediator):
                     col = Collision(bullet.id, other.id, CollisionType.BULLET_BULLET)
                     new_active_collisions.add(col)
                     if col not in self.active_collisions:
-                        self._mediator.notify("Collision", collision=col)
+                        bullet._mediator.notify("Dead")
+                        other._mediator.notify("Dead")
 
         self.active_collisions = new_active_collisions
 
