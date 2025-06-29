@@ -18,10 +18,11 @@ class Buff {
             textureArray.push(texture);
         }
         this.animatedSprite = new AnimatedSprite(textureArray);
-        this.animatedSprite.x = this.x;
-        this.animatedSprite.y = this.y;
+        this.animatedSprite.position.x = this.x;
+        this.animatedSprite.position.y = this.y;
         this.animatedSprite.width = 30;
         this.animatedSprite.height = 30;
+        this.animatedSprite.anchor.set(0.5);
         this.animatedSprite.animationSpeed = 0.2;
         this.animatedSprite.play();
         this.app.stage.addChild(this.animatedSprite);
