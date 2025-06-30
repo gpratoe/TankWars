@@ -135,7 +135,7 @@ class Game:
 
             end = time.perf_counter()
             #print(f"Physics: {(t1 - t0)*1000:.3f} ms, Total: {(end - start)*1000:.3f} ms")
-            if self.physics_manager.tick % 6 == 0:
+            if self.physics_manager.tick % 600 == 0:
                 self.spawn_buff()
 
             await asyncio.sleep(self.physics_manager.time_step)
