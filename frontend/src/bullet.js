@@ -2,7 +2,7 @@ import { Graphics } from "pixi.js";
 import { InterpolationBuffer } from "./InterpolationBuffer";
 
 class Bullet {
-    constructor(id, x,y,dir_norm,damage,speed, app, is_local = false, update_rate = 50) {
+    constructor(id, x, y, dir_norm, damage, speed, radius, app, is_local = false, update_rate = 50) {
         this.is_local = is_local;
         this.id = id;
         this.x = x;
@@ -12,7 +12,7 @@ class Bullet {
         this.speed = speed;
         this.dir_norm = dir_norm;
         this.bullet = new Graphics()
-        .circle(1.5, 1.5, 3)
+        .circle(1.5, 1.5, radius)
         .fill(0x000000);
         this.bullet.pivot.set(this.bullet.width/2, this.bullet.height/2);
         this.bullet.position.x = x;

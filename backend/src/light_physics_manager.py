@@ -2,7 +2,7 @@ from src.common_types import EntityType
 from src.light_collision_handler import LP_CollisionHandler
 from src.light_physics import LP_Bullet, LP_Tank, LP_Wall, LP_Buff
 from src.mediator import BaseMediator
-from src.settings import BUFF_RADIUS
+from src.settings import BUFF_RADIUS, BULLET_RADIUS
 
 
 class LP_PhysicsManager(BaseMediator):
@@ -57,13 +57,13 @@ class LP_PhysicsManager(BaseMediator):
                         -id)
         return ntank
 
-    def _create_bullet(self, id, pos, angle, speed, radius=3, groupIndex=0, **kwargs):
+    def _create_bullet(self, id, pos, angle, speed, groupIndex=0, **kwargs):
         if id in self.bodies[EntityType.BULLET]:
             raise ValueError(f"Bullet with id {id} already exists")
         nbullet = LP_Bullet(id,
                             pos[0],
                             pos[1],
-                            radius,
+                            BULLET_RADIUS,
                             angle,
                             speed*10,
                             groupIndex)

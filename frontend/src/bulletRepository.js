@@ -5,7 +5,7 @@ class BulletRepository extends BaseRepository {
     constructor(app, settings, player_id) {
         super();
         this.app = app;
-        this.settings = settings;
+        this.settings = settings['bullet'];
         this.player_id = player_id;
     }
 
@@ -19,6 +19,7 @@ class BulletRepository extends BaseRepository {
             bulletData.direction,
             bulletData.damage,
             bulletData.speed,
+            this.settings.radius,
             this.app,
             is_local,
             this.settings.update_rate

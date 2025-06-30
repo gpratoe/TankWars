@@ -11,6 +11,9 @@ TANK_HEIGHT = 30
 TANK_INITIAL_BULLETSPEED = 50
 TANK_INITIAL_DAMAGE = 10
 
+# Bullet settings
+BULLET_RADIUS = 3
+
 # Buff settings
 BUFF_RADIUS = 15
 
@@ -37,6 +40,7 @@ BASES_BLEFT_Y = 0 + GAME_HEIGHT - BOUNDARIES_THICKNESS - BASES_BLEFT_TRIGHT_HEIG
 BASES_TRIGHT_X = GAME_WIDTH - BOUNDARIES_THICKNESS - BASES_SPACE + BOUNDARIES_THICKNESS/2
 BASES_TRIGHT_Y = 0 + BOUNDARIES_THICKNESS + BASES_BLEFT_TRIGHT_HEIGHT/2
 
+# This thing is used to properly place buffs in the map
 MAP_BITMAP = [[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
               [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
               [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,1,1],
@@ -67,6 +71,9 @@ SETTINGS_JSON = {
                 'height': TANK_HEIGHT,
                 'bullet_speed': TANK_INITIAL_BULLETSPEED,
                 'damage': TANK_INITIAL_DAMAGE,
+            },
+            'bullet': {
+                'radius': BULLET_RADIUS
             },
             'buff': {
                 'radius': BUFF_RADIUS
