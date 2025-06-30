@@ -2,9 +2,10 @@ import { BaseRepository } from './baseRepository.js'
 import { Buff } from './buff.js'
 
 class BuffRepository extends BaseRepository {
-    constructor(app) {
+    constructor(app, settings) {
         super();
         this.app = app;
+        this.settings = settings.buff;
     }
 
     create(id, buffData) {
@@ -13,6 +14,7 @@ class BuffRepository extends BaseRepository {
             buffData.type,
             buffData.x,
             buffData.y,
+            this.settings.radius,
             this.app,
         );
         this.entities.set(id, buff);

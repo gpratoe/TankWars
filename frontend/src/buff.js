@@ -1,11 +1,13 @@
 import { Container, Assets, AnimatedSprite } from "pixi.js";
 
 class Buff {
-    constructor(id, type, x, y, app) {
+    constructor(id, type, x, y, radius, app) {
         this.id = id;
         this.type = type;
         this.x = x;
         this.y = y;
+        this.w = radius * 2
+        this.h = radius * 2
         this.app = app;
         this.animatedSprite = null;
         this.#setup();
@@ -20,8 +22,8 @@ class Buff {
         this.animatedSprite = new AnimatedSprite(textureArray);
         this.animatedSprite.position.x = this.x;
         this.animatedSprite.position.y = this.y;
-        this.animatedSprite.width = 30;
-        this.animatedSprite.height = 30;
+        this.animatedSprite.width = this.w;
+        this.animatedSprite.height = this.h;
         this.animatedSprite.anchor.set(0.5);
         this.animatedSprite.animationSpeed = 0.2;
         this.animatedSprite.play();

@@ -7,7 +7,7 @@ class EntityManager {
         this.repos = new Map();
         this.repos.set('tank', new TankRepository(app, settings, player_id));
         this.repos.set('bullet', new BulletRepository(app, settings, player_id));
-        this.repos.set('buff', new BuffRepository(app));
+        this.repos.set('buff', new BuffRepository(app, settings));
     }
 
     add(type, id, data) {

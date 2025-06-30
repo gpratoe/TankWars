@@ -2,6 +2,7 @@ from src.common_types import EntityType
 from src.light_collision_handler import LP_CollisionHandler
 from src.light_physics import LP_Bullet, LP_Tank, LP_Wall, LP_Buff
 from src.mediator import BaseMediator
+from src.settings import BUFF_RADIUS
 
 
 class LP_PhysicsManager(BaseMediator):
@@ -84,7 +85,7 @@ class LP_PhysicsManager(BaseMediator):
         nbuff = LP_Buff(id,
                         pos[0],
                         pos[1],
-                        9)
+                        BUFF_RADIUS)
         return nbuff
 
     def cleanup_world(self, entities_to_destroy):

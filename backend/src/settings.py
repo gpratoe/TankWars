@@ -11,6 +11,9 @@ TANK_HEIGHT = 30
 TANK_INITIAL_BULLETSPEED = 50
 TANK_INITIAL_DAMAGE = 10
 
+# Buff settings
+BUFF_RADIUS = 15
+
 # Map settings
 BOUNDARIES_THICKNESS = 25
 BASES_SPACE = BOUNDARIES_THICKNESS * 5
@@ -64,6 +67,9 @@ SETTINGS_JSON = {
                 'height': TANK_HEIGHT,
                 'bullet_speed': TANK_INITIAL_BULLETSPEED,
                 'damage': TANK_INITIAL_DAMAGE,
+            },
+            'buff': {
+                'radius': BUFF_RADIUS
             },
             'map': {
                 'boundaries_thickness': BOUNDARIES_THICKNESS,
