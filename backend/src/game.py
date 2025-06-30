@@ -85,8 +85,17 @@ class Game:
             self.input_router.handle_input(input, player_id)
 
     def spawn_buff(self):
-        x = random.randint(BOUNDARIES_THICKNESS, GAME_WIDTH - 2 * BOUNDARIES_THICKNESS)
-        y = random.randint(BOUNDARIES_THICKNESS, GAME_HEIGHT - 2 * BOUNDARIES_THICKNESS)
+        i = random.randint(1, MAP_TILES_ROWS - 1)
+        j = random.randint(1, MAP_TILES_COLS - 1)
+        tile = MAP_BITMAP[i][j]
+        if tile == 1:
+            while tile == 1:
+                i += 1
+                j += 1
+                tile = MAP_BITMAP[i % (MAP_TILES_ROWS)] [j % (MAP_TILES_COLS)]
+
+        x = j * BOUNDARIES_THICKNESS
+        y = i * BOUNDARIES_THICKNESS
 
         self.entity_manager.spawn_buff((x,y))
     
@@ -126,7 +135,7 @@ class Game:
 
             end = time.perf_counter()
             #print(f"Physics: {(t1 - t0)*1000:.3f} ms, Total: {(end - start)*1000:.3f} ms")
-            if self.physics_manager.tick % 600 == 0:
+            if self.physics_manager.tick % 6 == 0:
                 self.spawn_buff()
 
             await asyncio.sleep(self.physics_manager.time_step)
