@@ -96,8 +96,10 @@ class Lobby:
         return None
 
     async def remove_player(self, player_id: int):
-        gs.remove_player_from_game(self.lobby_id, player_id)
         player = self.get_player(player_id)
+        if not player:
+            return
+        gs.remove_player_from_game(self.lobby_id, player_id)
         if player:
             self.__color_availability[player.color] = True
             self.players.remove(player)
