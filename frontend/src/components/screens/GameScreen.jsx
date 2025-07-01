@@ -4,11 +4,11 @@ import { Game } from '../../game'; // Importa la instancia game
 import { usePlayer } from '../contexts/playerContext';
 import { useWebSocket } from '../contexts/webSocketContext';
 import '../../styles/GameScreen.css';
-import { WS_URL } from '../../apiService';
+import { WS_URL, leave_lobby } from '../../apiService';
 import GameOverModal from '../GameOverModal.jsx'
 
 function GameScreen({ }) {
-  const { player } = usePlayer();
+  const { player, updatePlayer } = usePlayer();
   const lobbyId = useParams().lobbyId;
   const settings = JSON.parse(sessionStorage.getItem('game_settings'));
   const gameRef = useRef(null);
@@ -52,9 +52,20 @@ function GameScreen({ }) {
 
   }, [lobbyId, player.id, settings, sendMessage]);
 
+  const onLeaving = async () => {
+      try {
+          const resp = await leave_lobby(lobbyId, player.id);
+          updatePlayer({ id: player.id, name: player.name, is_owner: false });
+          navigate('/rooms');
+      }   
+      catch(err) {
+          console.error(err);
+      }
+  }
+ 
   return (
       <div className='gameScreen-container'>
-        { winner && <GameOverModal winner={winner} onGoBack={() => navigate(`/lobby/${lobbyId}`)}/> }
+        { winner && <GameOverModal winner={winner} onLeave={ () => {onLeaving()} } onGoBack={() => navigate(`/lobby/${lobbyId}`)}/> }
         <h1>Game</h1>
         <div id='game-container'></div>
       </div>
