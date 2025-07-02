@@ -106,8 +106,8 @@ function LobbyScreen({}){
                 </div>
            </div>
             <div className='buttons-container'>
-                <Button text='Abandonar' variant='red' onClick={() => {onLeaving()}}/>
-                {player.is_owner ? <Button text='Empezar' onClick={() => {onStart()}}/>: null}
+                <Button text='Abandonar' variant='red' onClick={async () => { await onLeaving()}}/>
+                {player.is_owner ? <Button text='Empezar' onClick={async () => {await onStart()}}/>: null}
             </div>
         </div>
     );

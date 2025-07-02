@@ -65,7 +65,7 @@ function GameScreen({ }) {
  
   return (
       <div className='gameScreen-container'>
-        { winner && <GameOverModal winner={winner} onLeave={ () => {onLeaving()} } onGoBack={() => navigate(`/lobby/${lobbyId}`)}/> }
+        { winner && <GameOverModal winner={winner} onLeave={ async () => {await onLeaving()} } onGoBack={() => navigate(`/lobby/${lobbyId}`)}/> }
         <h1>Game</h1>
         <div id='game-container'></div>
       </div>
