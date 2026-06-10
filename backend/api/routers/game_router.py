@@ -71,6 +71,17 @@ async def remove_player_from_game(game_id:int, player_id:int):
         await gsm.handle_disconnect(player_id)
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+@gr.post("/{game_id}/kick/{player_to_kick_id}", status_code=status.HTTP_202_ACCEPTED)
+async def kick_player(game_id:int, owner_id:int, player_to_kick_id:int):
+    try:
+        gsm = GameStateMachine.get_gsm(game_id)
+        lobby = gsm.lobby
+        resp = await lobby.kick_player(owner_id, player_to_kick_id)
+        return resp
+    except Exception as e:
+        utils.logger.warning(e)
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     
 @gr.post("/{game_id}/start", status_code=status.HTTP_202_ACCEPTED)
 async def start_game(game_id:int, owner_id:int):

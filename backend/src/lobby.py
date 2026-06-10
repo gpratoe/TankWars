@@ -150,6 +150,20 @@ class Lobby:
         await self.broadcast(data)
 
     
+    async def kick_player(self, owner_id: int, player_to_kick_id: int):
+        if owner_id != self.owner.id:
+            raise ValueError('Only the owner can kick players')
+        
+        player_to_kick = self.get_player(player_to_kick_id)
+        if not player_to_kick:
+            raise ValueError('Player not found in lobby')
+        
+        if player_to_kick_id == owner_id:
+            raise ValueError('Cannot kick yourself')
+        
+        await self.disconnect_player(player_to_kick_id)
+        return {'message': 'Player kicked successfully'}
+    
     async def start_game(self, owner_id: int):
         if owner_id != self.owner.id:
             raise ValueError('Only the owner can start the game')
