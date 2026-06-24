@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from enum import Enum
 from src.mediator import BaseMediator
+from src.common_types import EntityType
 
 class BuffEffect(ABC):
     @abstractmethod
@@ -28,6 +29,7 @@ class Buff(BaseMediator):
         self.effect = effect
         self.taken = False
         self.type = type
+        self.entity_type = EntityType.BUFF
         self.last_state = None
 
     def get_state(self):

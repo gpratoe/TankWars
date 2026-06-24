@@ -1,10 +1,9 @@
 from src.tank import Tank
 from src.bullet import Bullet
 from src.settings import *
-from src.common_types import CollisionType, EntityType
+from src.common_types import EntityType
 from src.utils import utils
 from src.mediator import BaseMediator
-from src.buff import Buff, CoolDownBuff
 from src.repository import BuffRepo
 
 
@@ -56,19 +55,16 @@ class EntityManager(BaseMediator):
                               logic_entity=logic_buff,
                               pos=pos)
 
-    def remove_tank(self, tank):
+    def remove(self, entity):
         try:
-            self._mediator.notify("DestroyBody", id=tank.id, type=EntityType.TANK)
-            del self.tanks[tank.id]
+            self._mediator.notify("DestroyBody", id=entity.id, type=entity.entity_type)
+            match entity.entity_type:
+                case EntityType.TANK:
+                    del self.tanks[entity.id]
+                case EntityType.BULLET:
+                    del self.bullets[entity.id]
         except Exception as e:
-            utils.logger.warning(f"EntityManager: Couldn't remove tank, got: {e}")
-
-    def remove_bullet(self, bullet):
-        try:
-            self._mediator.notify("DestroyBody", id=bullet.id, type=EntityType.BULLET)
-            del self.bullets[bullet.id]
-        except Exception as e:
-            utils.logger.warning(f"EntityManager: Couldn't remove bullet, got: {e}")
+            utils.logger.warning(f"EntityManager: Couldn't remove {entity.entity_type}, got: {e}")
 
     def remove_buff(self, id):
         try:
@@ -87,7 +83,7 @@ class EntityManager(BaseMediator):
             if not same_state and bullet_state:
                 state['bullets'][bullet_id] = bullet_state
             if bullet_state["is_dead"]:
-                self.remove_bullet(bullet)
+                self.remove(bullet)
 
         for tank_id, tank in list(self.tanks.items()):
             tank_state, same_state = tank.get_state_and_diff()
@@ -96,7 +92,7 @@ class EntityManager(BaseMediator):
             if tank.shooting:
                 tank.shoot()
             if tank_state["is_dead"]:
-                self.remove_tank(tank)
+                self.remove(tank)
 
         if len(self.tanks) == 1:
             state['game_over'] = True

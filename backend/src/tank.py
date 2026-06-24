@@ -1,8 +1,7 @@
-from src.utils import utils
-import math
 from src.settings import *
 import time
 from src.mediator import BaseMediator
+from src.common_types import EntityType
 
 class Tank(BaseMediator):
     def __init__(self, id, name, color, shoot_callback):
@@ -18,6 +17,7 @@ class Tank(BaseMediator):
         self.shoot_callback = shoot_callback
         self.shooting = False
         self.last_state = None
+        self.entity_type = EntityType.TANK
 
 
     def shoot(self, bullet_pos, angle):

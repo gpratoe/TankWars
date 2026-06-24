@@ -1,7 +1,7 @@
-from src.utils import utils
 from src.settings import *
 import time
 from src.mediator import BaseMediator
+from src.common_types import EntityType
 
 class Bullet(BaseMediator):
     def __init__(self, id, owner_id, damage):
@@ -10,6 +10,7 @@ class Bullet(BaseMediator):
         self.damage = damage
         self.is_dead = False
         self.bounces_left = 1
+        self.entity_type = EntityType.BULLET
 
         self.last_state = None
 
