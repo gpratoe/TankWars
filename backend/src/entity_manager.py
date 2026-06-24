@@ -63,20 +63,15 @@ class EntityManager(BaseMediator):
                     del self.tanks[entity.id]
                 case EntityType.BULLET:
                     del self.bullets[entity.id]
+                case EntityType.BUFF:
+                    self.buff_repo.remove(entity.id)
         except Exception as e:
             utils.logger.warning(f"EntityManager: Couldn't remove {entity.entity_type}, got: {e}")
-
-    def remove_buff(self, id):
-        try:
-            self._mediator.notify("DestroyBody", id=id, type=EntityType.BUFF)
-            self.buff_repo.remove(id)
-        except Exception as e:
-            utils.logger.warning(f"EntityManager: Couldn't remove buff, got: {e}")
 
     def get_last_state(self):
         state = {'tanks': {}, 'bullets': {}, 'buffs': {}, 'game_over': False}
         state['buffs'] = self.buff_repo.get_diff_states()
-        self.buff_repo.cleanup(self.remove_buff)
+        self.buff_repo.cleanup(self.remove)
 
         for bullet_id, bullet in list(self.bullets.items()):
             bullet_state, same_state = bullet.get_state_and_diff()

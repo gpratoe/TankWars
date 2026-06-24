@@ -53,7 +53,7 @@ class BuffRepo(BaseRepository):
 
         for id, buff in list(self.entities.items()):
             if buff.taken:
-                cleanup_func(id)
+                cleanup_func(buff)
 
 
 
