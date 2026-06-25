@@ -62,7 +62,6 @@ class Game:
 
 
     async def first_setup(self):
-        middle = (self.w/2, self.h/2)
         self.map = Map(self.physics_manager, self.w, self.h)
         
         corners = [(TANK_WIDTH + BOUNDARIES_THICKNESS, TANK_HEIGHT + BOUNDARIES_THICKNESS),
@@ -70,12 +69,9 @@ class Game:
                     (self.w - TANK_WIDTH - BOUNDARIES_THICKNESS, 0 + TANK_HEIGHT + BOUNDARIES_THICKNESS),
                     (0 + TANK_WIDTH + BOUNDARIES_THICKNESS, self.h - TANK_HEIGHT - BOUNDARIES_THICKNESS)]
         
-        angles = [math.degrees(math.atan2(middle[1] - corner[1], middle[0] - corner[0])) for corner in corners]
-
         for player in self.players:
             pos = corners.pop(0)
-            angle = angles.pop(0)
-            self.entity_manager.add_tank(player, pos, angle)
+            self.entity_manager.add_tank(player, pos)
 
     async def broadcast(self, data):
         await self.connection_manager.broadcast(data)

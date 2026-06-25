@@ -1,22 +1,28 @@
 from abc import ABC, abstractmethod
 from src.buff import Buff, BuffType
 from src.common_types import EntityType
+from src.tank import Tank
+from src.bullet import Bullet
 import random
 
 class BaseRepository(ABC):
     def __init__(self):
         self.entities = {}
+    def __getitem__(self, id):
+        return self.entities[id]
+    def __delitem__(self, id):
+        del self.entities[id]
+    def __contains__(self,id):
+        return id in self.entities
+    def __len__(self):
+        return len(self.entities)
+    def __iter__(self):
+        return iter(self.entities.items())
 
     @abstractmethod
     def add(self, **kwargs):
         pass
 
-    def remove(self, id):
-        if id in self.entities:
-            del self.entities[id]
-
-    def get(self, id):
-        return self.entities.get(id)
 
 class BuffRepo(BaseRepository):
     def __init__(self):
@@ -33,32 +39,30 @@ class BuffRepo(BaseRepository):
         type = random.choice(list(BuffType))
         return self.add(type)
 
-    def get_states(self):
-        return { id: buff.get_state() for id, buff in self.entities.items() }
 
-    def get_diff_states(self):
-        ret = {}
-        for id, buff in self.entities.items():
-            state, same = buff.get_state_and_diff()
-            if not same:
-                ret[id] = state
-        return ret
+class TankRepo(BaseRepository):
+    def __init__(self):
+        super().__init__()
 
-
-
-    def cleanup(self, cleanup_func):
-        # You need to pass a function(id) to handle each individual buff.
-        # Maybe it's not the most clean way of doing this but i didn't want
-        # to loop through the dict in entity_manager.
-
-        for id, buff in list(self.entities.items()):
-            if buff.taken:
-                cleanup_func(buff)
+    def add(self, player, callback):
+        tank = Tank(id=player.id,
+                    name=player.name,
+                    color=player.color,
+                    shoot_callback=callback)
+        self.entities[player.id] = tank
+        return tank
 
 
+class BulletRepo(BaseRepository):
+    def __init__(self):
+        super().__init__()
+        self.id_counter = 0
 
-
-
-
-
-
+    def add (self, owner_id, damage):
+        id = self.id_counter
+        bullet = Bullet(id,
+                        owner_id,
+                        damage)
+        self.entities[id] = bullet
+        self.id_counter += 1
+        return bullet
